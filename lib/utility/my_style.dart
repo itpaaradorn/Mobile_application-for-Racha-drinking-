@@ -7,6 +7,11 @@ class MyStyle {
         width: 8.0,
         height: 12.0,
       );
+
+  Widget showProgress(){
+    return Center(child: CircularProgressIndicator(),);
+  }
+
   SizedBox mySixedBoxs() => SizedBox(
         width: 100.0,
         height: 280.0,

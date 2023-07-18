@@ -1,3 +1,4 @@
+import 'package:application_drinking_water_shop/utility/my_constant.dart';
 import 'package:application_drinking_water_shop/utility/my_style.dart';
 import 'package:application_drinking_water_shop/utility/normal_dialog.dart';
 import 'package:dio/dio.dart';
@@ -63,7 +64,7 @@ class _SignUpState extends State<SignUp> {
       ));
 
       Future<Null> checkUser() async{
-        String url = 'http://192.168.1.99:8012/WaterShop/getUserWhereUser.php?isAdd=true&User=$user';
+        String url = '${MyConstant().domain}/WaterShop/getUserWhereUser.php?isAdd=true&User=$user';
         try {
           Response response = await Dio().get(url);
           if (response.toString() == 'null') {
@@ -78,7 +79,7 @@ class _SignUpState extends State<SignUp> {
 
   Future<Null> registerThread() async {
     String url =
-        'http://192.168.1.99:8012/WaterShop/addUser.php?isAdd=true&Name=$name&User=$user&Password=$password&ChooseType=$chooseType';
+        '${MyConstant().domain}/WaterShop/addUser.php?isAdd=true&Name=$name&User=$user&Password=$password&ChooseType=$chooseType';
 
     try {
       Response response = await Dio().get(url);

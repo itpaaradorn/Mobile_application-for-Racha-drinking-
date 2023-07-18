@@ -4,6 +4,7 @@ import 'package:application_drinking_water_shop/model/user_model.dart';
 import 'package:application_drinking_water_shop/screen/main_emp.dart';
 import 'package:application_drinking_water_shop/screen/main_shop.dart';
 import 'package:application_drinking_water_shop/screen/main_user.dart';
+import 'package:application_drinking_water_shop/utility/my_constant.dart';
 import 'package:application_drinking_water_shop/utility/my_style.dart';
 import 'package:application_drinking_water_shop/utility/normal_dialog.dart';
 import 'package:dio/dio.dart';
@@ -66,7 +67,7 @@ class _SigninState extends State<Signin> {
 
   Future<Null> checkAuthen() async {
     String url =
-        'http://192.168.1.99:8012/WaterShop/getUserWhereUser.php?isAdd=true&User=$user';
+        '${MyConstant().domain}/WaterShop/getUserWhereUser.php?isAdd=true&User=$user';
     try {
       Response response = await Dio().get(url);
       print('res = $response');
