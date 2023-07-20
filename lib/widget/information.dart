@@ -53,7 +53,7 @@ class _InformationState extends State<Information> {
     MaterialPageRoute materialPageRoute = MaterialPageRoute(
       builder: (context) => widget,
     );
-    Navigator.push(context, materialPageRoute);
+    Navigator.push(context, materialPageRoute).then((value) => readDataUser());
   }
 
   @override

@@ -22,6 +22,7 @@ class _AddInfoShopState extends State<AddInfoShop> {
   File? _image;
   String? nameShop, address, phone, urlImage;
 
+
   Future getImage() async {
     final image = await ImagePicker().pickImage(source: ImageSource.camera);
     if (image == null) return;
@@ -115,8 +116,8 @@ class _AddInfoShopState extends State<AddInfoShop> {
             uploadImage();
           }
         },
-        icon: Icon(Icons.save),
-        label: Text('Save Information'),
+        icon: Icon(Icons.save_alt),
+        label: Text('บันทึก'),
       ),
     );
   }
@@ -164,7 +165,7 @@ Future<Null> editShop() async {
 
 
   Set<Marker> myMarker() {
-    return <Marker>{
+    return <Marker>[
       Marker(
         markerId: MarkerId('Rachadrink Shop'),
         position: LatLng(lat!, lng!),
@@ -173,7 +174,7 @@ Future<Null> editShop() async {
           snippet: 'ละติจูด = $lat , ลองติจูด = $lng',
         ),
       )
-    };
+    ].toSet();
   }
 
   Container showMap() {
