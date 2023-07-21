@@ -40,7 +40,8 @@ class _SigninState extends State<Signin> {
               MyStyle().mySixedBox(),
               passwordForm(),
               MyStyle().mySixedBox(),
-              loginButton()
+              loginButton(),
+              
               // RaisedButton(onPressed: (){}, child: Text('data'))
             ],
           ),

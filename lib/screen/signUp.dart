@@ -10,7 +10,7 @@ class SignUp extends StatefulWidget {
 }
 
 class _SignUpState extends State<SignUp> {
-  String? chooseType, name, user, password;
+  String? chooseType, name, user, password, customer, address, phone;
 
   @override
   Widget build(BuildContext context) {
@@ -31,9 +31,14 @@ class _SignUpState extends State<SignUp> {
             MyStyle().mySixedBox(),
             passwordForm(),
             MyStyle().mySixedBox(),
-            MyStyle().showTitleH2('ชนิดของสมาชิก :'),
+            phoneForm(),
             MyStyle().mySixedBox(),
-            userRadio(),
+            addressForm(),
+            MyStyle().mySixedBox(),
+
+            // MyStyle().showTitleH2('ชนิดของสมาชิก :'),
+            // MyStyle().mySixedBox(),
+            // userRadio(),
             // employeeRadio(),
             registerButton()
           ],
@@ -45,17 +50,19 @@ class _SignUpState extends State<SignUp> {
       child: ElevatedButton(
         onPressed: () {
           print(
-              'name = $name, user = $user, password = $password, chooseType = $chooseType');
+              'name = $name, user = $user, password = $password, chooseType = $customer phone = $phone address =$address');
           if (name == null ||
               name!.isEmpty ||
               user == null ||
               user!.isEmpty ||
               password == null ||
-              password!.isEmpty) {
+              password!.isEmpty ||
+              phone == null ||
+              phone!.isEmpty ||
+              address == null ||
+              address!.isEmpty) {
             print('Have Space');
             normalDialog(context, 'มีช่องว่าง กรุณากรอกให้ครบครับ');
-          } else if (chooseType == null) {
-            normalDialog(context, 'โปรดเลือกชนิดของผู้สมัคร');
           } else {
             checkUser();
           }
@@ -63,23 +70,23 @@ class _SignUpState extends State<SignUp> {
         child: Text('สมัครสมาชิก'),
       ));
 
-      Future<Null> checkUser() async{
-        String url = '${MyConstant().domain}/WaterShop/getUserWhereUser.php?isAdd=true&User=$user';
-        try {
-          Response response = await Dio().get(url);
-          if (response.toString() == 'null') {
-            registerThread();
-          } else {
-            normalDialog(
+  Future<Null> checkUser() async {
+    String url =
+        '${MyConstant().domain}/WaterShop/getUserWhereUser.php?isAdd=true&User=$user';
+    try {
+      Response response = await Dio().get(url);
+      if (response.toString() == 'null') {
+        registerThread();
+      } else {
+        normalDialog(
             context, 'User นี้ $user มีคนใช้แล้วกรุณาเปลี่ยน User ใหม่');
-          }
-        } catch (e) {
-        }
       }
+    } catch (e) {}
+  }
 
   Future<Null> registerThread() async {
     String url =
-        '${MyConstant().domain}/WaterShop/addUser.php?isAdd=true&Name=$name&User=$user&Password=$password&ChooseType=$chooseType';
+        '${MyConstant().domain}/WaterShop/addUser.php?isAdd=true&Name=$name&User=$user&Password=$password&ChooseType=Customer&Avatar=null&Address=$address&Phone=$phone';
 
     try {
       Response response = await Dio().get(url);
@@ -95,83 +102,83 @@ class _SignUpState extends State<SignUp> {
     }
   }
 
-  Widget userRadio() => Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            width: 250.0,
-            child: Row(
-              children: <Widget>[
-                Radio(
-                  value: 'Customer',
-                  groupValue: chooseType,
-                  onChanged: (value) {
-                    setState(() {
-                      chooseType = value;
-                    });
-                  },
-                ),
-                Text(
-                  'ลูกค้า',
-                  style: TextStyle(color: MyStyle().darkColor),
-                )
-              ],
-            ),
-          ),
-        ],
-      );
+  // Widget userRadio() => Row(
+  //       mainAxisAlignment: MainAxisAlignment.center,
+  //       children: [
+  //         Container(
+  //           width: 250.0,
+  //           child: Row(
+  //             children: <Widget>[
+  //               Radio(
+  //                 value: 'Customer',
+  //                 groupValue: chooseType,
+  //                 onChanged: (value) {
+  //                   setState(() {
+  //                     chooseType = value;
+  //                   });
+  //                 },
+  //               ),
+  //               Text(
+  //                 'ลูกค้า',
+  //                 style: TextStyle(color: MyStyle().darkColor),
+  //               )
+  //             ],
+  //           ),
+  //         ),
+  //       ],
+  //     );
 
-  Widget employeeRadio() => Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            width: 250.0,
-            child: Row(
-              children: <Widget>[
-                Radio(
-                  value: 'Employee',
-                  groupValue: chooseType,
-                  onChanged: (value) {
-                    setState(() {
-                      chooseType = value;
-                    });
-                  },
-                ),
-                Text(
-                  'พนักงานขนส่ง',
-                  style: TextStyle(color: MyStyle().darkColor),
-                )
-              ],
-            ),
-          ),
-        ],
-      );
+  // Widget employeeRadio() => Row(
+  //       mainAxisAlignment: MainAxisAlignment.center,
+  //       children: [
+  //         Container(
+  //           width: 250.0,
+  //           child: Row(
+  //             children: <Widget>[
+  //               Radio(
+  //                 value: 'Employee',
+  //                 groupValue: chooseType,
+  //                 onChanged: (value) {
+  //                   setState(() {
+  //                     chooseType = value;
+  //                   });
+  //                 },
+  //               ),
+  //               Text(
+  //                 'พนักงานขนส่ง',
+  //                 style: TextStyle(color: MyStyle().darkColor),
+  //               )
+  //             ],
+  //           ),
+  //         ),
+  //       ],
+  //     );
 
-  Widget shopkeeperRadio() => Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            width: 250.0,
-            child: Row(
-              children: <Widget>[
-                Radio(
-                  value: 'Shopkeeper',
-                  groupValue: chooseType,
-                  onChanged: (value) {
-                    setState(() {
-                      chooseType = value;
-                    });
-                  },
-                ),
-                Text(
-                  'เจ้าของร้าน',
-                  style: TextStyle(color: MyStyle().darkColor),
-                )
-              ],
-            ),
-          ),
-        ],
-      );
+  // Widget shopkeeperRadio() => Row(
+  //       mainAxisAlignment: MainAxisAlignment.center,
+  //       children: [
+  //         Container(
+  //           width: 250.0,
+  //           child: Row(
+  //             children: <Widget>[
+  //               Radio(
+  //                 value: 'Shopkeeper',
+  //                 groupValue: chooseType,
+  //                 onChanged: (value) {
+  //                   setState(() {
+  //                     chooseType = value;
+  //                   });
+  //                 },
+  //               ),
+  //               Text(
+  //                 'เจ้าของร้าน',
+  //                 style: TextStyle(color: MyStyle().darkColor),
+  //               )
+  //             ],
+  //           ),
+  //         ),
+  //       ],
+  //     );
 
   Widget nameForm() => Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -235,6 +242,54 @@ class _SignUpState extends State<SignUp> {
                 ),
                 labelStyle: TextStyle(color: MyStyle().darkColor),
                 labelText: 'Password :',
+                enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: MyStyle().darkColor)),
+                focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: MyStyle().primaryColor)),
+              ),
+            ),
+          ),
+        ],
+      );
+  Widget phoneForm() => Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            width: 250.0,
+            child: TextField(
+              onChanged: (value) => phone = value.trim(),
+              decoration: InputDecoration(
+                prefixIcon: Icon(
+                  Icons.phone,
+                  color: MyStyle().darkColor,
+                ),
+                labelStyle: TextStyle(color: MyStyle().darkColor),
+                labelText: 'Phone :',
+                enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: MyStyle().darkColor)),
+                focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: MyStyle().primaryColor)),
+              ),
+            ),
+          ),
+        ],
+      );
+  Widget addressForm() => Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            width: 250.0,
+            child: TextField(
+              keyboardType: TextInputType.multiline,
+              maxLines: 3,
+              onChanged: (value) => address = value.trim(),
+              decoration: InputDecoration(
+                prefixIcon: Icon(
+                  Icons.home,
+                  color: MyStyle().darkColor,
+                ),
+                labelStyle: TextStyle(color: MyStyle().darkColor),
+                labelText: 'Address :',
                 enabledBorder: OutlineInputBorder(
                     borderSide: BorderSide(color: MyStyle().darkColor)),
                 focusedBorder: OutlineInputBorder(
