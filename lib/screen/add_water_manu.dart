@@ -18,7 +18,7 @@ class AddMenuWater extends StatefulWidget {
 
 class _AddMenuWaterState extends State<AddMenuWater> {
   File? file;
-  String? nameWhat, price, detail;
+  String? nameWhat, price, size;
 
   @override
   Widget build(BuildContext context) {
@@ -34,9 +34,9 @@ class _AddMenuWaterState extends State<AddMenuWater> {
             showTitleWater('รายละเอียดน้ำดื่ม'),
             nameForm(),
             MyStyle().mySixedBox(),
-            pricForm(),
+            siezForm(),
             MyStyle().mySixedBox(),
-            detaiForm(),
+            pricForm(),
             MyStyle().mySixedBox(),
             saveButton()
           ],
@@ -57,8 +57,8 @@ class _AddMenuWaterState extends State<AddMenuWater> {
               nameWhat!.isEmpty ||
               price == null ||
               price!.isEmpty ||
-              detail == null ||
-              detail!.isEmpty) {
+              size == null ||
+              size!.isEmpty) {
             normalDialog(context, 'กรุณากรอกข้อมูลทุกช่อง !');
           } else {
             uploadWaterAndInsertData();
@@ -70,40 +70,37 @@ class _AddMenuWaterState extends State<AddMenuWater> {
     );
   }
 
-  Future<Null> uploadWaterAndInsertData ()async{
-
+  Future<Null> uploadWaterAndInsertData() async {
     String? urlUpload = '${MyConstant().domain}/WaterShop/savewater.php';
 
-    Random  random = Random();
+    Random random = Random();
     int i = random.nextInt(1000000);
     String? nameFile = 'what$i.jpg';
 
     try {
-      
-       Map<String, dynamic> map = Map();
-       map['file'] = await MultipartFile.fromFile(file!.path, filename: nameFile);
-       FormData formData = FormData.fromMap(map);
+      Map<String, dynamic> map = Map();
+      map['file'] =
+          await MultipartFile.fromFile(file!.path, filename: nameFile);
+      FormData formData = FormData.fromMap(map);
 
-       await Dio().post(urlUpload,data: formData).then((value) async {
-        String? urlPathImage = '/WaterShop/water/$nameFile';
+      await Dio().post(urlUpload, data: formData).then(
+        (value) async {
+          String? urlPathImage = '/WaterShop/water/$nameFile';
 
-        print('urlPathImage = ${MyConstant().domain}$urlPathImage');
+          print('urlPathImage = ${MyConstant().domain}$urlPathImage');
 
-        SharedPreferences preferences = await SharedPreferences.getInstance();
-        String? idShop = preferences.getString('id');
+          SharedPreferences preferences = await SharedPreferences.getInstance();
+          String? idShop = preferences.getString('id');
 
-
-        String? urlInsertData = '${MyConstant().domain}/WaterShop/addWater.php?isAdd=true&idShop=$idShop&NameWater=$nameWhat&PathImage=$urlPathImage&Price=$price&Detail=$detail';
-        await Dio().get(urlInsertData).then((value) => Navigator.pop(context));
-
-       },);
-
-    } catch (e) {
-      
-    }
-
+          String? urlInsertData =
+              '${MyConstant().domain}/WaterShop/addWater.php?isAdd=true&idShop=$idShop&NameWater=$nameWhat&PathImage=$urlPathImage&Price=$price&Size=$size';
+          await Dio()
+              .get(urlInsertData)
+              .then((value) => Navigator.pop(context));
+        },
+      );
+    } catch (e) {}
   }
-
 
   Widget nameForm() => Container(
         width: 250.0,
@@ -117,31 +114,45 @@ class _AddMenuWaterState extends State<AddMenuWater> {
         ),
       );
 
-  Widget pricForm() => Container(
+  Widget siezForm() => Container(
         width: 250.0,
-        child: TextField(keyboardType: TextInputType.number,
-          onChanged: (value) => price = value.trim(),
+        child: TextField(
+          keyboardType: TextInputType.number,
+          onChanged: (value) => size = value.trim(),
           decoration: InputDecoration(
-            prefixIcon: Icon(Icons.monetization_on_outlined),
-            labelText: 'ราคาน้ำดื่ม',
+            prefixIcon: Icon(Icons.view_list_rounded),
+            labelText: 'ขนาด ml',
             border: OutlineInputBorder(),
           ),
         ),
       );
 
-  Widget detaiForm() => Container(
+  Widget pricForm() => Container(
         width: 250.0,
         child: TextField(
-          onChanged: (value) => detail = value.trim(),
-          keyboardType: TextInputType.multiline,
-          maxLines: 3,
+          keyboardType: TextInputType.number,
+          onChanged: (value) => price = value.trim(),
           decoration: InputDecoration(
-            prefixIcon: Icon(Icons.description_outlined),
-            labelText: 'รายละเอียดน้ำดื่ม',
+            prefixIcon: Icon(Icons.monetization_on_outlined),
+            labelText: 'ราคา',
             border: OutlineInputBorder(),
           ),
         ),
       );
+
+  // Widget detaiForm() => Container(
+  //       width: 250.0,
+  //       child: TextField(
+  //         onChanged: (value) => detail = value.trim(),
+  //         keyboardType: TextInputType.multiline,
+  //         maxLines: 3,
+  //         decoration: InputDecoration(
+  //           prefixIcon: Icon(Icons.description_outlined),
+  //           labelText: 'รายละเอียดน้ำดื่มขนาด',
+  //           border: OutlineInputBorder(),
+  //         ),
+  //       ),
+  //     );
 
   Row groupImage() {
     return Row(

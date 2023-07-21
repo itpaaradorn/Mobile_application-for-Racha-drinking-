@@ -117,19 +117,23 @@ class _EditInfoShopState extends State<EditInfoShop> {
         ),
         children: [
           Row(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: <Widget>[
-              OutlinedButton(
+              TextButton(
                 onPressed: () {
                   Navigator.pop(context);
                   editThread();
                 },
-                child: Text('ตกลง'),
+                child: Text(
+                  'ตกลง',
+                  style:TextStyle(fontWeight: FontWeight.bold),
+                ),
               ),
-              OutlinedButton(
+              TextButton(
                 onPressed: () => Navigator.pop(context),
                 child: Text(
                   'ยกเลิก',
+                  style: TextStyle(fontWeight: FontWeight.bold),
                 ),
               )
             ],

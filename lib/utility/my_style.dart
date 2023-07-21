@@ -12,6 +12,26 @@ class MyStyle {
     return Center(child: CircularProgressIndicator(),);
   }
 
+  TextStyle mainTitle = TextStyle(
+    fontSize: 18.0,
+    fontWeight: FontWeight.bold,
+    color:  Color.fromARGB(255, 29, 77, 180),
+  );
+
+  TextStyle mainH2Title = TextStyle(
+    fontSize: 14,
+    fontWeight: FontWeight.bold,
+    color: Color.fromARGB(255, 63, 119, 224),
+  );
+
+  TextStyle mainH3Title = TextStyle(
+    fontSize: 14,
+    fontWeight: FontWeight.bold,
+    color: Color.fromARGB(255, 224, 94, 8),
+  );
+
+
+
   SizedBox mySixedBoxs() => SizedBox(
         width: 100.0,
         height: 280.0,
@@ -41,7 +61,7 @@ class MyStyle {
   Text showTitleH2(String title) => Text(
         title,
         style: TextStyle(
-          fontSize: 17.0,
+          fontSize: 16.0,
           color: Colors.blue.shade900,
           fontWeight: FontWeight.bold,
         ),
