@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:application_drinking_water_shop/model/user_model.dart';
+import 'package:application_drinking_water_shop/model/water_model.dart';
 import 'package:application_drinking_water_shop/utility/my_constant.dart';
 import 'package:application_drinking_water_shop/utility/my_style.dart';
 import 'package:application_drinking_water_shop/utility/singout_process.dart';
@@ -14,36 +15,67 @@ class MainUser extends StatefulWidget {
 }
 
 class _MainUserState extends State<MainUser> {
-  UserModel? userModel;
+  
+  
   String? nameUser;
-  List<Widget>? shopCards = [];
+  List<WaterModel> waterModels = [];
+  List<Widget> brandimageCards = [];
+
+  List<Widget> shopCards = [];
 
   @override
   void initState() {
     super.initState();
     findUser();
-    readShop();
+    readBrand();
   }
 
-  Future<Null> readShop() async {
-    String? url =
-        '${MyConstant().domain}/WaterShop/getUserWhereChooseTpy.php?isAdd=true&ChooseType=Admin';
+  // Future<Null> readShop() async {
+  //   String? url =
+  //       '${MyConstant().domain}/WaterShop/getWaterbrand.php';
+  //   await Dio().get(url).then((value) {
+  //     // print('value = $value');
+  //     var result = json.decode(value.data);
+  //     for (var map in result) {
+  //       WaterModel model = WaterModel.fromJson(map);
+  //       print('NameShop ==>> ${model.nameWater}');
+  //       setState(() {
+  //         WaterModel.add(model);
+  //         shopCards.add(createCard(model));
+  //       });
+  //     }
+  //   });
+  // }
 
-    await Dio().get(url).then(
-      (value) {
-        // print('value = $value');
-        var result = json.decode(value.data);
-        // print('result = $result');
-        for (var map in result) {
+  Future<Null> readBrand() async {
+    String url =  'http://192.168.1.99:8012/WaterShop/getWaterbrand.php?isAdd=true&wtbrand';
+    await Dio().get(url).then((value) {
+      // print('value ==> $value');
+      var result = json.decode(value.data);
+      int index = 0;
+      // print('result ==> $result');
+
+      for (var map in result) {
+        // print('item ==> $item');
+        WaterModel model = WaterModel.fromJson(map);
+        // print('brand gas ==>> ${model.brandGas}');
+
+        String PathImage = '${model.pathImage}';
+        if (PathImage.isNotEmpty) {
           setState(() {
-            userModel = UserModel.fromJson(map);
-            print('nameShop = ${userModel!.nameShop}');
-            shopCards!.add(crestCard(userModel!));
+            waterModels.add(model);
+            brandimageCards.add(createCard(model, index));
+            index++;
           });
         }
-      },
-    );
+      }
+    });
   }
+
+
+
+
+
 
   Future<Null> findUser() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
@@ -65,9 +97,12 @@ class _MainUserState extends State<MainUser> {
         ],
       ),
       drawer: showDrawer(),
-      body: shopCards!.length == 0 ? MyStyle().showProgress(): GridView.extent(
-        maxCrossAxisExtent: 150.0,children: shopCards!,
-      ),
+      body: brandimageCards.length == 0
+          ? MyStyle().showProgress()
+          : GridView.extent(
+              maxCrossAxisExtent: 250,
+              children: brandimageCards,
+            ),
     );
   }
 
@@ -94,16 +129,17 @@ class _MainUserState extends State<MainUser> {
     );
   }
 
-  Widget crestCard(UserModel userModel) {
+  Widget createCard(WaterModel waterModel, int index, ) {
     return Card(
       child: Column(
         children: [
           Container(
             width: 80.0,
             height: 80.0,
-            child: Image.network('${MyConstant().domain}${userModel.urlpicture}'),
+            child:
+                Image.network('${MyConstant().domain}${waterModel.pathImage}'),
           ),
-          Text('${userModel.nameShop}')
+          Text('${waterModel.wtbrand}')
         ],
       ),
     );

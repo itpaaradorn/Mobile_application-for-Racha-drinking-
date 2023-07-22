@@ -108,7 +108,7 @@ class _ListWaterMenuShopState extends State<ListWaterMenuShop> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      waterModels![index].nameWater!,
+                      waterModels![index].wtbrand!,
                       style: MyStyle().mainTitle,
                     ),
                     Text(
@@ -158,7 +158,7 @@ class _ListWaterMenuShopState extends State<ListWaterMenuShop> {
       context: context,
       builder: (context) => SimpleDialog(
         title:
-            MyStyle().showTitleH2('คุณต้องการลบรายการ ${waterModel.nameWater}'),
+            MyStyle().showTitleH2('คุณต้องการลบรายการ ${waterModel.wtbrand}'),
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,

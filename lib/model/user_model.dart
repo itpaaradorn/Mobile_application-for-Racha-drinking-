@@ -57,4 +57,6 @@ class UserModel {
     data['Token'] = this.token;
     return data;
   }
+
+  static void add(UserModel model) {}
 }

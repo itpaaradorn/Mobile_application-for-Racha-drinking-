@@ -72,6 +72,8 @@ class _MainShopState extends State<MainShop> {
         },
       );
 
+  
+
   ListTile information() => ListTile(
         leading: Icon(Icons.info),
         title: Text('รายละเอียดของร้าน'),
