@@ -12,7 +12,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../utility/my_constant.dart';
 
 class Information extends StatefulWidget {
-  const Information({Key? key}) : super(key: key);
+
   @override
   State<Information> createState() => _InformationState();
 }
@@ -32,7 +32,7 @@ class _InformationState extends State<Information> {
     String? id = preferences.getString('id');
 
     String url =
-        '${MyConstant().domain}/WaterShop/getUserWhereUserId.php?isAdd=true&id=$id';
+        'http://192.168.1.99:8012/WaterShop/getUserWhereId.php?isAdd=true&id=$id';
     await Dio().get(url).then(
       (value) {
         // print('value = $value');

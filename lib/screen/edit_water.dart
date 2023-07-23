@@ -26,7 +26,7 @@ class _EditWaterMenuState extends State<EditWaterMenu> {
     // TODO: implement initState
     super.initState();
     waterModel = widget.waterModel;
-    name = waterModel?.wtbrand;
+    name = waterModel?.nameWater;
     price = waterModel?.price;
     size = waterModel?.size;
     pathImage = waterModel?.pathImage;
@@ -37,7 +37,7 @@ class _EditWaterMenuState extends State<EditWaterMenu> {
     return Scaffold(
       floatingActionButton: uploadButton(),
       appBar: AppBar(
-        title: Text('การแก้ไข ${waterModel?.wtbrand}'),
+        title: Text('การแก้ไข ${waterModel?.nameWater}'),
       ),
       body: SingleChildScrollView(
         child: Column(

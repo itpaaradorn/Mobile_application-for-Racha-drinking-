@@ -49,7 +49,7 @@ class _EditInfoShopState extends State<EditInfoShop> {
     print('idShop ==> $idShop');
 
     String? url =
-        '${MyConstant().domain}/WaterShop/getUserWhereUserId.php?isAdd=true&id=$idShop';
+        'http://192.168.1.99:8012/WaterShop/getUserWhereId.php?isAdd=true&id=$idShop';
 
     Response response = await Dio().get(url);
     print('response ==>> $response');

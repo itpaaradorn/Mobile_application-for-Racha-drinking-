@@ -71,8 +71,7 @@ class _MainShopState extends State<MainShop> {
           Navigator.pop(context);
         },
       );
-
-  
+      
 
   ListTile information() => ListTile(
         leading: Icon(Icons.info),
