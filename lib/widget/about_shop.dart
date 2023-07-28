@@ -2,7 +2,9 @@ import 'dart:math';
 
 import 'package:application_drinking_water_shop/model/user_model.dart';
 import 'package:application_drinking_water_shop/utility/my_constant.dart';
+import 'package:application_drinking_water_shop/utility/my_style.dart';
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:location/location.dart';
 
@@ -18,6 +20,8 @@ class _AboutShopState extends State<AboutShop> {
   UserModel? userModel;
   double? lat1, lng1, lat2, lng2, distance;
   String? distanceString;
+  int? transport;
+  CameraPosition? position;
 
   @override
   void initState() {
@@ -39,9 +43,22 @@ class _AboutShopState extends State<AboutShop> {
       var myFormat = NumberFormat('##.0#', 'en_us');
       distanceString = myFormat.format(distance);
 
+      transport = calculateTransport(distance!);
 
       print('distance =>> $distance');
+      print('transport =>> $transport');
     });
+  }
+
+  int calculateTransport(double distance) {
+    int transport;
+    if (distance < 1.0) {
+      transport = 5;
+      return transport;
+    } else {
+      transport = 5 + (distance - 1).round() * 5;
+      return transport;
+    }
   }
 
   double calculateDistance(double lat1, double lng1, double lat2, double lng2) {
@@ -69,39 +86,92 @@ class _AboutShopState extends State<AboutShop> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              margin: EdgeInsets.all(16.0),
-              width: 150.0,
-              height: 150.0,
-              child: Image.network(
-                '${MyConstant().domain}${userModel!.urlpicture}',
-                fit: BoxFit.cover,
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                margin: EdgeInsets.all(16.0),
+                width: 180.0,
+                height: 180.0,
+                child: Image.network(
+                  '${MyConstant().domain}${userModel!.urlpicture}',
+                  fit: BoxFit.cover,
+                ),
               ),
+            ],
+          ),
+          ListTile(
+            leading: Icon(Icons.home),
+            title: Text('${userModel!.address}'),
+          ),
+          ListTile(
+            leading: Icon(Icons.phone),
+            title: Text('${userModel!.phone}'),
+          ),
+          ListTile(
+            leading: Icon(Icons.social_distance),
+            title: Text(distance == null ? '' : '$distanceString กิโลเมตร'),
+          ),
+          ListTile(
+            leading: Icon(Icons.monetization_on),
+            title: Text(transport == null ? '' : '$transport บาท'),
+          ),
+          showMap(),
+        ],
+      ),
+    );
+  }
+
+  Container showMap() {
+    if (lat1 != null) {
+      LatLng latLng1 = LatLng(lat1!, lng1!);
+      position = CameraPosition(
+        target: latLng1,
+        zoom: 16.0,
+      );
+    }
+
+    Marker userMaker() {
+      return Marker(
+          markerId: MarkerId('userMaker'),
+          position: LatLng(lat1!, lng1!),
+          icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueViolet),
+          infoWindow: InfoWindow(
+            title: 'คุณอยู่ที่นี้',
+          ));
+    }
+
+    Marker shopMaker() {
+      return Marker(
+          markerId: MarkerId('shopMaker'),
+          position: LatLng(lat2!, lng2!),
+          icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
+          infoWindow: InfoWindow(
+            title: 'ร้าน${userModel!.nameShop}',
+          ));
+    }
+
+    Set<Marker> mySet() {
+      return <Marker>[
+        userMaker(),
+        shopMaker(),
+      ].toSet();
+    }
+
+    return Container(
+      margin: EdgeInsets.only(left: 13, right: 13, top: 13, bottom: 30),
+      // color: Colors.grey,
+      height: 300.0,
+      child: lat1 == null
+          ? MyStyle().showProgress()
+          : GoogleMap(
+              initialCameraPosition: position!,
+              mapType: MapType.normal,
+              onMapCreated: (controller) {},markers: mySet(),
             ),
-          ],
-        ),
-        ListTile(
-          leading: Icon(Icons.home),
-          title: Text('${userModel!.address}'),
-        ),
-        ListTile(
-          leading: Icon(Icons.phone),
-          title: Text('${userModel!.phone}'),
-        ),
-        ListTile(
-          leading: Icon(Icons.social_distance),
-          title: Text(distance == null ? '' : '$distanceString กิโลเมตร' ),
-        ),
-        ListTile(
-          leading: Icon(Icons.monetization_on),
-          title: Text('123 บาท'),
-        ),
-      ],
     );
   }
 }

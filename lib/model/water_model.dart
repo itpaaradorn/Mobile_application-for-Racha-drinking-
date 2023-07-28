@@ -37,4 +37,6 @@ class WaterModel {
     data['idbrand'] = this.idbrand;
     return data;
   }
+
+  void add(WaterModel waterModel) {}
 }

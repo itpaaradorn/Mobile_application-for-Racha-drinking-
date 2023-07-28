@@ -28,7 +28,7 @@ class _ShowShopWaterMunuState extends State<ShowShopWaterMunu> {
     super.initState();
     brandModel = widget.brandWaterModel;
     listWidgets.add(AboutShop(userModel: widget.userModel,));
-    listWidgets.add(ShowMenuWater());
+    listWidgets.add(ShowMenuWater(userModel: widget.userModel));
 
   }
 
