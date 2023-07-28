@@ -7,6 +7,8 @@ import 'package:application_drinking_water_shop/widget/show_account.dart';
 import 'package:application_drinking_water_shop/widget/show_accountcs.dart';
 import 'package:flutter/material.dart';
 
+import '../widget/list_brand_water.dart';
+
 class MainShop extends StatefulWidget {
   @override
   State<MainShop> createState() => _MainShopState();
@@ -35,18 +37,26 @@ class _MainShopState extends State<MainShop> {
   }
 
   Drawer showDrawer() => Drawer(
-        child: ListView(
-          children: <Widget>[
-            showHead(),
-            homeMenu(),
-            waterMenu(),
-            information(),
-            personEmpMenu(),
-            personCsMenu(),
-            MyStyle().mySixedBoxs(),
-            signOutMenu(),
-          ],
-        ),
+        child: Stack(children: [
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              showHead(),
+              homeMenu(),
+              waterMenu(),
+              brandMenu(),
+              information(),
+              personEmpMenu(),
+              personCsMenu(),
+            ],
+          ),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              signOutMenu(),
+            ],
+          )
+        ]),
       );
 
   ListTile homeMenu() => ListTile(
@@ -63,7 +73,7 @@ class _MainShopState extends State<MainShop> {
 
   ListTile waterMenu() => ListTile(
         leading: Icon(Icons.shop),
-        title: Text('ข้อมูลสินค้า'),
+        title: Text('ข้อมูลน้ำดื่ม'),
         onTap: () {
           setState(() {
             currentWidget = ListWaterMenuShop();
@@ -71,7 +81,16 @@ class _MainShopState extends State<MainShop> {
           Navigator.pop(context);
         },
       );
-      
+  ListTile brandMenu() => ListTile(
+        leading: Icon(Icons.bar_chart_rounded),
+        title: Text('ประเภทน้ำดื่ม'),
+        onTap: () {
+          setState(() {
+            currentWidget = ListBrandWater();
+          });
+          Navigator.pop(context);
+        },
+      );
 
   ListTile information() => ListTile(
         leading: Icon(Icons.info),

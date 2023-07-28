@@ -8,14 +8,16 @@ class MyStyle {
         height: 12.0,
       );
 
-  Widget showProgress(){
-    return Center(child: CircularProgressIndicator(),);
+  Widget showProgress() {
+    return Center(
+      child: CircularProgressIndicator(),
+    );
   }
 
   TextStyle mainTitle = TextStyle(
     fontSize: 18.0,
     fontWeight: FontWeight.bold,
-    color:  Color.fromARGB(255, 29, 77, 180),
+    color: Color.fromARGB(255, 29, 77, 180),
   );
 
   TextStyle mainH2Title = TextStyle(
@@ -30,7 +32,11 @@ class MyStyle {
     color: Color.fromARGB(255, 224, 94, 8),
   );
 
-
+  TextStyle mainhPTitle = TextStyle(
+    fontSize: 15.0,
+    fontWeight: FontWeight.bold,
+    color: Color(0xff2972ff),
+  );
 
   SizedBox mySixedBoxs() => SizedBox(
         width: 100.0,
@@ -57,6 +63,11 @@ class MyStyle {
       ),
     );
   }
+  TextStyle mainh2Title = TextStyle(
+      fontSize: 15.0,
+      fontWeight: FontWeight.bold,
+      color: Colors.black,
+    );
 
   Text showTitleH2(String title) => Text(
         title,

@@ -1,13 +1,15 @@
-import 'dart:convert';
-
-import 'package:application_drinking_water_shop/model/water_model.dart';
-import 'package:application_drinking_water_shop/screen/show_shop_water.dart';
-import 'package:application_drinking_water_shop/utility/my_constant.dart';
+import 'package:application_drinking_water_shop/screen/profilepage.dart';
+import 'package:application_drinking_water_shop/screen/show_shop_cart.dart';
 import 'package:application_drinking_water_shop/utility/my_style.dart';
 import 'package:application_drinking_water_shop/utility/singout_process.dart';
-import 'package:dio/dio.dart';
+
+import 'package:application_drinking_water_shop/widget/show_list_shop.dart';
+import 'package:application_drinking_water_shop/widget/show_status_water_order.dart';
+
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../widget/tab_bar_material.dart';
 
 class MainUser extends StatefulWidget {
   @override
@@ -15,37 +17,25 @@ class MainUser extends StatefulWidget {
 }
 
 class _MainUserState extends State<MainUser> {
-  WaterModel? waterModels;
   String? nameUser;
-  List<Widget>? shopCards = [];
+  Widget? currentWidget;
+  Widget? tabbarWidget;
+  int index = 0;
+  final pages = <Widget>[
+    ShowListShop(),
+    // History(),
+    // NotificationPage(),
+    AccountPage(),
+    AccountPage(),
+    AccountPage(),
+
+  ];
 
   @override
   void initState() {
     super.initState();
+    currentWidget = ShowListShop();
     findUser();
-    readShop();
-  }
-
-  Future<Null> readShop() async {
-    String? url =
-        '${MyConstant().domain}/WaterShop/getUserWhereChooseTpy.php?isAdd=true&idShop=46';
-
-    await Dio().get(url).then(
-      (value) {
-        // print('value = $value');
-        var result = json.decode(value.data);
-        int index = 0;
-        // print('result = $result');
-        for (var map in result) {
-          setState(() {
-            waterModels = WaterModel.fromJson(map);
-            print('nameShop = ${waterModels!.nameWater}');
-            shopCards!.add(crestCard(waterModels!, index));
-            index++;
-          });
-        }
-      },
-    );
   }
 
   Future<Null> findUser() async {
@@ -57,73 +47,132 @@ class _MainUserState extends State<MainUser> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(nameUser == null ? 'Main User' : '$nameUser login'),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.exit_to_app),
-            onPressed: () => signOutProcess(context),
-          )
-        ],
-      ),
-      drawer: showDrawer(),
-      body: shopCards!.length == 0
-          ? MyStyle().showProgress()
-          : GridView.extent(
-              maxCrossAxisExtent: 250.0,
-              mainAxisSpacing: 4.0,
-              crossAxisSpacing: 4.0,
-              children: shopCards!,
+    return Stack(
+      children: [
+        Scaffold(
+          appBar: AppBar(
+            title: Text(
+              nameUser == null ? 'Main User' : 'สวัสดี $nameUser',
+              style: TextStyle(color: Colors.white),
             ),
+            actions: <Widget>[
+              IconButton(
+                icon: Icon(
+                  Icons.exit_to_app,
+                  color: Colors.white,
+                ),
+                onPressed: () => signOutProcess(context),
+              )
+            ],
+          ),
+
+          // drawer: showDrawer(),
+          body: pages[index],
+          backgroundColor: Color(0xfff1f1f5),
+          bottomNavigationBar: TabbarMaterialWidget(
+            index: index,
+            onChangedTab: onChangedTab,
+          ),
+        ),shoppingCartbutton(),
+      ],
+    );
+  }
+
+  void onChangedTab(int index) {
+    setState(() {
+      this.index = index;
+    });
+  }
+
+  Widget shoppingCartbutton() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: <Widget>[
+        Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: <Widget>[
+            Container(
+              margin: EdgeInsets.only(right: 20.0, bottom: 50.0),
+              child: FloatingActionButton(
+                child: Icon(Icons.shopping_cart),
+                onPressed: () {
+                  MaterialPageRoute route = MaterialPageRoute(
+                    builder: (context) => ShowCart(),
+                  );
+                  Navigator.push(context, route);
+                },
+              ),
+            ),
+          ],
+        ),
+      ],
     );
   }
 
   Drawer showDrawer() => Drawer(
-        child: ListView(
-          children: <Widget>[
-            showHeadDrawer(),
-          ],
-        ),
+        child: Stack(children: [
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              showHeadDrawer(),
+              menuListShop(),
+              menuStatusWaterOrder(),
+            ],
+          ),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              menuSignOut(),
+            ],
+          )
+        ]),
       );
+
+  ListTile menuListShop() {
+    return ListTile(
+      onTap: () {
+        setState(() {
+          Navigator.pop(context);
+          currentWidget = ShowListShop();
+        });
+      },
+      leading: Icon(Icons.home),
+      title: Text('รายการน้ำดื่ม'),
+    );
+  }
+
+  ListTile menuStatusWaterOrder() {
+    return ListTile(
+      onTap: () {
+        Navigator.pop(context);
+        setState(() {
+          currentWidget = ShowStatusWaterOrder();
+        });
+      },
+      leading: Icon(Icons.list_alt),
+      title: Text('รายการน้ำดื่ม ที่สั่ง'),
+    );
+  }
+
+  ListTile menuSignOut() {
+    return ListTile(
+      onTap: () => signOutProcess(context),
+      leading: Icon(Icons.exit_to_app),
+      title: Text('Sign Out'),
+    );
+  }
 
   UserAccountsDrawerHeader showHeadDrawer() {
     return UserAccountsDrawerHeader(
       decoration: MyStyle().myBoxDecoration('user.jpg'),
       currentAccountPicture: MyStyle().showLogo(),
       accountName: Text(
-        'Name Login',
-        style: TextStyle(color: MyStyle().darkColor),
+        nameUser == null ? 'Name Login' : nameUser!,
+        style: TextStyle(color: MyStyle().darkColor, fontSize: 18),
       ),
       accountEmail: Text(
         'Login',
         style: TextStyle(color: MyStyle().darkColor),
-      ),
-    );
-  }
-
-  Widget crestCard(WaterModel waterModel, int index) {
-    return GestureDetector(
-      onTap: () {
-        print('You Click index $index');
-        MaterialPageRoute route =
-        MaterialPageRoute(
-          builder: (context) => ShowShopWaterMunu(waterModel: waterModel),
-        );Navigator.push(context,route);
-      },
-      child: Card(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-                width: 150.0,
-                height: 150.0,
-                child: Image.network(
-                    '${MyConstant().domain}${waterModel.pathImage}')),
-            MyStyle().mySixedBox(),
-            Text('${waterModel.nameWater}')
-          ],
-        ),
       ),
     );
   }

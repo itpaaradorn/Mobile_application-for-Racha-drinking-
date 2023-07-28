@@ -1,6 +1,7 @@
 class MyConstant {
 
-  String domain = 'http://192.168.1.99:8012/';
+  String domain = 'http://192.168.1.99/';
+
 
   MyConstant();
   

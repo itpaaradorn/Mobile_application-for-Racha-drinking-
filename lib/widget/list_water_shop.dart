@@ -39,6 +39,7 @@ class _ListWaterMenuShopState extends State<ListWaterMenuShop> {
         '${MyConstant().domain}/WaterShop/getWaterWheredShop.php?isAdd=true&idShop=$idShop';
     await Dio().get(url).then(
       (value) {
+       
         setState(
           () {
             loadStatus = false;
@@ -108,7 +109,7 @@ class _ListWaterMenuShopState extends State<ListWaterMenuShop> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      waterModels![index].nameWater!,
+                      'ID: ${waterModels![index].idbrand!} ',
                       style: MyStyle().mainTitle,
                     ),
                     Text(
@@ -204,7 +205,7 @@ class _ListWaterMenuShopState extends State<ListWaterMenuShop> {
                 child: FloatingActionButton(
                   onPressed: () {
                     MaterialPageRoute route = MaterialPageRoute(
-                      builder: (context) => AddMenuWater(),
+                      builder: (context) => AddMenuWater(waterModel: WaterModel()),
                     );
                     Navigator.push(context, route)
                         .then((value) => readWaterMenu());

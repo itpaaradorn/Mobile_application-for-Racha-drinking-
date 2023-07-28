@@ -49,7 +49,7 @@ class _EditInfoShopState extends State<EditInfoShop> {
     print('idShop ==> $idShop');
 
     String? url =
-        'http://192.168.1.99:8012/WaterShop/getUserWhereId.php?isAdd=true&id=$idShop';
+        '${MyConstant().domain}/WaterShop/getUserWhereId.php?isAdd=true&id=46';
 
     Response response = await Dio().get(url);
     print('response ==>> $response');
@@ -158,7 +158,7 @@ class _EditInfoShopState extends State<EditInfoShop> {
         urlPicture = '/WaterShop/shop/$nameFile';
 
         String? id = userModel?.id;
-        // print('id = $id');
+        print('id = $id');
 
         String? url =
             '${MyConstant().domain}/WaterShop/editUserWhereId.php?isAdd=true&id=$id&NameShop=$nameShop&Address=$address&Phone=$phone&UrlPicture=$urlPicture&Lat=$lat&Lng=$lng';

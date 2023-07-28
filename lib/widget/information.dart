@@ -32,7 +32,7 @@ class _InformationState extends State<Information> {
     String? id = preferences.getString('id');
 
     String url =
-        'http://192.168.1.99:8012/WaterShop/getUserWhereId.php?isAdd=true&id=$id';
+        '${MyConstant().domain}/WaterShop/getUserWhereId.php?isAdd=true&id=$id';
     await Dio().get(url).then(
       (value) {
         // print('value = $value');

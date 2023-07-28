@@ -1,61 +1,58 @@
 import 'dart:io';
 
-import 'package:application_drinking_water_shop/model/water_model.dart';
-import 'package:application_drinking_water_shop/utility/my_constant.dart';
-import 'package:application_drinking_water_shop/utility/normal_dialog.dart';
+import 'package:application_drinking_water_shop/model/brand_model.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
-class EditWaterMenu extends StatefulWidget {
-  // ignore: prefer_typing_uninitialized_variables
-  final waterModel;
-  EditWaterMenu({Key? key, this.waterModel}) : super(key: key);
+import '../utility/my_constant.dart';
+import '../utility/normal_dialog.dart';
+
+class EditBrandWater extends StatefulWidget {
+  final BrandWaterModel brandWaterModel;
+  const EditBrandWater({super.key, required this.brandWaterModel});
 
   @override
-  State<EditWaterMenu> createState() => _EditWaterMenuState();
+  State<EditBrandWater> createState() => _EditBrandWaterState();
 }
 
-class _EditWaterMenuState extends State<EditWaterMenu> {
-  WaterModel? waterModel;
+class _EditBrandWaterState extends State<EditBrandWater> {
+  BrandWaterModel? brandModel;
   File? file;
-  String? name, price, size, pathImage;
+  String? brand_id, brand_name, brand_image, idShop;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    waterModel = widget.waterModel;
-    name = waterModel?.nameWater;
-    price = waterModel?.price;
-    size = waterModel?.size;
-    pathImage = waterModel?.pathImage;
+    brandModel = widget.brandWaterModel;
+    brand_id = brandModel?.brandId;
+    brand_name = brandModel?.brandName;
+    brand_image = brandModel?.brandImage;
+    idShop = brandModel?.idShop;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: uploadButton(),
-      appBar: AppBar(
-        title: Text('แก้ไข ${waterModel?.nameWater}'),
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            nameWater(),
-            groupImage(),
-            sizeWater(),
-            priceWater(),
-          ],
+        floatingActionButton: uploadButton(),
+        appBar: AppBar(
+          title: Text(
+            'แก้ไข ยี่ห้อน้ำดื่ม ${brandModel!.brandName}',
+          ),
         ),
-      ),
-    );
+        body: Column(
+          children: [
+            nameBrandWater(),
+            groupImage(),
+          ],
+        ));
   }
 
   FloatingActionButton uploadButton() {
     return FloatingActionButton(
       onPressed: () {
-        if (name!.isEmpty || size!.isEmpty || price!.isEmpty) {
+        if (brand_name!.isEmpty) {
           normalDialog(context, 'กรุณากรอกให้ครบทุกช่อง');
         } else {
           confirmEdit();
@@ -101,20 +98,15 @@ class _EditWaterMenuState extends State<EditWaterMenu> {
   }
 
   Future<Null> editvalueOnMySQL() async {
-    String? id = waterModel!.id;
+    String? id = brandModel!.brandId;
     String? url =
-        '${MyConstant().domain}/WaterShop/editWater.php?isAdd=true&id=$id&NameWater=$name&PathImage=$pathImage&Price=$price&Size=$size';
+        'http://192.168.1.99:8012/WaterShop/editBrand.php?isAdd=true&brand_id=$brand_id&brand_name=$brand_name&brand_image=$brand_image&idShop=$idShop';
     await Dio().get(url).then((value) => {
-
-    if(value.toString() == 'true'){
-      Navigator.pop(context)
-
-    }else{
-      normalDialog(context, 'กรุณาลองใหม่ มีข้อผิดพลาด')
-
-    }
-
-    });
+          if (value.toString() == 'true')
+            {Navigator.pop(context)}
+          else
+            {normalDialog(context, 'กรุณาลองใหม่ มีข้อผิดพลาด')}
+        });
   }
 
   Widget groupImage() => Row(
@@ -131,7 +123,7 @@ class _EditWaterMenuState extends State<EditWaterMenu> {
             height: 250.0,
             child: file == null
                 ? Image.network(
-                    '${MyConstant().domain}${waterModel?.pathImage}',
+                    '${MyConstant().domain}${brandModel?.brandImage}',
                     fit: BoxFit.cover,
                   )
                 : Image.file(file!),
@@ -155,55 +147,17 @@ class _EditWaterMenuState extends State<EditWaterMenu> {
     } catch (e) {}
   }
 
-  Widget nameWater() => Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            margin: EdgeInsets.only(top: 30.0),
-            width: 250.0,
-            child: TextFormField(
-              onChanged: (value) => name = value.trim(),
-              initialValue: name,
-              decoration: InputDecoration(
-                labelText: 'ชื่อน้ำดื่ม',
-                border: OutlineInputBorder(),
-              ),
-            ),
-          ),
-        ],
-      );
-
-  Widget sizeWater() => Row(
+  Widget nameBrandWater() => Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Container(
             margin: EdgeInsets.only(top: 16.0),
             width: 250.0,
             child: TextFormField(
-              onChanged: (value) => price = value.trim(),
-              keyboardType: TextInputType.number,
-              initialValue: size,
+              onChanged: (value) => brand_name = value.trim(),
+              initialValue: brand_name,
               decoration: InputDecoration(
-                labelText: 'ขนาด ml',
-                border: OutlineInputBorder(),
-              ),
-            ),
-          ),
-        ],
-      );
-
-  Widget priceWater() => Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            margin: EdgeInsets.only(top: 16.0),
-            width: 250.0,
-            child: TextFormField(
-              onChanged: (value) => price = value.trim(),
-              keyboardType: TextInputType.number,
-              initialValue: price,
-              decoration: InputDecoration(
-                labelText: 'ราคา',
+                labelText: 'ชื่อ ยี่ห้อ น้ำดื่ม',
                 border: OutlineInputBorder(),
               ),
             ),

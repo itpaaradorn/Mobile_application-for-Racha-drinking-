@@ -4,6 +4,7 @@ import 'package:application_drinking_water_shop/model/user_model.dart';
 import 'package:application_drinking_water_shop/screen/main_emp.dart';
 import 'package:application_drinking_water_shop/screen/main_shop.dart';
 import 'package:application_drinking_water_shop/screen/main_user.dart';
+import 'package:application_drinking_water_shop/screen/signUp.dart';
 import 'package:application_drinking_water_shop/utility/my_constant.dart';
 import 'package:application_drinking_water_shop/utility/my_style.dart';
 import 'package:application_drinking_water_shop/utility/normal_dialog.dart';
@@ -41,7 +42,8 @@ class _SigninState extends State<Signin> {
               passwordForm(),
               MyStyle().mySixedBox(),
               loginButton(),
-              
+              showTextDonAccount(), showTextSigUp(),
+
               // RaisedButton(onPressed: (){}, child: Text('data'))
             ],
           ),
@@ -49,6 +51,30 @@ class _SigninState extends State<Signin> {
       ),
     );
   }
+
+  Column showTextDonAccount() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: <Widget>[
+        Container(
+            margin: EdgeInsets.only(top: 10),
+            child: Text('Don\'t have an account?')),
+      ],
+    );
+  }
+
+  Widget showTextSigUp() => Container(
+        width: 250.0,
+        child: TextButton(
+          onPressed:() {
+            MaterialPageRoute route = MaterialPageRoute(
+          builder: (context) => SignUp()
+        );
+        Navigator.push(context, route);
+          },
+          child: Text('SignUp',style: TextStyle(color: Color.fromARGB(255, 0, 62, 170)),),
+        ),
+      );
 
   Widget loginButton() => Container(
       width: 250.0,
@@ -68,10 +94,11 @@ class _SigninState extends State<Signin> {
 
   Future<Null> checkAuthen() async {
     String url =
-        '${MyConstant().domain}/WaterShop/getUserWhereUser.php?isAdd=true&User=$user';
+        '${MyConstant().domain}WaterShop/getUserWhereUser.php?isAdd=true&User=$user';
+    print('url == $url');
     try {
       Response response = await Dio().get(url);
-      print('res = $response');
+      print(response.data);
 
       var result = json.decode(response.data);
       print('result = $result');
@@ -92,16 +119,16 @@ class _SigninState extends State<Signin> {
           normalDialog(context, 'Password ผิด กรุณาลองใหม่');
         }
       }
-    } catch (e) {}
+    } catch (e) {
+      print('e === $e');
+    }
   }
 
   Future<Null> routeTuService(Widget myWidget, UserModel userModel) async {
-
     SharedPreferences preferences = await SharedPreferences.getInstance();
     preferences.setString('id', userModel.id!);
     preferences.setString('chooseType', userModel.chooseType!);
     preferences.setString('Name', userModel.name!);
-
 
     MaterialPageRoute route = MaterialPageRoute(
       builder: (context) => myWidget,
