@@ -21,6 +21,7 @@ class _SigninState extends State<Signin> {
   // Field
 
   String? user, password;
+  bool passwordVisible = true;
 
   @override
   Widget build(BuildContext context) {
@@ -66,13 +67,15 @@ class _SigninState extends State<Signin> {
   Widget showTextSigUp() => Container(
         width: 250.0,
         child: TextButton(
-          onPressed:() {
-            MaterialPageRoute route = MaterialPageRoute(
-          builder: (context) => SignUp()
-        );
-        Navigator.push(context, route);
+          onPressed: () {
+            MaterialPageRoute route =
+                MaterialPageRoute(builder: (context) => SignUp());
+            Navigator.push(context, route);
           },
-          child: Text('SignUp',style: TextStyle(color: Color.fromARGB(255, 0, 62, 170)),),
+          child: Text(
+            'SignUp',
+            style: TextStyle(color: Color.fromARGB(255, 0, 62, 170)),
+          ),
         ),
       );
 
@@ -159,7 +162,7 @@ class _SigninState extends State<Signin> {
         width: 250.0,
         child: TextField(
           onChanged: (value) => password = value.trim(),
-          obscureText: true,
+          obscureText: passwordVisible,
           decoration: InputDecoration(
             prefixIcon: Icon(
               Icons.lock,
@@ -171,6 +174,16 @@ class _SigninState extends State<Signin> {
                 borderSide: BorderSide(color: MyStyle().darkColor)),
             focusedBorder: OutlineInputBorder(
                 borderSide: BorderSide(color: MyStyle().primaryColor)),
+            suffixIcon: IconButton(
+              icon: Icon(
+                  passwordVisible ? Icons.visibility_off : Icons.visibility,
+                  color: Colors.blue.shade900),
+              onPressed: () {
+                setState(() {
+                  passwordVisible = !passwordVisible;
+                });
+              },
+            ),
           ),
         ),
       );

@@ -11,6 +11,7 @@ class SignUp extends StatefulWidget {
 
 class _SignUpState extends State<SignUp> {
   String? chooseType, name, user, password, customer, address, phone;
+  bool passwordVisible = true;
 
   @override
   Widget build(BuildContext context) {
@@ -235,6 +236,7 @@ class _SignUpState extends State<SignUp> {
             width: 250.0,
             child: TextField(
               onChanged: (value) => password = value.trim(),
+              obscureText: passwordVisible,
               decoration: InputDecoration(
                 prefixIcon: Icon(
                   Icons.lock,
@@ -246,6 +248,16 @@ class _SignUpState extends State<SignUp> {
                     borderSide: BorderSide(color: MyStyle().darkColor)),
                 focusedBorder: OutlineInputBorder(
                     borderSide: BorderSide(color: MyStyle().primaryColor)),
+                suffixIcon: IconButton(
+                  icon: Icon(
+                      passwordVisible ? Icons.visibility_off : Icons.visibility,
+                      color: Colors.blue.shade900),
+                  onPressed: () {
+                    setState(() {
+                      passwordVisible = !passwordVisible;
+                    });
+                  },
+                ),
               ),
             ),
           ),

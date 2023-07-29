@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:application_drinking_water_shop/model/brand_model.dart';
 import 'package:application_drinking_water_shop/model/user_model.dart';
 import 'package:application_drinking_water_shop/model/water_model.dart';
 import 'package:application_drinking_water_shop/utility/my_constant.dart';
@@ -8,8 +9,8 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
 class ShowMenuWater extends StatefulWidget {
-  final UserModel userModel;
-  const ShowMenuWater({super.key, required this.userModel});
+  final BrandWaterModel brandWaterModel;
+  const ShowMenuWater({super.key, required this.brandWaterModel});
 
   @override
   State<ShowMenuWater> createState() => _ShowMenuWaterState();
@@ -17,22 +18,23 @@ class ShowMenuWater extends StatefulWidget {
 
 class _ShowMenuWaterState extends State<ShowMenuWater> {
   UserModel? userModel;
-  String? idShop;
+  BrandWaterModel? brandModel;
+  String? idShop, idbrand;
   List<WaterModel> waterModels = [];
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    userModel = widget.userModel;
+    brandModel = widget.brandWaterModel;
     readWaterMenu();
   }
 
   Future<Null> readWaterMenu() async {
-    idShop = userModel!.id;
+    idbrand = brandModel!.brandId;
     // ignore: unused_local_variable
     String? url =
-        '${MyConstant().domain}/WaterShop/getWaterWheredShop.php?isAdd=true&idShop=$idShop';
+        '${MyConstant().domain}/WaterShop/getWaterWhereIdBrand.php?isAdd=true&idbrand=$idbrand';
     Response response = await Dio().get(url);
     print('res ==>> $response');
 

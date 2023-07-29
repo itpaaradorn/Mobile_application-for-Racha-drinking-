@@ -161,7 +161,7 @@ class _ListBrandWaterState extends State<ListBrandWater> {
                 },
                 child: Text('ยืนยัน',
                     style: TextStyle(
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.bold,color: Colors.black87,
                     )),
               ),
               TextButton(
@@ -169,7 +169,7 @@ class _ListBrandWaterState extends State<ListBrandWater> {
                 child: Text(
                   'ยกเลิก',
                   style: TextStyle(
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.bold,color: Colors.black87,
                   ),
                 ),
               )

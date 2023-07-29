@@ -14,6 +14,7 @@ class AddAccountEMP extends StatefulWidget {
 
 class _AddAccountEMPState extends State<AddAccountEMP> {
   String? chooseType, name, user, password, employee, address, phone;
+  bool passwordVisible = true;
 
   @override
   Widget build(BuildContext context) {
@@ -24,10 +25,10 @@ class _AddAccountEMPState extends State<AddAccountEMP> {
       body: SingleChildScrollView(
         child: Column(
           children: [
+           MyStyle().mySixedBox(),
+            MyStyle().mySixedBox(),
+            MyStyle().mySixedBox(),
             myLogo(),
-            MyStyle().mySixedBox(),
-            showAppname(),
-            MyStyle().mySixedBox(),
             MyStyle().mySixedBox(),
             nameForm(),
             MyStyle().mySixedBox(),
@@ -52,8 +53,7 @@ class _AddAccountEMPState extends State<AddAccountEMP> {
         onPressed: () {
           print(
               'name = $name, user = $user, password = $password, chooseType = $employee phone = $phone address =$address');
-          if (
-            name == null ||
+          if (name == null ||
               name!.isEmpty ||
               user == null ||
               user!.isEmpty ||
@@ -62,8 +62,7 @@ class _AddAccountEMPState extends State<AddAccountEMP> {
               phone == null ||
               phone!.isEmpty ||
               address == null ||
-              address!.isEmpty
-              ) {
+              address!.isEmpty) {
             print('Have Space');
             normalDialog(context, 'มีช่องว่าง กรุณากรอกให้ครบครับ');
           } else {
@@ -112,9 +111,16 @@ class _AddAccountEMPState extends State<AddAccountEMP> {
             child: TextField(
               onChanged: (value) => name = value.trim(),
               decoration: InputDecoration(
+                prefixIcon: Icon(
+                  Icons.face,
+                  color: MyStyle().darkColor,
+                ),
+                labelStyle: TextStyle(color: MyStyle().darkColor),
                 labelText: 'Name :',
-                prefixIcon: Icon(Icons.face),
-                border: OutlineInputBorder(),
+                enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: MyStyle().darkColor)),
+                focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: MyStyle().primaryColor)),
               ),
             ),
             width: 250.0,
@@ -126,11 +132,19 @@ class _AddAccountEMPState extends State<AddAccountEMP> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Container(
-            child: TextField(onChanged: (value) => user = value.trim(),
+            child: TextField(
+              onChanged: (value) => user = value.trim(),
               decoration: InputDecoration(
+                prefixIcon: Icon(
+                  Icons.account_box,
+                  color: MyStyle().darkColor,
+                ),
+                labelStyle: TextStyle(color: MyStyle().darkColor),
                 labelText: 'Username :',
-                prefixIcon: Icon(Icons.account_box),
-                border: OutlineInputBorder(),
+                enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: MyStyle().darkColor)),
+                focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: MyStyle().primaryColor)),
               ),
             ),
             width: 250.0,
@@ -142,12 +156,20 @@ class _AddAccountEMPState extends State<AddAccountEMP> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Container(
-            child: TextField(onChanged: (value) => phone = value.trim(),
+            child: TextField(
+              onChanged: (value) => phone = value.trim(),
               keyboardType: TextInputType.phone,
               decoration: InputDecoration(
+                prefixIcon: Icon(
+                  Icons.phone,
+                  color: MyStyle().darkColor,
+                ),
+                labelStyle: TextStyle(color: MyStyle().darkColor),
                 labelText: 'Phone :',
-                prefixIcon: Icon(Icons.phone),
-                border: OutlineInputBorder(),
+                enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: MyStyle().darkColor)),
+                focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: MyStyle().primaryColor)),
               ),
             ),
             width: 250.0,
@@ -159,11 +181,30 @@ class _AddAccountEMPState extends State<AddAccountEMP> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Container(
-            child: TextField(onChanged: (value) => password = value.trim(),
+            child: TextField(
+              onChanged: (value) => password = value.trim(),
+              obscureText: passwordVisible,
               decoration: InputDecoration(
+                prefixIcon: Icon(
+                  Icons.lock,
+                  color: MyStyle().darkColor,
+                ),
+                labelStyle: TextStyle(color: MyStyle().darkColor),
                 labelText: 'Password :',
-                prefixIcon: Icon(Icons.lock),
-                border: OutlineInputBorder(),
+                enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: MyStyle().darkColor)),
+                focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: MyStyle().primaryColor)),
+                suffixIcon: IconButton(
+                  icon: Icon(
+                      passwordVisible ? Icons.visibility_off : Icons.visibility,
+                      color: Colors.blue.shade900),
+                  onPressed: () {
+                    setState(() {
+                      passwordVisible = !passwordVisible;
+                    });
+                  },
+                ),
               ),
             ),
             width: 250.0,
@@ -175,13 +216,21 @@ class _AddAccountEMPState extends State<AddAccountEMP> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Container(
-            child: TextField(onChanged: (value) => address = value.trim(),
+            child: TextField(
+              onChanged: (value) => address = value.trim(),
               keyboardType: TextInputType.multiline,
               maxLines: 3,
               decoration: InputDecoration(
+                prefixIcon: Icon(
+                  Icons.home,
+                  color: MyStyle().darkColor,
+                ),
+                labelStyle: TextStyle(color: MyStyle().darkColor),
                 labelText: 'Address :',
-                prefixIcon: Icon(Icons.home),
-                border: OutlineInputBorder(),
+                enabledBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: MyStyle().darkColor)),
+                focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: MyStyle().primaryColor)),
               ),
             ),
             width: 250.0,
@@ -189,15 +238,6 @@ class _AddAccountEMPState extends State<AddAccountEMP> {
         ],
       );
 
-
-  Row showAppname() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        MyStyle().showTitle('Racha Drinking Water Shop'),
-      ],
-    );
-  }
 
   Widget myLogo() => Row(
         mainAxisAlignment: MainAxisAlignment.center,

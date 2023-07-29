@@ -175,7 +175,7 @@ class _ListWaterMenuShopState extends State<ListWaterMenuShop> {
                 },
                 child: Text('ยืนยัน',
                     style: TextStyle(
-                      fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.bold,color: Colors.black87,
                     )),
               ),
               TextButton(
@@ -183,7 +183,7 @@ class _ListWaterMenuShopState extends State<ListWaterMenuShop> {
                 child: Text(
                   'ยกเลิก',
                   style: TextStyle(
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.bold,color: Colors.black87,
                   ),
                 ),
               )
