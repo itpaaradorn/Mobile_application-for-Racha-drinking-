@@ -94,7 +94,7 @@ class _ListWaterMenuShopState extends State<ListWaterMenuShop> {
             Container(
               padding: EdgeInsets.all(6.0),
               width: MediaQuery.of(context).size.width * 0.5,
-              height: MediaQuery.of(context).size.width * 0.4,
+              height: MediaQuery.of(context).size.width * 0.5,
               child: Image.network(
                 '${MyConstant().domain}${waterModels![index].pathImage!}',
                 fit: BoxFit.cover,
@@ -119,6 +119,10 @@ class _ListWaterMenuShopState extends State<ListWaterMenuShop> {
                     Text(
                       'ราคา: ${waterModels![index].price!} บาท',
                       style: MyStyle().mainH3Title,
+                    ),
+                    Text(
+                      'จำนวน ${waterModels![index].quantity!} ขวด/แพ็ค',
+                      style: MyStyle().mainDackTitle,
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,

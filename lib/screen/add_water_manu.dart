@@ -21,8 +21,8 @@ class AddMenuWater extends StatefulWidget {
 class _AddMenuWaterState extends State<AddMenuWater> {
   WaterModel? waterModel;
   File? file;
-  String? id, nameWhat, price, size, idbrand;
-  String? selectedValue;
+  String? id, nameWhat, price, size, idbrand,quantity;
+  String? selectedValue = "เลือก";
 
   @override
   Widget build(BuildContext context) {
@@ -52,7 +52,7 @@ class _AddMenuWaterState extends State<AddMenuWater> {
             MyStyle().mySixedBox(),
             sizeWater(),
             priceWater(),
-            // qtyWater(),
+            qtyWater(),
             MyStyle().mySixedBox(),
             saveButton()
           ],
@@ -110,7 +110,7 @@ class _AddMenuWaterState extends State<AddMenuWater> {
           String? idShop = preferences.getString('id');
 
           String? urlInsertData =
-              '${MyConstant().domain}/WaterShop/addWater.php?isAdd=true&idShop=$idShop&NameWater=$nameWhat&PathImage=$urlPathImage&Price=$price&Size=$size&idbrand=$idbrand';
+              '${MyConstant().domain}/WaterShop/addWater.php?isAdd=true&idShop=$idShop&NameWater=$nameWhat&PathImage=$urlPathImage&Price=$price&Size=$size&idbrand=$idbrand&quantity=$quantity';
           // print('urlInsertData ======== $urlInsertData');
           await Dio()
               .get(urlInsertData)
@@ -122,10 +122,14 @@ class _AddMenuWaterState extends State<AddMenuWater> {
 
   List<DropdownMenuItem<String>> get dropdownItems {
     List<DropdownMenuItem<String>> menuItems = [
-      DropdownMenuItem(child: Text("Namthip"), value: "2"),
+      
+      DropdownMenuItem(child: Text("เลือกยี่ห้อน้ำดื่ม"), value: "เลือก"),
       DropdownMenuItem(child: Text("Crystal"), value: "1"),
-      DropdownMenuItem(child: Text("Sing"), value: "4"),
+      DropdownMenuItem(child: Text("Namthip"), value: "2"),
       DropdownMenuItem(child: Text("Nestle"), value: "3"),
+      DropdownMenuItem(child: Text("Sing"), value: "4"),
+   
+      
     ];
     return menuItems;
   }
@@ -225,7 +229,8 @@ class _AddMenuWaterState extends State<AddMenuWater> {
             margin: EdgeInsets.only(top: 16.0),
             width: 300.0,
             child: TextFormField(
-              onChanged: (value) {},
+              onChanged: (value) => quantity = value.trim(),
+              initialValue: quantity,
               decoration: InputDecoration(
                 prefixIcon: Icon(Icons.production_quantity_limits),
                 labelText: 'จำนวน',

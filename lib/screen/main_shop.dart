@@ -1,3 +1,4 @@
+import 'package:application_drinking_water_shop/model/user_model.dart';
 import 'package:application_drinking_water_shop/utility/my_style.dart';
 import 'package:application_drinking_water_shop/utility/singout_process.dart';
 import 'package:application_drinking_water_shop/widget/information.dart';
@@ -15,8 +16,9 @@ class MainShop extends StatefulWidget {
 }
 
 class _MainShopState extends State<MainShop> {
-// field
 
+// field
+  UserModel? userModel;
   Widget currentWidget = OrderListShop();
 
   @override
@@ -60,7 +62,7 @@ class _MainShopState extends State<MainShop> {
       );
 
   ListTile homeMenu() => ListTile(
-        leading: Icon(Icons.list),
+        leading: Icon(Icons.list,),
         title: Text('รายการน้ำดื่ม ที่ลูกค้าสั่ง'),
         subtitle: Text('รายการน้ำดื่มที่ยังไม่ส่ง'),
         onTap: () {
@@ -72,8 +74,9 @@ class _MainShopState extends State<MainShop> {
       );
 
   ListTile waterMenu() => ListTile(
-        leading: Icon(Icons.shop),
+        leading: Icon(Icons.shop,),
         title: Text('ข้อมูลน้ำดื่ม'),
+        subtitle: Text('น้ำดื่มที่มีของทางร้าน'),
         onTap: () {
           setState(() {
             currentWidget = ListWaterMenuShop();
@@ -82,8 +85,9 @@ class _MainShopState extends State<MainShop> {
         },
       );
   ListTile brandMenu() => ListTile(
-        leading: Icon(Icons.bar_chart_rounded),
+        leading: Icon(Icons.bar_chart_rounded,),
         title: Text('ประเภทน้ำดื่ม'),
+        subtitle: Text('ยี่ห้อน้ำดื่ม'),
         onTap: () {
           setState(() {
             currentWidget = ListBrandWater();
@@ -95,7 +99,7 @@ class _MainShopState extends State<MainShop> {
   ListTile information() => ListTile(
         leading: Icon(Icons.info),
         title: Text('รายละเอียดของร้าน'),
-        subtitle: Text('--'),
+        subtitle: Text('รายละเอียดต่างๆ ของร้าน'),
         onTap: () {
           setState(() {
             currentWidget = Information();
@@ -105,8 +109,9 @@ class _MainShopState extends State<MainShop> {
       );
 
   ListTile personEmpMenu() => ListTile(
-        leading: Icon(Icons.person_add),
-        title: Text('จัดการข้อมูลพนักงาน'),
+        leading: Icon(Icons.person_add,),
+        title: Text('ข้อมูลพนักงาน'),
+        subtitle: Text('จัดการข้อมูลพนักงาน'),
         onTap: () {
           setState(() {
             currentWidget = ShowAccount();
@@ -116,8 +121,9 @@ class _MainShopState extends State<MainShop> {
       );
 
   ListTile personCsMenu() => ListTile(
-        leading: Icon(Icons.person_search_rounded),
-        title: Text('จัดการข้อมูลลูกค้า'),
+        leading: Icon(Icons.person_search_rounded,),
+        title: Text('ข้อมูลลูกค้า'),
+        subtitle: Text('จัดการข้อมูลลูกค้า'),
         onTap: () {
           setState(() {
             currentWidget = ShowAccountCs();
@@ -127,23 +133,20 @@ class _MainShopState extends State<MainShop> {
       );
 
   ListTile signOutMenu() => ListTile(
-        leading: Icon(Icons.exit_to_app),
+        leading: Icon(
+          Icons.exit_to_app,
+          color: Color.fromARGB(255, 255, 92, 4),
+        ),
         title: Text('Sign Out'),
-        subtitle: Text('Sign Out และกลับไปหาหน้าแรก'),
+        subtitle: Text('ออกจากระบบและ กลับไปหาหน้าแรก'),
         onTap: () => signOutProcess(context),
       );
 
   UserAccountsDrawerHeader showHead() {
     return UserAccountsDrawerHeader(
-        decoration: MyStyle().myBoxDecoration('shop.png'),
+        arrowColor: Colors.blueAccent,
         currentAccountPicture: MyStyle().showLogo(),
-        accountName: Text(
-          'Admin',
-          style: TextStyle(color: MyStyle().darkColor),
-        ),
-        accountEmail: Text(
-          'Login',
-          style: TextStyle(color: MyStyle().darkColor),
-        ));
+        accountName: Text('Admin Login'),
+        accountEmail: Text('bankch@gamil.com'));
   }
 }

@@ -1,6 +1,7 @@
 import 'package:application_drinking_water_shop/utility/my_style.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 
 import '../utility/my_constant.dart';
 import '../utility/normal_dialog.dart';
@@ -15,6 +16,35 @@ class AddAccountUser extends StatefulWidget {
 class _AddAccountUser extends State<AddAccountUser> {
   String? chooseType, name, user, password, customer, address, phone;
   bool passwordVisible = true;
+
+// Position? userlocation;
+//   var _nameController = TextEditingController();
+//   var _emailController = TextEditingController();
+//   var _passwordController = TextEditingController();
+//   var _phoneController = TextEditingController();
+//   var _addressController = TextEditingController();
+//   final formKey = GlobalKey<FormState>();
+//   double? lat,lng;
+
+//   @override
+//   void dispose() {
+//     _nameController.dispose();
+//     _emailController.dispose();
+//     _passwordController.dispose();
+//     _phoneController.dispose();
+//     _addressController.dispose();
+//     super.dispose();
+//   }
+
+//   @override
+//   void initState() {
+//     // TODO: implement initState
+//     super.initState();
+//     checkPermission();
+//     findlatlng();
+//   }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -244,4 +274,64 @@ class _AddAccountUser extends State<AddAccountUser> {
           MyStyle().showLogo(),
         ],
       );
+
+
+//  Future<Null> checkPermission() async {
+//     bool locationService;
+//     LocationPermission locationPermission;
+
+//     locationService = await Geolocator.isLocationServiceEnabled();
+//     if (locationService) {
+//       print('Sevice Location Open');
+//       locationPermission = await Geolocator.checkPermission();
+//       if (locationPermission == LocationPermission.denied) {
+//         locationPermission == await Geolocator.requestPermission();
+//         if (locationPermission == LocationPermission.deniedForever) {
+//           normalDialog(context, 'ไม่อนุญาติแชร์ Location โปรดแชร์ Location');
+//         } else {}
+//       } else {
+//         if (locationPermission == LocationPermission.deniedForever) {
+//           normalDialog(context, 'ไม่อนุญาติแชร์ Location โปรดแชร์ Location');
+//         } else {}
+//       }
+//     } else {
+//       print('Service Location Close');
+//       normalDialog(context,
+//           'Location service ปิดอยู่ ? กรุณาเปิดตำแหน่งของท่านก่อนใช้บริการค่ะ');
+//     }
+//   }
+
+//   Future<Null> findlatlng() async {
+//     Position positon = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+//     setState(() {
+//       lat = positon.latitude;
+//       lng = positon.longitude;
+//       print(' lat == $lat , lng == $lng');
+//     });
+//   }
+
+
+//   //Future function upload data
+//   Future<Null> uploadAndInsertData() async {
+//     var name = _nameController.text;
+//     var address = _addressController.text;
+//     var phone = _phoneController.text;
+//     var user = _emailController.text;
+//     var password = _passwordController.text;
+//     // print(" name == ${name} ${address}");
+//     // String apipath = '${API().BASE_URL}/rattaphumwater/register.php?isAdd=true&Name=$name&User=$user&Password=$password&ChooseType=Employee&Avatar=null&Phone=$phone&Address=$address&Lat=$lat&Lng=$lng';
+
+//     // await Dio().get(apipath).then((value) {
+//     //   if(value.toString() == 'true') {
+//     //     Navigator.pop(context);
+//     //   } else {
+//     //     normalDialog(context,"ไม่สำเร็จ");
+//     //   }
+//     // });
+  // }
+
+
+
+
+
 }

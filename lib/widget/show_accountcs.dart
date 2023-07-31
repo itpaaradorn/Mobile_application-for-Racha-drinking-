@@ -1,13 +1,14 @@
 import 'dart:convert';
 
 import 'package:application_drinking_water_shop/screen/add_account_user.dart';
+import 'package:application_drinking_water_shop/screen/edit_account_emp.dart';
+import 'package:application_drinking_water_shop/screen/edit_account_user.dart';
 import 'package:application_drinking_water_shop/utility/my_constant.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
 import '../model/user_model.dart';
-import '../utility/app_icon.dart';
-import '../utility/big_text.dart';
+
 import '../utility/my_style.dart';
 
 class ShowAccountCs extends StatefulWidget {
@@ -36,16 +37,7 @@ class _ShowAccountCsState extends State<ShowAccountCs> {
     Navigator.push(context, materialPageRoute).then((value) => readAccount());
   }
 
-  // @override
-  // Widget build(BuildContext context) {
-  //   return Stack(
-  //     children: [
-  //       addAndEditButton(),
-  //       showContent(),
-  //     ],
-  //   );
-  // }
-@override
+  @override
   Widget build(BuildContext context) {
     return Stack(
       children: <Widget>[
@@ -54,16 +46,16 @@ class _ShowAccountCsState extends State<ShowAccountCs> {
       ],
     );
   }
+
   
- Widget showContent() {
+
+  Widget showContent() {
     return status
         ? showListAccount()
         : Center(
             child: Text('ยังไม่มีข้อมูลลูกค้า'),
           );
   }
-
-
 
   Widget showListAccount() => ListView.builder(
         shrinkWrap: true,
@@ -72,8 +64,8 @@ class _ShowAccountCsState extends State<ShowAccountCs> {
         itemBuilder: (context, index) => Row(
           children: [
             Container(
-              padding: EdgeInsets.all(10.0),
-              width: MediaQuery.of(context).size.width * 0.5,
+              padding: EdgeInsets.all(14.0),
+              width: MediaQuery.of(context).size.width * 0.4,
               height: MediaQuery.of(context).size.width * 0.4,
               child: usermodels[index].urlpicture == null
                   ? Image.network(
@@ -81,8 +73,8 @@ class _ShowAccountCsState extends State<ShowAccountCs> {
                   : buildNoneAvatarImage(),
             ),
             Container(
-              padding: EdgeInsets.all(10.0),
-              width: MediaQuery.of(context).size.width * 0.5,
+              padding: EdgeInsets.all(15.0),
+              width: MediaQuery.of(context).size.width * 0.6,
               height: MediaQuery.of(context).size.width * 0.4,
               child: SingleChildScrollView(
                 child: Column(
@@ -113,14 +105,14 @@ class _ShowAccountCsState extends State<ShowAccountCs> {
                             color: Colors.blue,
                           ),
                           onPressed: () {
-                            // MaterialPageRoute route = MaterialPageRoute(
-                            //   builder: (context) => EditAccountCs(
-                            //     userModel: usermodels[index],
-                            //   ),
-                            // );
-                            // Navigator.push(context, route).then(
-                            //       (value) => readAccount(),
-                            // );
+                            MaterialPageRoute route = MaterialPageRoute(
+                              builder: (context) => EditAccountUser(
+                                userModel: usermodels[index],
+                              ),
+                            );
+                            Navigator.push(context, route).then(
+                                  (value) => readAccount(),
+                            );
                           },
                         ),
                         IconButton(
@@ -128,8 +120,7 @@ class _ShowAccountCsState extends State<ShowAccountCs> {
                             Icons.delete,
                             color: Colors.red,
                           ),
-                          onPressed: () =>
-                            deleteAccount(usermodels[index]),
+                          onPressed: () => deleteAccount(usermodels[index]),
                         ),
                       ],
                     ),
@@ -177,12 +168,11 @@ class _ShowAccountCsState extends State<ShowAccountCs> {
     });
   }
 
- Future<Null> deleteAccount(UserModel userModel) async {
+  Future<Null> deleteAccount(UserModel userModel) async {
     showDialog(
       context: context,
       builder: (context) => SimpleDialog(
-        title: MyStyle()
-            .showTitleH2('คุณต้องการลบรายการ ${userModel.id}'),
+        title: MyStyle().showTitleH2('คุณต้องการลบรายการ ${userModel.id}'),
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -198,7 +188,8 @@ class _ShowAccountCsState extends State<ShowAccountCs> {
                 },
                 child: Text('ยืนยัน',
                     style: TextStyle(
-                      fontWeight: FontWeight.bold,color: Colors.black87,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
                     )),
               ),
               TextButton(
@@ -206,7 +197,8 @@ class _ShowAccountCsState extends State<ShowAccountCs> {
                 child: Text(
                   'ยกเลิก',
                   style: TextStyle(
-                    fontWeight: FontWeight.bold,color: Colors.black87,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
                   ),
                 ),
               )
@@ -216,16 +208,6 @@ class _ShowAccountCsState extends State<ShowAccountCs> {
       ),
     );
   }
-
-  // @override
-  // Widget build(BuildContext context) {
-  //   return Stack(
-  //     children: [addAndEditButton(),
-  //       MyStyle().titleCenter('ยังไม่มีข้อมูลลูกค้า กรุณาเพิ่มด้วยครับ !!'),
-
-  //     ],
-  //   );
-  // }
 
   Row addAndEditButton() {
     return Row(

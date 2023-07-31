@@ -104,8 +104,12 @@ class _ListBrandWaterState extends State<ListBrandWater> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    'ยี่ห้อน้ำดื่ม : ${brandWaterModels[index].brandName!} ',
-                    style: MyStyle().mainTitle,
+                    'ID: ${brandWaterModels[index].brandId!} ',
+                    style: MyStyle().mainOrangTitle,
+                  ),MyStyle().mySixedBox05(),
+                  Text(
+                    '${brandWaterModels[index].brandName!} ',
+                    style: MyStyle().mainhPTitle,
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
