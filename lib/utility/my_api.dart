@@ -14,7 +14,8 @@ double calculateDistance(double lat1, double lng1, double lat2, double lng2) {
 
     return distance;
   }
-  double? calculate2Distance(
+
+    double? calculate2Distance(
       double lat1, double lng1, double lat2, double lng2) {
     try {
       double distance = 0;
@@ -28,7 +29,7 @@ double calculateDistance(double lat1, double lng1, double lat2, double lng2) {
       return distance;
     } catch (e) {}
   }
-
+  
   int calculateTransport(double distance) {
     int transport;
     if (distance < 1.0) {

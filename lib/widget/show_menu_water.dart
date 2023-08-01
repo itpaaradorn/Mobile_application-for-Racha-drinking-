@@ -3,14 +3,14 @@ import 'dart:convert';
 import 'package:application_drinking_water_shop/model/brand_model.dart';
 import 'package:application_drinking_water_shop/model/user_model.dart';
 import 'package:application_drinking_water_shop/model/water_model.dart';
-import 'package:application_drinking_water_shop/utility/my_api.dart';
 import 'package:application_drinking_water_shop/utility/my_constant.dart';
 import 'package:application_drinking_water_shop/utility/my_style.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:intl/intl.dart';
+
 import 'package:location/location.dart';
+
+import '../utility/my_api.dart';
 
 class ShowMenuWater extends StatefulWidget {
   final BrandWaterModel brandWaterModel;
@@ -23,10 +23,11 @@ class ShowMenuWater extends StatefulWidget {
 class _ShowMenuWaterState extends State<ShowMenuWater> {
   UserModel? userModel;
   BrandWaterModel? brandModel;
-  String? idShop, idbrand, distanceString;
+  String? idShop, idbrand;
   List<WaterModel> waterModels = [];
   int amount = 1;
   double? lat1, lng1, lat2, lng2;
+
   Location location = Location();
 
   @override
@@ -42,15 +43,9 @@ class _ShowMenuWaterState extends State<ShowMenuWater> {
   //   location.onLocationChanged.listen((event) {
   //     lat1 = event.latitude;
   //     lng1 = event.longitude;
-  //     // print('lat1 = $lat1, lng1 = $lng1');
+  //     print('lat1 = $lat1, lng1 = $lng1');
   //   });
   // }
-  Future<Null> findLocation() async {
-    var currentLocation = await Location.instance.getLocation();
-    lat1 = currentLocation.latitude;
-    lng1 = currentLocation.longitude;
-    print('lat1 ==> $lat1 , lat2 ==> $lng1');
-  }
 
   Future<Null> readWaterMenu() async {
     idbrand = brandModel!.brandId;
@@ -234,21 +229,29 @@ class _ShowMenuWaterState extends State<ShowMenuWater> {
     );
   }
 
+  Future<Null> findLocation() async {
+    var currentLocation = await Location.instance.getLocation();
+    lat1 = currentLocation.latitude;
+    lng1 = currentLocation.longitude;
+    print('lat1 ==> $lat1 , lng1 ==> $lng1');
+  }
+
   Future<Null> addOrderToCart(int index) async {
     String? brand_id = brandModel!.brandId;
     String? brand_name = brandModel!.brandName;
     String? water_id = waterModels[index].id!;
     String? price = waterModels[index].price!;
+    
 
     int priceInt = int.parse(price);
     int sumInt = priceInt * amount;
+    
 
-    lat2 = double.parse('${userModel!.lat}');
-    lng2 = double.parse('${userModel!.lng}');
-    // ignore: unused_local_variable
-    double distance = MyAPI().calculateDistance(lat1!, lng1!, lat2!, lng2!);
+    lat2 = double.parse(userModel!.lat!);
+    lng2 = double.parse(userModel!.lng!);
+    double? distance = MyAPI().calculate2Distance(lat1!, lng1!, lat2!, lng2!);
 
     print(
-        'water_id == $water_id,brand_id == $brand_id, brand_name == $brand_name, price == $price, amount == $amount, sum == $sumInt, distance == $distance ');
+        'water_id == $water_id,brand_id == $brand_id, brand_name == $brand_name, price == $price, amount == $amount, sum == $sumInt, distance == $distance  ');
   }
 }
