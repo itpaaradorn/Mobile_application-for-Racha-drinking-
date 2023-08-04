@@ -1,9 +1,24 @@
 import 'package:flutter/material.dart';
 
+import '../screen/show_shop_cart.dart';
+
 class MyStyle {
   Color darkColor = Colors.blue.shade900;
   Color primaryColor = Colors.green;
   Color myColor = Color.fromARGB(255, 211, 103, 35);
+
+  Widget iconShowCart(BuildContext context) {
+    return IconButton(
+      icon: Icon(Icons.add_shopping_cart),
+      onPressed: () {
+        MaterialPageRoute route = MaterialPageRoute(
+          builder: (context) => ShowCart(),
+        );
+        Navigator.push(context, route);
+      },
+    );
+  }
+
   SizedBox mySixedBox() => SizedBox(
         width: 8.0,
         height: 12.0,
@@ -25,14 +40,11 @@ class MyStyle {
     color: Color.fromARGB(255, 29, 77, 180),
   );
 
-
   TextStyle mainSize = TextStyle(
     fontSize: 19.0,
     fontWeight: FontWeight.bold,
     color: Color.fromARGB(255, 29, 77, 180),
   );
-
-
 
   TextStyle mainH2Title = TextStyle(
     fontSize: 14,
@@ -72,8 +84,8 @@ class MyStyle {
         height: 280.0,
       );
   SizedBox mySixedBoxEnd() => SizedBox(
-        child: Container(margin: EdgeInsets.all(160),
-
+        child: Container(
+          margin: EdgeInsets.all(160),
         ),
       );
 
@@ -111,6 +123,45 @@ class MyStyle {
           color: Colors.blue.shade900,
           fontWeight: FontWeight.bold,
         ),
+      );
+  Text showTitleH3(String title) => Text(
+        title,
+        style: TextStyle(
+          fontSize: 16.0,
+          color: Colors.red.shade900,
+          fontWeight: FontWeight.bold,
+        ),
+      );
+  Text showTitleHDack(String title) => Text(
+        title,
+        style: TextStyle(
+          fontSize: 16.0,
+          color: Colors.blue.shade800,
+          fontWeight: FontWeight.w600,
+        ),
+      );
+  
+  Text showTitleHC(String title) => Text(
+        title,
+        style: TextStyle(
+            fontSize: 23.0,
+            color: Color.fromARGB(255, 7, 0, 210),
+            fontWeight: FontWeight.bold),
+      );
+
+  Text showTitleH44(String title) => Text(
+        title,
+        style: TextStyle(
+            fontSize: 16.0,
+            color: Colors.blue.shade800,
+            fontWeight: FontWeight.w500),
+      );
+  Text showTitleH44color(String title) => Text(
+        title,
+        style: TextStyle(
+            fontSize: 16.0,
+            color: Colors.deepPurple,
+            fontWeight: FontWeight.w500),
       );
 
   BoxDecoration myBoxDecoration(String namePic) {

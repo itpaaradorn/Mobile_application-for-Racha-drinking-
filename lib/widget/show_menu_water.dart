@@ -1,16 +1,21 @@
 import 'dart:convert';
 
 import 'package:application_drinking_water_shop/model/brand_model.dart';
+import 'package:application_drinking_water_shop/model/cart_model.dart';
 import 'package:application_drinking_water_shop/model/user_model.dart';
 import 'package:application_drinking_water_shop/model/water_model.dart';
 import 'package:application_drinking_water_shop/utility/my_constant.dart';
 import 'package:application_drinking_water_shop/utility/my_style.dart';
+import 'package:application_drinking_water_shop/utility/sqlite_helper.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 import 'package:location/location.dart';
+import 'package:toast/toast.dart';
 
-import '../utility/my_api.dart';
+import '../configs/api.dart';
+import '../utility/normal_dialog.dart';
 
 class ShowMenuWater extends StatefulWidget {
   final BrandWaterModel brandWaterModel;
@@ -36,6 +41,7 @@ class _ShowMenuWaterState extends State<ShowMenuWater> {
     super.initState();
     brandModel = widget.brandWaterModel;
     readWaterMenu();
+    readDataAdmin();
     findLocation();
   }
 
@@ -68,6 +74,7 @@ class _ShowMenuWaterState extends State<ShowMenuWater> {
 
   @override
   Widget build(BuildContext context) {
+    ToastContext().init(context);
     return waterModels.length == 0
         ? MyStyle().showProgress()
         : ListView.builder(
@@ -229,11 +236,30 @@ class _ShowMenuWaterState extends State<ShowMenuWater> {
     );
   }
 
+  Future<Null> readDataAdmin() async {
+    String url =
+        '${MyConstant().domain}/WaterShop/readUserModelWhereChooseTpy.php?isAdd=true&ChooseType=Admin';
+
+    await Dio().get(url).then((value) {
+      var result = json.decode(value.data);
+      // print('value == $value');
+
+      for (var map in result) {
+        setState(() {
+          userModel = UserModel.fromJson(map);
+          lat2 = double.parse('${userModel!.lat}');
+          lng2 = double.parse('${userModel!.lng}');
+        });
+        // print(" useradmin ===> ${userModel!.id}");
+      }
+    });
+  }
+
   Future<Null> findLocation() async {
     var currentLocation = await Location.instance.getLocation();
     lat1 = currentLocation.latitude;
     lng1 = currentLocation.longitude;
-    print('lat1 ==> $lat1 , lng1 ==> $lng1');
+    // print('lat1 ==> $lat1 , lng1 ==> $lng1');
   }
 
   Future<Null> addOrderToCart(int index) async {
@@ -241,17 +267,60 @@ class _ShowMenuWaterState extends State<ShowMenuWater> {
     String? brand_name = brandModel!.brandName;
     String? water_id = waterModels[index].id!;
     String? price = waterModels[index].price!;
-    
+    String? size = waterModels[index].size!;
 
     int priceInt = int.parse(price);
     int sumInt = priceInt * amount;
-    
 
     lat2 = double.parse(userModel!.lat!);
     lng2 = double.parse(userModel!.lng!);
-    double? distance = MyAPI().calculate2Distance(lat1!, lng1!, lat2!, lng2!);
+    double? distance = MyAPI().calculateDistance(lat1!, lng1!, lat2!, lng2!);
+
+    var myFormat = NumberFormat('##0.0#', 'en_US');
+    String distanceString = myFormat.format(distance);
+
+    int transport = MyAPI().calculateTransport(distance);
 
     print(
-        'water_id == $water_id,brand_id == $brand_id, brand_name == $brand_name, price == $price, amount == $amount, sum == $sumInt, distance == $distance  ');
+        'water_id == $water_id,brand_id == $brand_id, brand_name == $brand_name, price == $price, size == $size, amount == $amount, sum == $sumInt, distance == $distanceString, transport == $transport  ');
+    Map<String, dynamic> map = Map();
+    map['water_id'] = water_id;
+    map['brand_id'] = brand_id;
+    map['brand_name'] = brand_name;
+    map['price'] = price;
+    map['size'] = size;
+    map['amount'] = amount.toString();
+    map['sum'] = sumInt.toString();
+    map['distance'] = distanceString;
+    map['transport'] = transport.toString();
+
+    print('map == ${map.toString()}');
+
+    CartModel? cartModel = CartModel.fromJson(map);
+
+    var object = await SQLiteHelper().readAllDataFormSQLite();
+    print('object leht == ${object.length}');
+
+     if (object.length == 0) {
+      await SQLiteHelper().insertDataToSQLite(cartModel).then((value)  {
+        print('insert Sucess');
+        Toast.show("เพิ่มใส่ตะกร้าเรียบร้อยแล้ว", duration: Toast.lengthLong, gravity:  Toast.bottom);
+      });
+    } else {
+      String id_brandSQLite = object[0].brandId!;
+      print('brandSQLite ==>> $id_brandSQLite');
+      if (brand_id == id_brandSQLite) {
+        await SQLiteHelper().insertDataToSQLite(cartModel).then((value)  {
+          print('insert Sucess');
+          Toast.show("เพิ่มใส่ตะกร้าเรียบร้อยแล้ว", duration: Toast.lengthLong, gravity:  Toast.bottom);
+          
+
+        });
+      } else {
+        normalDialog(context, 'มีการทำรายการสั่งซื้อน้ำดื่มยี่ห้อ ${object[0].brandName} อยู่กรุณาทำรายการก่อนหน้าเสร็จก่อน');
+      }
   }
+}
+
+
 }

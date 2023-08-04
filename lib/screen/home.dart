@@ -5,12 +5,11 @@ import 'package:application_drinking_water_shop/screen/signIn.dart';
 import 'package:application_drinking_water_shop/screen/signUp.dart';
 import 'package:application_drinking_water_shop/utility/my_style.dart';
 import 'package:application_drinking_water_shop/utility/normal_dialog.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Home extends StatefulWidget {
-  const Home({super.key});
-
   @override
   State<Home> createState() => _HomeState();
 }
@@ -20,10 +19,30 @@ class _HomeState extends State<Home> {
   void initState() {
     super.initState();
     checkPreferance();
+    // getToken();
   }
+
+  // Future<void> getToken() async {
+  //   FirebaseMessaging firebaseMessaging = FirebaseMessaging Future<void> getToken() async {
+  //   String token = await FirebaseMessaging.instance.getToken();
+  //   print(token);
+  // }
+
+    // String? token = await FirebaseMessaging.instance.getToken();
+    // print(token);
+  
+//  }
+
+
+
 
   Future<Null> checkPreferance() async {
     try {
+
+      FirebaseMessaging messaging = FirebaseMessaging.instance;
+      String token = await FirebaseMessaging.instance.getToken();
+      print('token ====>>> $token');
+
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String? chooseType = preferences.getString('chooseType');
       if (chooseType != null && chooseType.isNotEmpty) {
@@ -57,7 +76,11 @@ class _HomeState extends State<Home> {
 
   Drawer showDrawer() => Drawer(
         child: ListView(
-          children: <Widget>[showHeadDrawer(), SigninMunu(), SignUpMunu()],
+          children: <Widget>[
+            showHeadDrawer(),
+            SigninMunu(),
+            SignUpMunu(),
+          ],
         ),
       );
 

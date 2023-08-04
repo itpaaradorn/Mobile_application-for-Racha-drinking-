@@ -1,5 +1,5 @@
-import 'dart:math';
 
+import 'package:application_drinking_water_shop/configs/api.dart';
 import 'package:application_drinking_water_shop/model/user_model.dart';
 import 'package:application_drinking_water_shop/utility/my_constant.dart';
 import 'package:application_drinking_water_shop/utility/my_style.dart';
@@ -38,41 +38,20 @@ class _AboutShopState extends State<AboutShop> {
       lat2 = double.parse('${userModel!.lat}');
       lng2 = double.parse('${userModel!.lng}');
       print('lat1 =>> $lat1, lng1 =>> $lng1, lat2 =>> $lat2, lng2 =>> $lng2');
-      distance = calculateDistance(lat1!, lng1!, lat2!, lng2!);
+      distance = MyAPI().calculateDistance(lat1!, lng1!, lat2!, lng2!);
 
       var myFormat = NumberFormat('##.0#', 'en_us');
       distanceString = myFormat.format(distance);
 
-      transport = calculateTransport(distance!);
+      transport = MyAPI().calculateTransport(distance!);
 
       print('distance =>> $distance');
       print('transport =>> $transport');
     });
   }
 
-  int calculateTransport(double distance) {
-    int transport;
-    if (distance < 1.0) {
-      transport = 5;
-      return transport;
-    } else {
-      transport = 5 + (distance - 1).round() * 5;
-      return transport;
-    }
-  }
+  
 
-  double calculateDistance(double lat1, double lng1, double lat2, double lng2) {
-    double distance = 0;
-
-    var p = 0.017453292519943295;
-    var c = cos;
-    var a = 0.5 -
-        c((lat2 - lat1) * p) / 2 +
-        c(lat1 * p) * c(lat2 * p) * (1 - c((lng2 - lng1) * p)) / 2;
-    distance = 12742 * asin(sqrt(a));
-
-    return distance;
-  }
 
   Future<LocationData> findLocationData() async {
     Location? location = Location();

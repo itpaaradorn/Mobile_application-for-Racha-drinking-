@@ -25,7 +25,7 @@ class _MainUserState extends State<MainUser> {
     ShowListShop(),
     // History(),
     // NotificationPage(),
-    AccountPage(),
+    ShowStatusWaterOrder(),
     AccountPage(),
     AccountPage(),
 
@@ -92,9 +92,9 @@ class _MainUserState extends State<MainUser> {
           mainAxisAlignment: MainAxisAlignment.end,
           children: <Widget>[
             Container(
-              margin: EdgeInsets.only(right: 20.0, bottom: 50.0),
+              margin: EdgeInsets.only(right: 20.0, bottom: 58.0),
               child: FloatingActionButton(
-                child: Icon(Icons.shopping_cart),
+                child: Icon(Icons.shopping_cart,size: 28.0,),
                 onPressed: () {
                   MaterialPageRoute route = MaterialPageRoute(
                     builder: (context) => ShowCart(),
