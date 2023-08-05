@@ -54,7 +54,7 @@ class _ShowCartState extends State<ShowCart> {
     ToastContext().init(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text('ตะกร้าของฉัน'),
+        title: Text('รายการในตะกร้า'),
       ),
       body: ststus
           ? Center(
@@ -76,8 +76,10 @@ class _ShowCartState extends State<ShowCart> {
             Divider(),
             buildTotal(),
             Divider(),
-            buildClaerCartButton(),
-            buildOrderButton(),
+            // buildClaerCartButton(),
+            // buildOrderButton(), 
+            buildPaymentButton(),
+            buildAddOrderButton(),
           ],
         ),
       ),
@@ -111,6 +113,59 @@ class _ShowCartState extends State<ShowCart> {
             },
             icon: Icon(Icons.add_shopping_cart_sharp),
             label: Text('สั่งซื้อ'),
+          ),
+        ),
+      ],
+    );
+  }
+  Widget buildPaymentButton() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: <Widget>[
+        Container(
+          margin: EdgeInsets.only(bottom: 10, right: 10),
+          width: 160,
+          child: ElevatedButton.icon(
+           
+            onPressed: () {
+              // MaterialPageRoute route = MaterialPageRoute(
+              //   builder: (context) => null,
+              // );
+              // Navigator.pushNamed(context, AppRoute.confirmpayment).then((value) => readSQLite());
+            },
+            label: Text(
+              'ชำระเงินล่วงหน้า',
+              style: TextStyle(color: Colors.white),
+            ),
+            icon: Icon(
+              Icons.add_shopping_cart_sharp,
+              color: Colors.white,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget buildAddOrderButton() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: <Widget>[
+        Container(
+          margin: EdgeInsets.only(bottom: 10, right: 10),
+          width: 160,
+          child: ElevatedButton.icon(
+            onPressed: () {
+              orderThread();
+            },
+            label: Text(
+              'สั่งซื้อปลายทาง',
+              style: TextStyle(color: Colors.white),
+            ),
+            icon: Icon(
+              Icons.add_shopping_cart_sharp,
+              color: Colors.white,
+            ),
           ),
         ),
       ],
@@ -339,11 +394,11 @@ class _ShowCartState extends State<ShowCart> {
   }
 
   Future<Null> claerAllSQLite() async {
-   Toast.show("ทำรายการสั่งซื้อ เสร็จสิ้น", duration: Toast.lengthLong, gravity:  Toast.bottom);
-  
+    Toast.show("ทำรายการสั่งซื้อ เสร็จสิ้น",
+        duration: Toast.lengthLong, gravity: Toast.bottom);
+
     await SQLiteHelper().deleteAllData().then((value) {
       readSQLite();
     });
   }
-  
 }

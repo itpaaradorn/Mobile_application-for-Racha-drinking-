@@ -21,7 +21,7 @@ class AddMenuWater extends StatefulWidget {
 class _AddMenuWaterState extends State<AddMenuWater> {
   WaterModel? waterModel;
   File? file;
-  String? id, nameWhat, price, size, idbrand,quantity;
+  String? id, brandname, price, size, idbrand,quantity;
   String? selectedValue = "เลือก";
 
   @override
@@ -110,7 +110,7 @@ class _AddMenuWaterState extends State<AddMenuWater> {
           String? idShop = preferences.getString('id');
 
           String? urlInsertData =
-              '${MyConstant().domain}/WaterShop/addWater.php?isAdd=true&idShop=$idShop&NameWater=$nameWhat&PathImage=$urlPathImage&Price=$price&Size=$size&idbrand=$idbrand&quantity=$quantity';
+              '${MyConstant().domain}/WaterShop/addWater.php?isAdd=true&idShop=$idShop&brandname=$brandname&PathImage=$urlPathImage&Price=$price&Size=$size&idbrand=$idbrand&quantity=$quantity';
           // print('urlInsertData ======== $urlInsertData');
           await Dio()
               .get(urlInsertData)
@@ -195,7 +195,7 @@ class _AddMenuWaterState extends State<AddMenuWater> {
               initialValue: price,
               decoration: InputDecoration(
                 prefixIcon: Icon(Icons.attach_money_rounded),
-                labelText: 'ราคา',
+                labelText: 'ราคา/บาท',
                 border: OutlineInputBorder(),
               ),
             ),
@@ -214,7 +214,7 @@ class _AddMenuWaterState extends State<AddMenuWater> {
               initialValue: size,
               decoration: InputDecoration(
                 prefixIcon: Icon(Icons.merge_type),
-                labelText: 'ขนาด',
+                labelText: 'ขนาด/ml',
                 border: OutlineInputBorder(),
               ),
             ),
@@ -233,7 +233,7 @@ class _AddMenuWaterState extends State<AddMenuWater> {
               initialValue: quantity,
               decoration: InputDecoration(
                 prefixIcon: Icon(Icons.production_quantity_limits),
-                labelText: 'จำนวน',
+                labelText: 'จำนวน/ขวด',
                 border: OutlineInputBorder(),
               ),
             ),

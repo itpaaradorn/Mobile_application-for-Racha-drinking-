@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:application_drinking_water_shop/model/water_model.dart';
 import 'package:application_drinking_water_shop/utility/my_constant.dart';
+import 'package:application_drinking_water_shop/utility/my_style.dart';
 import 'package:application_drinking_water_shop/utility/normal_dialog.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -9,7 +10,7 @@ import 'package:image_picker/image_picker.dart';
 
 class EditWaterMenu extends StatefulWidget {
   // ignore: prefer_typing_uninitialized_variables
-  final waterModel;
+  final WaterModel? waterModel;
   EditWaterMenu({Key? key, this.waterModel}) : super(key: key);
 
   @override
@@ -19,15 +20,15 @@ class EditWaterMenu extends StatefulWidget {
 class _EditWaterMenuState extends State<EditWaterMenu> {
   WaterModel? waterModel;
   File? file;
-  String? name, price, size, pathImage, idbrand, quantity;
-  String? selectedValue ="1";
+  String? brandname, price, size, pathImage, idbrand, quantity;
+  String? selectedValue;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     waterModel = widget.waterModel;
-    name = waterModel?.idbrand;
+    brandname = waterModel?.brandname;
     price = waterModel?.price;
     size = waterModel?.size;
     pathImage = waterModel?.pathImage;
@@ -39,27 +40,20 @@ class _EditWaterMenuState extends State<EditWaterMenu> {
     return Scaffold(
       floatingActionButton: uploadButton(),
       appBar: AppBar(
-        title: Text('แก้ไข ${waterModel?.nameWater}'),
+        title: Text('แก้ไข รายการน้ำดื่ม ID: ${waterModel!.id}'),
       ),
       body: SingleChildScrollView(
         child: Column(
           children: [
+            // nameWater(),
+            Container(
+              margin: EdgeInsets.only(top: 20),
+            ),
             nameWater(),
             groupImage(),
             sizeWater(),
             priceWater(),
-            Container(
-              width: 300,
-              child: DropdownButtonFormField(
-                value: selectedValue,
-                items: dropdownItems,
-                onChanged: (String? value) {
-                  setState(() {
-                    idbrand = value;
-                  });
-                },
-              ),
-            )
+            qtyWater(),
           ],
         ),
       ),
@@ -69,8 +63,8 @@ class _EditWaterMenuState extends State<EditWaterMenu> {
   FloatingActionButton uploadButton() {
     return FloatingActionButton(
       onPressed: () {
-        if (name!.isEmpty || size!.isEmpty || price!.isEmpty) {
-          normalDialog(context, 'กรุณากรอกให้ครบทุกช่อง');
+        if (brandname!.isEmpty || size!.isEmpty || price!.isEmpty) {
+          normalDialog(context, 'กรุณากรอกให้ครบทุกช่อง!');
         } else {
           confirmEdit();
         }
@@ -83,19 +77,19 @@ class _EditWaterMenuState extends State<EditWaterMenu> {
     showDialog(
       context: context,
       builder: (context) => SimpleDialog(
-        title: Text('คุณต้องการจะเปลี่ยนแปลง ?'),
-        children: [
+        title: Text('คุณต้องการเปลี่ยนแปลงรายการน้ำดื่มใช่ไหม ?'),
+        children: <Widget>[
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
+            children: <Widget>[
               TextButton.icon(
                 onPressed: () {
                   Navigator.pop(context);
-                  editvalueOnMySQL();
+                  editValueOnMySQL();
                 },
                 icon: Icon(
                   Icons.check,
-                  color: Color.fromARGB(255, 0, 184, 31),
+                  color: Colors.green,
                 ),
                 label: Text('ตกลง'),
               ),
@@ -108,22 +102,36 @@ class _EditWaterMenuState extends State<EditWaterMenu> {
                 label: Text('ยกเลิก'),
               )
             ],
-          ),
+          )
         ],
       ),
     );
   }
 
-  Future<Null> editvalueOnMySQL() async {
+  // Future<Null> editvalueOnMySQL() async {
+  //   String? id = waterModel!.id;
+  //   String? url =
+  //       '${MyConstant().domain}/WaterShop/editWater.php?isAdd=true&id=$id&NameWater=$name&PathImage=$pathImage&Price=$price&Size=$size&idbrand=$idbrand&quantity=$quantity';
+  //   await Dio().get(url).then((value) => {
+  //         if (value.toString() == 'true')
+  //           {Navigator.pop(context)}
+  //         else
+  //           {normalDialog(context, 'กรุณาลองใหม่ มีข้อผิดพลาด')}
+  //       });
+  // }
+
+  Future<Null> editValueOnMySQL() async {
     String? id = waterModel!.id;
-    String? url =
-        '${MyConstant().domain}/WaterShop/editWater.php?isAdd=true&id=$id&NameWater=$name&PathImage=$pathImage&Price=$price&Size=$size&idbrand=$idbrand&quantity=$quantity';
-    await Dio().get(url).then((value) => {
-          if (value.toString() == 'true')
-            {Navigator.pop(context)}
-          else
-            {normalDialog(context, 'กรุณาลองใหม่ มีข้อผิดพลาด')}
-        });
+    String url =
+        '${MyConstant().domain}/WaterShop/editWater.php?isAdd=true&id=$id&brandname=$brandname&PathImage=$pathImage&Price=$price&Size=$size&idbrand=$idbrand&quantity=$quantity';
+
+    await Dio().get(url).then((value) {
+      if (value.toString() == 'true') {
+        Navigator.pop(context);
+      } else {
+        normalDialog(context, 'กรุณาลองใหม่มีอะไร ผิดพลาด!');
+      }
+    });
   }
 
   Widget groupImage() => Row(
@@ -171,8 +179,8 @@ class _EditWaterMenuState extends State<EditWaterMenu> {
             margin: EdgeInsets.only(top: 30.0),
             width: 250.0,
             child: TextFormField(
-              onChanged: (value) => name = value.trim(),
-              initialValue: name,
+              onChanged: (value) => brandname = value.trim(),
+              initialValue: brandname,
               decoration: InputDecoration(
                 labelText: 'ชื่อน้ำดื่ม',
                 border: OutlineInputBorder(),
@@ -220,16 +228,21 @@ class _EditWaterMenuState extends State<EditWaterMenu> {
         ],
       );
 
-  List<DropdownMenuItem<String>> get dropdownItems {
-    List<DropdownMenuItem<String>> menuItems = [
-      DropdownMenuItem(child: Text("Namthip"), value: "2"),
-      DropdownMenuItem(child: Text("Crystal"), value: "1"),
-      DropdownMenuItem(child: Text("Sing"), value: "4"),
-      DropdownMenuItem(child: Text("Nestle"), value: "3"),
-      DropdownMenuItem(child: Text("เลือกยี่ห้อน้ำดื่ม"), value: "5"),
-    ];
-    return menuItems;
-  }
-
-
+  Widget qtyWater() => Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            margin: EdgeInsets.only(top: 16.0),
+            width: 250.0,
+            child: TextFormField(
+              onChanged: (value) => quantity = value.trim(),
+              initialValue: quantity,
+              decoration: InputDecoration(
+                labelText: 'จำนวน',
+                border: OutlineInputBorder(),
+              ),
+            ),
+          ),
+        ],
+      );
 }

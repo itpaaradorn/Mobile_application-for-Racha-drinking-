@@ -7,6 +7,42 @@
   "client": [
     {
       "client_info": {
+        "mobilesdk_app_id": "1:453112287485:android:1beab6220dd5614b826e94",
+        "android_client_info": {
+          "package_name": "android.intent.action.MAIN"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "453112287485-k4mq3jvalgrim5gdphqossu5od7gf7do.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCXfoQ_KpbxQX6fs9xP74vraVUGXvDDl0k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "453112287485-k4mq3jvalgrim5gdphqossu5od7gf7do.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "453112287485-ilgormqfofstakuhih5hji96i68i4rr2.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.flutterthailand.applicationDrinkingWaterShop.RunnerTests"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:453112287485:android:acdd62b880960e87826e94",
         "android_client_info": {
           "package_name": "com.flutterthailand.application_drinking_water_shop"
@@ -29,6 +65,13 @@
             {
               "client_id": "453112287485-k4mq3jvalgrim5gdphqossu5od7gf7do.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "453112287485-ilgormqfofstakuhih5hji96i68i4rr2.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.flutterthailand.applicationDrinkingWaterShop.RunnerTests"
+              }
             }
           ]
         }

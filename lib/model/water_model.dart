@@ -1,7 +1,7 @@
 class WaterModel {
   String? id;
   String? idShop;
-  String? nameWater;
+  String? brandname;
   String? pathImage;
   String? price;
   String? size;
@@ -11,7 +11,7 @@ class WaterModel {
   WaterModel(
       {this.id,
       this.idShop,
-      this.nameWater,
+      this.brandname,
       this.pathImage,
       this.price,
       this.size,
@@ -21,7 +21,7 @@ class WaterModel {
   WaterModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
     idShop = json['idShop'];
-    nameWater = json['NameWater'];
+    brandname = json['brandname'];
     pathImage = json['PathImage'];
     price = json['Price'];
     size = json['Size'];
@@ -33,7 +33,7 @@ class WaterModel {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['id'] = this.id;
     data['idShop'] = this.idShop;
-    data['NameWater'] = this.nameWater;
+    data['brandname'] = this.brandname;
     data['PathImage'] = this.pathImage;
     data['Price'] = this.price;
     data['Size'] = this.size;

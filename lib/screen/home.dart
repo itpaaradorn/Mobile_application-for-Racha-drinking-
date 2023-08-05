@@ -3,8 +3,10 @@ import 'package:application_drinking_water_shop/screen/main_shop.dart';
 import 'package:application_drinking_water_shop/screen/main_user.dart';
 import 'package:application_drinking_water_shop/screen/signIn.dart';
 import 'package:application_drinking_water_shop/screen/signUp.dart';
+import 'package:application_drinking_water_shop/utility/my_constant.dart';
 import 'package:application_drinking_water_shop/utility/my_style.dart';
 import 'package:application_drinking_water_shop/utility/normal_dialog.dart';
+import 'package:dio/dio.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -23,28 +25,29 @@ class _HomeState extends State<Home> {
   }
 
   // Future<void> getToken() async {
-  //   FirebaseMessaging firebaseMessaging = FirebaseMessaging Future<void> getToken() async {
-  //   String token = await FirebaseMessaging.instance.getToken();
-  //   print(token);
+  //   String? token = await FirebaseMessaging.instance.getToken();
+  //   print('token ====>>> $token');
   // }
-
-    // String? token = await FirebaseMessaging.instance.getToken();
-    // print(token);
-  
-//  }
-
-
-
 
   Future<Null> checkPreferance() async {
     try {
-
       FirebaseMessaging messaging = FirebaseMessaging.instance;
-      String token = await FirebaseMessaging.instance.getToken();
+      String? token = await FirebaseMessaging.instance.getToken();
       print('token ====>>> $token');
 
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String? chooseType = preferences.getString('chooseType');
+      String? idlogin = preferences.getString('id');
+      print('idlogin == $idlogin');
+
+      if (idlogin != null && idlogin.isNotEmpty) {
+        String? url =
+            '${MyConstant().domain}/WaterShop/editTokenWhereId.php?isAdd=true&id=$idlogin&Token=$token';
+        await Dio()
+            .get(url)
+            .then((value) => print('####### Update Token Success ######'));
+      }
+
       if (chooseType != null && chooseType.isNotEmpty) {
         if (chooseType == 'Customer') {
           routeToService(MainUser());
