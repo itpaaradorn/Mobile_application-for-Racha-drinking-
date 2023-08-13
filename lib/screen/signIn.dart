@@ -29,24 +29,28 @@ class _SigninState extends State<Signin> {
       appBar: AppBar(
         title: Text('Sign In'),
       ),
-      body: Center(
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              MyStyle().showLogo(),
-              MyStyle().showTitle('Racha Drinking Water Shop'),
-              MyStyle().mySixedBox(),
-              MyStyle().mySixedBox(),
-              userForm(),
-              MyStyle().mySixedBox(),
-              passwordForm(),
-              MyStyle().mySixedBox(),
-              loginButton(),
-              showTextDonAccount(), showTextSigUp(),
+      body: GestureDetector(
+        onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
+        behavior: HitTestBehavior.opaque,
+        child: Center(
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                MyStyle().showLogo(),
+                MyStyle().showTitle('Racha Drinking Water Shop'),
+                MyStyle().mySixedBox(),
+                MyStyle().mySixedBox(),
+                userForm(),
+                MyStyle().mySixedBox(),
+                passwordForm(),
+                MyStyle().mySixedBox(),
+                loginButton(),
+                showTextDonAccount(), showTextSigUp(),
 
-              // RaisedButton(onPressed: (){}, child: Text('data'))
-            ],
+                // RaisedButton(onPressed: (){}, child: Text('data'))
+              ],
+            ),
           ),
         ),
       ),
@@ -73,7 +77,7 @@ class _SigninState extends State<Signin> {
             Navigator.push(context, route);
           },
           child: Text(
-            'SignUp',
+            'Create Account',
             style: TextStyle(color: Color.fromARGB(255, 0, 62, 170)),
           ),
         ),
@@ -129,9 +133,9 @@ class _SigninState extends State<Signin> {
 
   Future<Null> routeTuService(Widget myWidget, UserModel userModel) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
-    preferences.setString('id', userModel.id!);
-    preferences.setString('chooseType', userModel.chooseType!);
-    preferences.setString('Name', userModel.name!);
+    preferences.setString(MyConstant().keyId, userModel.id!);
+    preferences.setString(MyConstant().keyType, userModel.chooseType!);
+    preferences.setString(MyConstant().keyName, userModel.name!);
 
     MaterialPageRoute route = MaterialPageRoute(
       builder: (context) => myWidget,

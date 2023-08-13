@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:application_drinking_water_shop/screen/main_emp.dart';
 import 'package:application_drinking_water_shop/screen/main_shop.dart';
 import 'package:application_drinking_water_shop/screen/main_user.dart';
@@ -21,7 +23,8 @@ class _HomeState extends State<Home> {
   void initState() {
     super.initState();
     checkPreferance();
-    // getToken();
+    // getToken();'
+    aboutNotification();
   }
 
   // Future<void> getToken() async {
@@ -31,6 +34,7 @@ class _HomeState extends State<Home> {
 
   Future<Null> checkPreferance() async {
     try {
+      // ignore: unused_local_variable
       FirebaseMessaging messaging = FirebaseMessaging.instance;
       String? token = await FirebaseMessaging.instance.getToken();
       print('token ====>>> $token');
@@ -120,5 +124,18 @@ class _HomeState extends State<Home> {
         currentAccountPicture: MyStyle().showLogo(),
         accountName: Text('Guest'),
         accountEmail: Text('Please Login'));
+  }
+
+  Future<Null> aboutNotification() async {
+    if (Platform.isAndroid) {
+      print('aboutNoti Work Android');
+
+      // FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
+      // await firebaseMessaging.con
+
+
+    } else if (Platform.isIOS) {
+      print('aboutNoti Work IOS');
+    }
   }
 }

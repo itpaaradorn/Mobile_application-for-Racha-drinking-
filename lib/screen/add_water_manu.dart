@@ -1,6 +1,8 @@
+import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 
+import 'package:application_drinking_water_shop/model/brand_model.dart';
 import 'package:application_drinking_water_shop/model/water_model.dart';
 import 'package:application_drinking_water_shop/utility/my_constant.dart';
 import 'package:application_drinking_water_shop/utility/my_style.dart';
@@ -21,8 +23,18 @@ class AddMenuWater extends StatefulWidget {
 class _AddMenuWaterState extends State<AddMenuWater> {
   WaterModel? waterModel;
   File? file;
-  String? id, brandname, price, size, idbrand,quantity;
-  String? selectedValue = "เลือก";
+  String? id, brandname, price, size, idbrand,quantity,idShop;
+  String? selectvalue;
+  List<BrandWaterModel> brandModels = [];
+
+   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    readBrandWaterShop();
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -37,18 +49,8 @@ class _AddMenuWaterState extends State<AddMenuWater> {
             groupImage(), MyStyle().mySixedBox(),
             showTitleWater('รายละเอียดน้ำดื่ม'),
             // nameForm(),
-            Container(
-              width: 300,
-              child: DropdownButtonFormField(
-                value: selectedValue,
-                items: dropdownItems,
-                onChanged: (String? value) {
-                  setState(() {
-                    idbrand = value;
-                  });
-                },
-              ),
-            ),
+            Dropdownbrandwater(),
+           
             MyStyle().mySixedBox(),
             sizeWater(),
             priceWater(),
@@ -120,69 +122,51 @@ class _AddMenuWaterState extends State<AddMenuWater> {
     } catch (e) {}
   }
 
-  List<DropdownMenuItem<String>> get dropdownItems {
-    List<DropdownMenuItem<String>> menuItems = [
-      
-      DropdownMenuItem(child: Text("เลือกยี่ห้อน้ำดื่ม"), value: "เลือก"),
-      DropdownMenuItem(child: Text("Crystal"), value: "1"),
-      DropdownMenuItem(child: Text("Namthip"), value: "2"),
-      DropdownMenuItem(child: Text("Nestle"), value: "3"),
-      DropdownMenuItem(child: Text("Sing"), value: "4"),
-   
-      
-    ];
-    return menuItems;
+   Future<Null> readBrandWaterShop() async {
+
+    if (brandModels.length != 0) {
+      brandModels.clear();
+    }
+
+    String url = '${MyConstant().domain}/WaterShop/getWaterbrand.php?isAdd=true&idShop=46';
+
+    await Dio().get(url).then((value) {
+      // print('value ==> $value');
+      var result = json.decode(value.data);
+      // print('result ==> $result');
+
+      for (var item in result) {
+        // print('item ==> $item');
+        BrandWaterModel model = BrandWaterModel.fromJson(item);
+        // print('brand ==>> ${model.brandId}');
+
+        setState(() {
+          brandModels.add(model);
+        });
+      }
+    });
   }
 
-  // Widget nameForm() => Container(
-  //       width: 250.0,
-  //       child: TextField(
-  //         onChanged: (value) => nameWhat = value.trim(),
-  //         decoration: InputDecoration(
-  //           prefixIcon: Icon(Icons.water_drop_outlined),
-  //           labelText: 'ชื่อน้ำดื่ม',
-  //           border: OutlineInputBorder(),
-  //         ),
-  //       ),
-  //     );
 
-  // DropdownButtonFormField<String> Dropdownbrandgas() {
-  //   return DropdownButtonFormField(
-  //       hint: Container(width: 250.0, child: Text('เลือกยี่ห้อน้ำดื่ม')),
-  //       items: [
-  //         DropdownMenuItem<String>(
-  //           value: '1',
-  //           child: Center(
-  //             child: Text("Crytsal"),
-  //           ),
-  //         ),
-  //         DropdownMenuItem<String>(
-  //           value: '2',
-  //           child: Center(
-  //             child: Text("Namthip"),
-  //           ),
-  //         ),
-  //         DropdownMenuItem<String>(
-  //           value: '3',
-  //           child: Center(
-  //             child: Text("Nestle"),
-  //           ),
-  //         ),
-  //         DropdownMenuItem<String>(
-  //           value: '4',
-  //           child: Center(
-  //             child: Text("Sing"),
-  //           ),
-  //         ),
-  //       ],
-  //       onChanged: (value) {
-  //         print(' value ==== $value');
-  //         setState(() {
-  //           idbrand = value!;
-  //           nameWhat = value;
-  //         });
-  //       });
-  // }
+  Widget Dropdownbrandwater() {
+    return Container(
+      width: 300,
+      child: DropdownButtonFormField(
+          hint: Text('เลือกยี่ห้อน้ำดื่ม'),
+          value: selectvalue,
+          items: brandModels.map((BrandWaterModel model) {
+            return DropdownMenuItem(
+              value: model.brandId,
+              child: Text(model.brandName!),
+            );
+          }).toList(),
+          onChanged: (value) {
+            setState(() {
+              idbrand = value;
+            });
+          }),
+    );
+  }
 
   Widget priceWater() => Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -241,46 +225,7 @@ class _AddMenuWaterState extends State<AddMenuWater> {
         ],
       );
 
-  // Widget siezForm() => Container(
-  //       width: 400.0,
-  //       child: TextFormField(
-  //         keyboardType: TextInputType.number,
-  //         onChanged: (value) => size = value.trim(),
-  //         decoration: InputDecoration(
-  //           prefixIcon: Icon(Icons.view_list_rounded),
-  //           labelText: 'ขนาด ml',
-  //           border: OutlineInputBorder(),
-  //         ),
-  //       ),
-  //     );
-
-  // Widget pricForm() => Container(
-  //       width: 400.0,
-  //       child: TextFormField(
-  //         keyboardType: TextInputType.number,
-  //         onChanged: (value) => price = value.trim(),
-  //         decoration: InputDecoration(
-  //           prefixIcon: Icon(Icons.monetization_on_outlined),
-  //           labelText: 'ราคา',
-  //           border: OutlineInputBorder(),
-  //         ),
-  //       ),
-  //     );
-
-  // Widget detaiForm() => Container(
-  //       width: 250.0,
-  //       child: TextField(
-  //         onChanged: (value) => detail = value.trim(),
-  //         keyboardType: TextInputType.multiline,
-  //         maxLines: 3,
-  //         decoration: InputDecoration(
-  //           prefixIcon: Icon(Icons.description_outlined),
-  //           labelText: 'รายละเอียดน้ำดื่มขนาด',
-  //           border: OutlineInputBorder(),
-  //         ),
-  //       ),
-  //     );
-
+  
   Row groupImage() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,

@@ -8,10 +8,13 @@ import 'package:application_drinking_water_shop/utility/my_style.dart';
 import 'package:application_drinking_water_shop/utility/normal_dialog.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:location/location.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../configs/api.dart';
 
 class EditInfoShop extends StatefulWidget {
   const EditInfoShop({super.key});
@@ -31,34 +34,33 @@ class _EditInfoShopState extends State<EditInfoShop> {
   void initState() {
     super.initState();
     readCurrentInfo();
-
-    location?.onLocationChanged.listen(
-      (event) {
-        setState(() {
-          lat = event.latitude;
-          lng = event.longitude;
-          // print('lat = $lat, lng = $lng');
-        });
-      },
-    );
+    findLatLng();
+  }
+  Future<Null> findLatLng() async {
+    Position? positon = await MyAPI().getLocation();
+    setState(() {
+      lat = positon?.latitude;
+      lng = positon?.longitude;
+      print(' lat == $lat , lng == $lng');
+    });
   }
 
   Future<Null> readCurrentInfo() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     String? idShop = preferences.getString('id');
-    print('idShop ==> $idShop');
+    // print('idShop ==> $idShop');
 
     String? url =
         '${MyConstant().domain}/WaterShop/getUserWhereId.php?isAdd=true&id=46';
 
     Response response = await Dio().get(url);
-    print('response ==>> $response');
+    // print('response ==>> $response');
 
     var result = json.decode(response.data);
-    print('result ==>> $result');
+    // print('result ==>> $result');
 
     for (var map in result) {
-      print('map ==>> $map');
+      // print('map ==>> $map');
       setState(
         () {
           userModel = UserModel.fromJson(map);
@@ -187,7 +189,7 @@ class _EditInfoShopState extends State<EditInfoShop> {
   Set<Marker> currenMarker() {
     return <Marker>{
       Marker(
-        markerId: MarkerId('myMarker'),
+        markerId: MarkerId('id'),
         position: LatLng(lat!, lng!),
         infoWindow: InfoWindow(
             title: 'ตำแหน่งร้าน', snippet: 'Lat = $lat,  Lng = $lng'),
@@ -195,38 +197,37 @@ class _EditInfoShopState extends State<EditInfoShop> {
     };
   }
 
-  Container showMap() {
-    CameraPosition cameraPosition = CameraPosition(
-      target: LatLng(lat!, lng!),
-      zoom: 16.0,
-    );
 
+  Container showMap() {
     return Container(
+      margin: EdgeInsets.only(top: 16.0),
+      height: 250,
       child: GoogleMap(
-        initialCameraPosition: cameraPosition,
-        mapType: MapType.normal,
-        onMapCreated: (controller) {},
+        initialCameraPosition: CameraPosition(
+          target: LatLng(lat!, lng!),
+          zoom: 16,
+        ),
+        onMapCreated: (context) {},
         markers: currenMarker(),
       ),
-      margin: EdgeInsets.only(top: 16.0),
-      height: 250.0,
     );
   }
 
-  Widget showImage() => Container(
-        margin: EdgeInsetsDirectional.only(top: 14.0),
+ Widget showImage() => Container(
+        margin: EdgeInsetsDirectional.only(top: 16.0),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
+          children: <Widget>[
             IconButton(
               icon: Icon(Icons.add_a_photo),
               onPressed: () => chooseImage(ImageSource.camera),
             ),
             Container(
-              child: Image.network(
-                  width: 250.0,
-                  height: 200.0,
-                  '${MyConstant().domain}${userModel?.urlpicture}'),
+              width: 250.0,
+              height: 250.0,
+              child: file == null
+                  ? Image.network('${MyConstant().domain}$urlPicture')
+                  : Image.file(file!),
             ),
             IconButton(
               icon: Icon(Icons.add_photo_alternate),
@@ -235,6 +236,7 @@ class _EditInfoShopState extends State<EditInfoShop> {
           ],
         ),
       );
+
 
   Widget nameShopFrom() => Row(
         mainAxisAlignment: MainAxisAlignment.center,

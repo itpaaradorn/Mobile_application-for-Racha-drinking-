@@ -65,6 +65,7 @@ class _AddInfoShopState extends State<AddInfoShop> {
     try {
       return location.getLocation();
     } catch (e) {
+      // ignore: null_check_always_fails
       return null!;
     }
   }

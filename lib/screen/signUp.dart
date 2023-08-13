@@ -1,8 +1,14 @@
+import 'dart:io';
+
 import 'package:application_drinking_water_shop/utility/my_constant.dart';
 import 'package:application_drinking_water_shop/utility/my_style.dart';
 import 'package:application_drinking_water_shop/utility/normal_dialog.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:image_picker/image_picker.dart';
+
+import '../configs/api.dart';
 
 class SignUp extends StatefulWidget {
   @override
@@ -10,39 +16,107 @@ class SignUp extends StatefulWidget {
 }
 
 class _SignUpState extends State<SignUp> {
-  String? chooseType, name, user, password, customer, address, phone;
+  String? name, user, password, customer, address, phone;
+  String? chooseType;
+  String? avatar = '';
+  double? lat, lng;
+  File? file;
+
+  final formKey = GlobalKey<FormState>();
+
+  TextEditingController nameController = TextEditingController();
+  TextEditingController addressController = TextEditingController();
+  TextEditingController phoneController = TextEditingController();
+  TextEditingController userController = TextEditingController();
+  TextEditingController passwordController = TextEditingController();
+
   bool passwordVisible = true;
+  bool confirmPassVissible = true;
+
+  @override
+  void initState() {
+    checkPermission();
+    findLatLng();
+    passwordVisible = true;
+    confirmPassVissible = true;
+    super.initState();
+  }
+
+  Future<Null> findLatLng() async {
+    Position? positon = await MyAPI().getLocation();
+    setState(() {
+      lat = positon?.latitude;
+      lng = positon?.longitude;
+      print(' lat == $lat , lng == $lng');
+    });
+  }
+
+  Future<Null> checkPermission() async {
+    bool locationService;
+    LocationPermission locationPermission;
+
+    locationService = await Geolocator.isLocationServiceEnabled();
+    if (locationService) {
+      print('Sevice Location Open');
+      locationPermission = await Geolocator.checkPermission();
+      if (locationPermission == LocationPermission.denied) {
+        locationPermission == await Geolocator.requestPermission();
+        if (locationPermission == LocationPermission.deniedForever) {
+          MyDialog().alertLocationService(
+              context, 'ไม่อนุญาติแชร์ Location', 'โปรดแชร์ Location');
+        } else {
+          // findLatLng();
+        }
+      } else {
+        if (locationPermission == LocationPermission.deniedForever) {
+          MyDialog().alertLocationService(
+              context, 'ไม่อนุญาติแชร์ Location', 'โปรดแชร์ Location');
+        } else {
+          // findLatLng();
+        }
+      }
+    } else {
+      print('Service Location Close');
+      MyDialog().alertLocationService(context, 'Location service ปิดอยู่ ?',
+          'กรุณาเปิดตำแหน่งของท่านก่อนใช้บริการค่ะ');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text('SignUp'),
+          title: Text('Create Account'),
         ),
-        body: ListView(
-          padding: EdgeInsets.all(30.0),
-          children: <Widget>[
-            myLogo(),
-            MyStyle().mySixedBox(),
-            showAppname(),
-            MyStyle().mySixedBox(),
-            nameForm(),
-            MyStyle().mySixedBox(),
-            userForm(),
-            MyStyle().mySixedBox(),
-            passwordForm(),
-            MyStyle().mySixedBox(),
-            phoneForm(),
-            MyStyle().mySixedBox(),
-            addressForm(),
-            MyStyle().mySixedBox(),
+        body: GestureDetector(
+          onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
+          behavior: HitTestBehavior.opaque,
+          child: ListView(
+            padding: EdgeInsets.all(30.0),
+            children: <Widget>[
+              showAppname(),
+              MyStyle().mySixedBox(),
+              MyStyle().showTitleH2('รูปภาพ'),
+              MyStyle().mySixedBox(),
+              buildAvatar(),
+              nameForm(),
+              MyStyle().mySixedBox(),
+              userForm(),
+              MyStyle().mySixedBox(),
+              passwordForm(),
+              MyStyle().mySixedBox(),
+              phoneForm(),
+              MyStyle().mySixedBox(),
+              addressForm(),
+              MyStyle().mySixedBox(),
 
-            // MyStyle().showTitleH2('ชนิดของสมาชิก :'),
-            // MyStyle().mySixedBox(),
-            // userRadio(),
-            // employeeRadio(),
-            registerButton()
-          ],
+              // MyStyle().showTitleH2('ชนิดของสมาชิก :'),
+              // MyStyle().mySixedBox(),
+              // userRadio(),
+              // employeeRadio(),
+              registerButton()
+            ],
+          ),
         ));
   }
 
@@ -103,83 +177,51 @@ class _SignUpState extends State<SignUp> {
     }
   }
 
-  // Widget userRadio() => Row(
-  //       mainAxisAlignment: MainAxisAlignment.center,
-  //       children: [
-  //         Container(
-  //           width: 250.0,
-  //           child: Row(
-  //             children: <Widget>[
-  //               Radio(
-  //                 value: 'Customer',
-  //                 groupValue: chooseType,
-  //                 onChanged: (value) {
-  //                   setState(() {
-  //                     chooseType = value;
-  //                   });
-  //                 },
-  //               ),
-  //               Text(
-  //                 'ลูกค้า',
-  //                 style: TextStyle(color: MyStyle().darkColor),
-  //               )
-  //             ],
-  //           ),
-  //         ),
-  //       ],
-  //     );
+Row buildAvatar() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        IconButton(
+          onPressed: () => chooseImage(ImageSource.camera),
+          icon: Icon(
+            Icons.add_a_photo,
+            size: 22,
+          ),
+        ),
+        Container(
+          width: 180,
+          height: 180,
+          child:
+              file == null ? Image.asset(MyConstant.avatar) : Image.file(file!),
+        ),
+        IconButton(
+          onPressed: () => chooseImage(ImageSource.gallery),
+          icon: Icon(
+            Icons.add_photo_alternate,
+            size: 22,
+          ),
+        ),
+      ],
+    );
+  }
 
-  // Widget employeeRadio() => Row(
-  //       mainAxisAlignment: MainAxisAlignment.center,
-  //       children: [
-  //         Container(
-  //           width: 250.0,
-  //           child: Row(
-  //             children: <Widget>[
-  //               Radio(
-  //                 value: 'Employee',
-  //                 groupValue: chooseType,
-  //                 onChanged: (value) {
-  //                   setState(() {
-  //                     chooseType = value;
-  //                   });
-  //                 },
-  //               ),
-  //               Text(
-  //                 'พนักงานขนส่ง',
-  //                 style: TextStyle(color: MyStyle().darkColor),
-  //               )
-  //             ],
-  //           ),
-  //         ),
-  //       ],
-  //     );
+  Future<Null> chooseImage(ImageSource source) async {
+    try {
+      var result = await ImagePicker()
+          .pickImage(source: source, maxWidth: 800, maxHeight: 800);
+      setState(() {
+        file = File(result!.path);
+      });
+    } catch (e) {}
+  }
 
-  // Widget shopkeeperRadio() => Row(
-  //       mainAxisAlignment: MainAxisAlignment.center,
-  //       children: [
-  //         Container(
-  //           width: 250.0,
-  //           child: Row(
-  //             children: <Widget>[
-  //               Radio(
-  //                 value: 'Shopkeeper',
-  //                 groupValue: chooseType,
-  //                 onChanged: (value) {
-  //                   setState(() {
-  //                     chooseType = value;
-  //                   });
-  //                 },
-  //               ),
-  //               Text(
-  //                 'เจ้าของร้าน',
-  //                 style: TextStyle(color: MyStyle().darkColor),
-  //               )
-  //             ],
-  //           ),
-  //         ),
-  //       ],
-  //     );
+
+
+
+
+
+
+
 
   Widget nameForm() => Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -316,7 +358,7 @@ class _SignUpState extends State<SignUp> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        MyStyle().showTitle('Racha Drinking Water Shop'),
+        MyStyle().showTitle('สมัครสมาชิก'),
       ],
     );
   }

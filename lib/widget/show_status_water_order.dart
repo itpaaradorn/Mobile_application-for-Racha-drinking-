@@ -1,12 +1,15 @@
 import 'dart:convert';
 
 import 'package:application_drinking_water_shop/model/order_model.dart';
+import 'package:application_drinking_water_shop/screen/follow_delivery_map.dart';
 import 'package:application_drinking_water_shop/utility/my_constant.dart';
 import 'package:application_drinking_water_shop/utility/my_style.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:steps_indicator/steps_indicator.dart';
+
+import '../utility/normal_dialog.dart';
 
 class ShowStatusWaterOrder extends StatefulWidget {
   const ShowStatusWaterOrder({super.key});
@@ -17,6 +20,7 @@ class ShowStatusWaterOrder extends StatefulWidget {
 
 class _ShowStatusWaterOrderState extends State<ShowStatusWaterOrder> {
   String? user_id;
+  bool statusAvatar = true;
   bool statusorder = true;
   List<OrderModel> orderModels = [];
   List<List<String>> listMenuWaters = [];
@@ -36,7 +40,7 @@ class _ShowStatusWaterOrderState extends State<ShowStatusWaterOrder> {
 
   @override
   Widget build(BuildContext context) {
-    return statusorder ? buildNonOrder() : buildContant();
+    return statusAvatar ? buildNonOrder() : buildContant();
   }
 
   Widget buildContant() => ListView.builder(
@@ -44,7 +48,63 @@ class _ShowStatusWaterOrderState extends State<ShowStatusWaterOrder> {
         itemCount: orderModels.length,
         itemBuilder: (context, index) => Column(
           children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                TextButton(
+                  onPressed: () async {
+                    if (orderModels[index].status == 'shopprocess') {
+                      normalDialog2(context, 'ไม่สามารถยกเลิกการสั่งซื้อ',
+                          'เนื่องจากร้านได้ยืนยันการสั่งซื้อของคุณแล้ว กรุณาติดต่อทางร้านค่ะ!');
+                    } else if (orderModels[index].status == 'RiderHandle') {
+                      normalDialog2(context, 'ไม่สามารถยกเลิกการสั่งซื้อ',
+                          'เนื่องจากกำลังจัดสั่งรายแก๊สให้คุณ กรุณาติดต่อทางร้านค่ะ!');
+                    } else if (orderModels[index].status == 'Finish') {
+                      normalDialog2(context, 'รายการสั่งซื้อของท่านสำเร็จแล้ว!',
+                          'กรุณาติดต่อทางร้านค่ะ');
+                    } else if (orderModels[index].status == 'userorder') {
+                      confirmDeleteCancleOrder(index);
+                    }
+                  },
+                  child: Text(
+                    'ยกเลิกการสั่งซื้อ',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                TextButton(
+                  onPressed: () async {
+                    if (orderModels[index].status != 'Finish') {
+                      if (orderModels[index].riderId != 'none') {
+                        MaterialPageRoute route = MaterialPageRoute(
+                          builder: (context) => FollowTrackingDelivery(
+                            orderModel: orderModels[index],
+                          ),
+                        );
+                        Navigator.push(context, route).then((value) async {});
+                      } else {
+                        normalDialog3(
+                            context,
+                            'รายการของท่านยังไม่ได้ทำการจัดส่ง',
+                            'กรุณารอพนักงานจัดส่งท่านสามารถดูรายการต่อไปนี้ได้');
+                      }
+                    } else {
+                      normalDialog3(context, 'ไม่สามารถเปิดพิกัดได้ค่ะ',
+                          'เนื่องจากรายการของท่านสำเร็จแล้ว ค่ะ');
+                    }
+                    // print("${orderModels[index].riderId}");
+                  },
+                  child: Text(
+                    'ติดตามการจัดส่ง',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ],
+            ),
+            buildStepIndicator(statusInts[index]),
             MyStyle().mySixedBox(),
+            
             buildDatatimeOrder(index),
             buildDistance(index),
             buildTransport(index),
@@ -52,18 +112,71 @@ class _ShowStatusWaterOrderState extends State<ShowStatusWaterOrder> {
             buildLisviewMenuWater(index),
             MyStyle().mySixedBox(),
             buildTotal(index),
-            MyStyle().mySixedBox(),
-            buildStepIndicator(statusInts[index]),
-            MyStyle().mySixedBox(),
-            MyStyle().mySixedBox(),
+            SizedBox(height: 30,)
             // buildBrandWater(index),
           ],
         ),
       );
 
+  Future<Null> confirmDeleteCancleOrder(int index) async {
+    showDialog(
+      context: context,
+      builder: (context) => SimpleDialog(
+        title: Text('คุณต้องการจะยกเลิกรายการสั่งซื้อน้ำดื่มใช่ไหม ?'),
+        children: <Widget>[
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: <Widget>[
+              ElevatedButton.icon(
+                onPressed: () async {
+                  cancleOrderUser(index);
+                  Navigator.pop(context);
+                },
+                icon: Icon(
+                  Icons.check,
+                  color: Colors.white,
+                ),
+                label: Text(
+                  'ตกลง',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+              ElevatedButton.icon(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                icon: Icon(
+                  Icons.clear,
+                  color: Colors.white,
+                ),
+                label: Text(
+                  'ยกเลิก',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<Null> cancleOrderUser(int index) async {
+    String order_id = orderModels[index].orderId!;
+    String url =
+        '${MyConstant().domain}/WaterShop/cancleOrderWhereorderId.php?isAdd=true&status=Cancle&orderId=$order_id';
+
+    await Dio().get(url).then((value) {
+      readOrderFormIdUser();
+      normalDialog2(
+          context, 'ยกเลิกรายการสั่งซื้อสำเร็จ', 'รายการสั่งซื้อที่ $order_id');
+    });
+  }
+
   Widget buildStepIndicator(int index) => Column(
         children: [
-          StepsIndicator(lineLength: 80,
+          StepsIndicator(
+            lineLength: 80,
             selectedStep: index,
             nbSteps: 4,
           ),
@@ -85,15 +198,19 @@ class _ShowStatusWaterOrderState extends State<ShowStatusWaterOrder> {
             flex: 5,
             child: Row(
               children: [
-                MyStyle().showTitleH44color('รวมราคารายการน้ำดื่ม  '),
+                MyStyle().showTitleH44color('รวมทั้งสิ้น :'),
               ],
             ),
           ),
-          Expanded(
-            flex: 1,
+         Expanded(
+            flex: 2,
             child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                MyStyle().showTitleHDack(totalInts[index].toString()),
+                orderModels[index].status == 'Cancle'
+                    ? MyStyle().showTitleH3('ยกเลิก')
+                    : MyStyle()
+                        .showTitle('${totalInts[index].toString()} THB'),
               ],
             ),
           ),
@@ -215,6 +332,14 @@ class _ShowStatusWaterOrderState extends State<ShowStatusWaterOrder> {
   }
 
   Future<Null> readOrderFormIdUser() async {
+    
+if (orderModels.length != 0) {
+      orderModels.clear();
+    }
+
+
+
+
     if (user_id != null) {
       String url =
           '${MyConstant().domain}/WaterShop/getOrderWhereIdUser.php?isAdd=true&user_id=$user_id';
@@ -255,7 +380,7 @@ class _ShowStatusWaterOrderState extends State<ShowStatusWaterOrder> {
           }
 
           setState(() {
-            statusorder = false;
+            statusAvatar = false;
             orderModels.add(model);
             listMenuWaters.add(menuWaters);
             listPrices.add(prices);
@@ -263,6 +388,7 @@ class _ShowStatusWaterOrderState extends State<ShowStatusWaterOrder> {
             listSums.add(sums);
             totalInts.add(total);
             statusInts.add(status);
+            // updateorderId();
           });
         }
       }
@@ -281,4 +407,17 @@ class _ShowStatusWaterOrderState extends State<ShowStatusWaterOrder> {
     }
     return list;
   }
+   Future<Null> updateorderId() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    String? user_id = preferences.getString(MyConstant().keyId);
+    String order_id = orderModels[0].orderId!;
+    if (user_id != null && user_id.isNotEmpty) {
+      String url =
+          '${MyConstant().domain}/gas/updateorderIdfrompayment.php?isAdd=true&order_id=$order_id&user_id=$user_id';
+      await Dio().get(url).then(
+            (value) => print('order_id update success'),
+          );
+    }
+  }
+
 }

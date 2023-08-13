@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:application_drinking_water_shop/screen/profilepage.dart';
 import 'package:application_drinking_water_shop/screen/show_shop_cart.dart';
 import 'package:application_drinking_water_shop/utility/my_style.dart';
@@ -5,10 +7,12 @@ import 'package:application_drinking_water_shop/utility/singout_process.dart';
 
 import 'package:application_drinking_water_shop/widget/show_list_shop.dart';
 import 'package:application_drinking_water_shop/widget/show_status_water_order.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../utility/normal_dialog.dart';
 import '../widget/tab_bar_material.dart';
 
 class MainUser extends StatefulWidget {
@@ -28,14 +32,45 @@ class _MainUserState extends State<MainUser> {
     ShowStatusWaterOrder(),
     AccountPage(),
     AccountPage(),
-
   ];
 
   @override
   void initState() {
     super.initState();
-    currentWidget = ShowListShop();
+    aboutNotification();
     findUser();
+    currentWidget = ShowListShop();
+  }
+
+  Future<Null> aboutNotification() async {
+    if (Platform.isAndroid) {
+      FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
+        // ignore: unused_local_variable
+        RemoteNotification? notification = message.notification;
+        print('A new onMessageApp App ${message.toString()}');
+        // String title = message[''][''];
+        String? titlenotiMessage = message.notification?.title;
+        String? bodynotiMessage = message.notification?.body;
+        normalDialog2(context, titlenotiMessage!, bodynotiMessage!);
+      });
+
+      FirebaseMessaging.onMessageOpenedApp
+          .listen((RemoteMessage message) async {
+        String? titlenotiMessage1 = message.notification?.title;
+        String? bodynotiMessage1 = await message.notification?.body;
+        normalDialog2(context, titlenotiMessage1!, bodynotiMessage1!);
+        // normalDialog2(context, title, notiMessage);
+        print(
+            'A new onMessageOpenedApp event was published! Home ${message.toString()}');
+        Navigator.pushNamed(
+          context,
+          '/message',
+          arguments: message,
+        );
+      });
+    } else if (Platform.isIOS) {
+      print('aboutNoti work IOS');
+    }
   }
 
   Future<Null> findUser() async {
@@ -73,7 +108,8 @@ class _MainUserState extends State<MainUser> {
             index: index,
             onChangedTab: onChangedTab,
           ),
-        ),shoppingCartbutton(),
+        ),
+        shoppingCartbutton(),
       ],
     );
   }
@@ -94,7 +130,10 @@ class _MainUserState extends State<MainUser> {
             Container(
               margin: EdgeInsets.only(right: 20.0, bottom: 58.0),
               child: FloatingActionButton(
-                child: Icon(Icons.shopping_cart,size: 28.0,),
+                child: Icon(
+                  Icons.shopping_cart,
+                  size: 28.0,
+                ),
                 onPressed: () {
                   MaterialPageRoute route = MaterialPageRoute(
                     builder: (context) => ShowCart(),

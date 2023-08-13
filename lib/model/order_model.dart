@@ -13,6 +13,7 @@ class OrderModel {
   String? amount;
   String? sum;
   String? riderId;
+  String? pamentStatus;
   String? status;
 
   OrderModel(
@@ -30,6 +31,7 @@ class OrderModel {
       this.amount,
       this.sum,
       this.riderId,
+      this.pamentStatus,
       this.status});
 
   OrderModel.fromJson(Map<String, dynamic> json) {
@@ -47,6 +49,7 @@ class OrderModel {
     amount = json['amount'];
     sum = json['sum'];
     riderId = json['riderId'];
+    pamentStatus = json['payment_status'];
     status = json['status'];
   }
 
@@ -66,6 +69,7 @@ class OrderModel {
     data['amount'] = this.amount;
     data['sum'] = this.sum;
     data['riderId'] = this.riderId;
+    data['payment_status'] = this.pamentStatus;
     data['status'] = this.status;
     return data;
   }

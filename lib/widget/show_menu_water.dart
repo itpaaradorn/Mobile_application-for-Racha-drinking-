@@ -299,7 +299,7 @@ class _ShowMenuWaterState extends State<ShowMenuWater> {
     CartModel? cartModel = CartModel.fromJson(map);
 
     var object = await SQLiteHelper().readAllDataFormSQLite();
-    print('object leht == ${object.length}');
+    // print('object leht == ${object.length}');
 
      if (object.length == 0) {
       await SQLiteHelper().insertDataToSQLite(cartModel).then((value)  {
@@ -308,8 +308,8 @@ class _ShowMenuWaterState extends State<ShowMenuWater> {
       });
     } else {
       String id_brandSQLite = object[0].brandId!;
-      print('brandSQLite ==>> $id_brandSQLite');
-      if (brand_id == id_brandSQLite) {
+      // print('brandSQLite ==>> $id_brandSQLite');
+      if (brand_id != id_brandSQLite.isNotEmpty) {
         await SQLiteHelper().insertDataToSQLite(cartModel).then((value)  {
           print('insert Sucess');
           Toast.show("เพิ่มใส่ตะกร้าเรียบร้อยแล้ว", duration: Toast.lengthLong, gravity:  Toast.bottom);
@@ -317,7 +317,7 @@ class _ShowMenuWaterState extends State<ShowMenuWater> {
 
         });
       } else {
-        normalDialog(context, 'มีการทำรายการสั่งซื้อน้ำดื่มยี่ห้อ ${object[0].brandName} อยู่กรุณาทำรายการก่อนหน้าเสร็จก่อน');
+        normalDialog(context, 'รายการสั่งซื้อผิดพลาด !');
       }
   }
 }

@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:application_drinking_water_shop/model/cart_model.dart';
+import 'package:application_drinking_water_shop/screen/payment.dart';
 import 'package:application_drinking_water_shop/utility/my_constant.dart';
 import 'package:application_drinking_water_shop/utility/my_style.dart';
 import 'package:application_drinking_water_shop/utility/normal_dialog.dart';
@@ -8,6 +11,8 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toast/toast.dart';
+
+import '../model/user_model.dart';
 
 class ShowCart extends StatefulWidget {
   const ShowCart({super.key});
@@ -69,15 +74,22 @@ class _ShowCartState extends State<ShowCart> {
       padding: const EdgeInsets.all(8.0),
       child: SingleChildScrollView(
         child: Column(
-          children: [
-            buildNameShop(),
+          children: <Widget>[
+            buildmaintitleshop(),
+            Divider(
+              color: Colors.black26,
+              height: 30,
+              thickness: 5,
+            ),
+            buildclearshop(),
             buildHeadTitle(),
             buildListWater(),
-            Divider(),
+            Divider(
+              height: 50,
+              thickness: 10,
+            ),
             buildTotal(),
-            Divider(),
-            // buildClaerCartButton(),
-            // buildOrderButton(), 
+            MyStyle().mySixedBox(),
             buildPaymentButton(),
             buildAddOrderButton(),
           ],
@@ -86,17 +98,18 @@ class _ShowCartState extends State<ShowCart> {
     );
   }
 
-  Widget buildClaerCartButton() {
+  Row buildclearshop() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        ElevatedButton.icon(
-          onPressed: () {
-            confirmDeleteData();
-          },
-          icon: Icon(Icons.clear_all),
-          label: Text('ลบรายการทั้งหมด'),
-        ),
+        TextButton(
+            onPressed: () {
+              confirmDeleteData();
+            },
+            child: Text(
+              'ลบรายการทั้งหมด',
+              style: MyStyle().mainH2Title,
+            )),
       ],
     );
   }
@@ -118,6 +131,7 @@ class _ShowCartState extends State<ShowCart> {
       ],
     );
   }
+
   Widget buildPaymentButton() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
@@ -126,13 +140,15 @@ class _ShowCartState extends State<ShowCart> {
           margin: EdgeInsets.only(bottom: 10, right: 10),
           width: 160,
           child: ElevatedButton.icon(
-           
             onPressed: () {
-              // MaterialPageRoute route = MaterialPageRoute(
-              //   builder: (context) => null,
-              // );
-              // Navigator.pushNamed(context, AppRoute.confirmpayment).then((value) => readSQLite());
+              MaterialPageRoute route = MaterialPageRoute(
+                builder: (context) => Bank(),
+              );
+              Navigator.push(context, route);
             },
+            style: const ButtonStyle(
+              backgroundColor: MaterialStatePropertyAll<Color>(Colors.green),
+            ),
             label: Text(
               'ชำระเงินล่วงหน้า',
               style: TextStyle(color: Colors.white),
@@ -190,26 +206,23 @@ class _ShowCartState extends State<ShowCart> {
         ],
       );
 
-  Widget buildNameShop() {
+  Widget buildmaintitleshop() {
     return Container(
       margin: EdgeInsets.only(top: 1, bottom: 10),
       child: Column(
         children: [
           Row(
             children: [
-              MyStyle().showTitleHC('รายการในตะกร้า'),
+              MyStyle().showTitle('รายการในตะกร้า'),
             ],
           ),
           Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               MyStyle()
                   .showTitleH44('ระยะทาง : ${cartModels[0].distance} กิโลเมตร'),
-            ],
-          ),
-          Row(
-            children: [
               MyStyle()
-                  .showTitleH44('ค่าจัดส่ง : ${cartModels[0].transport} บาท'),
+                  .showTitleH3('ค่าจัดส่ง : ${cartModels[0].transport} บาท'),
             ],
           ),
         ],
@@ -219,12 +232,17 @@ class _ShowCartState extends State<ShowCart> {
 
   Widget buildHeadTitle() {
     return Container(
-      decoration: BoxDecoration(color: Colors.grey.shade300),
+      margin: EdgeInsets.only(top: 10, bottom: 10),
+      padding: EdgeInsets.symmetric(horizontal: 20),
       child: Row(
-        children: [
+        children: <Widget>[
           Expanded(
-            flex: 3,
-            child: MyStyle().showTitleH2('รายการน้ำดื่ม'),
+            flex: 1,
+            child: MyStyle().showTitleH2('จำนวน'),
+          ),
+          Expanded(
+            flex: 1,
+            child: MyStyle().showTitleH2('ยี่ห้อ'),
           ),
           Expanded(
             flex: 1,
@@ -232,20 +250,8 @@ class _ShowCartState extends State<ShowCart> {
           ),
           Expanded(
             flex: 1,
-            child: MyStyle().showTitleH2('ราคา'),
+            child: MyStyle().showTitleH2('ผลรวม'),
           ),
-          Expanded(
-            flex: 1,
-            child: MyStyle().showTitleH2('จำนวน'),
-          ),
-          Expanded(
-            flex: 1,
-            child: MyStyle().showTitleH2(' รวม'),
-          ),
-          Expanded(
-            flex: 1,
-            child: MyStyle().mySixedBox(),
-          )
         ],
       ),
     );
@@ -255,46 +261,66 @@ class _ShowCartState extends State<ShowCart> {
         shrinkWrap: true,
         physics: ScrollPhysics(),
         itemCount: cartModels.length,
-        itemBuilder: (context, index) => Container(
-          margin: EdgeInsets.all(2),
-          child: Row(
-            children: [
-              Expanded(
-                flex: 3,
-                child: Text(cartModels[index].brandName!),
-              ),
-              Expanded(
-                flex: 1,
-                child: Text(cartModels[index].size!),
-              ),
-              Expanded(
-                flex: 1,
-                child: Text(cartModels[index].price!),
-              ),
-              Expanded(
-                flex: 1,
-                child: Text(cartModels[index].amount!),
-              ),
-              Expanded(
-                flex: 1,
-                child: Text(cartModels[index].sum!),
-              ),
-              Expanded(
-                flex: 1,
-                child: IconButton(
+        itemBuilder: (context, index) {
+          return Container(
+            width: double.infinity,
+            margin: EdgeInsets.only(top: 10, bottom: 20),
+            padding: EdgeInsets.symmetric(horizontal: 30),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(5.0),
+            ),
+            child: Row(
+              children: <Widget>[
+                Expanded(
+                  flex: 2,
+                  child: Text(
+                    '${cartModels[index].amount}x',
+                    style: MyStyle().mainhATitle,
+                  ),
+                ),
+                Expanded(
+                  flex: 2,
+                  child: Text(
+                    cartModels[index].brandName!,
+                    style: MyStyle().mainh23Title,
+                  ),
+                ),
+                Expanded(
+                  flex: 2,
+                  child: Text(
+                    '${cartModels[index].size}ฺ ml.',
+                    style: MyStyle().mainh23Title,
+                  ),
+                ),
+                Expanded(
+                  flex: 1,
+                  child: Text(
+                    ' ${cartModels[index].sum}ฺ THB',
+                    style: MyStyle().mainh23Title,
+                  ),
+                ),
+                Expanded(
+                  flex: 1,
+                  child: IconButton(
+                    color: Colors.red,
+                    icon: Icon(Icons.delete_forever),
                     onPressed: () async {
                       int id = cartModels[index].id!;
-                      print('You Click Delete id == $id');
-                      await SQLiteHelper().deleteDataWhereId(id).then((value) {
-                        print('Success Delete id == $id');
-                        readSQLite();
-                      });
+                      print('You Click delete id = $id');
+                      await SQLiteHelper().deleteDataWhereId(id).then(
+                        (value) {
+                          print('delete Success id =$id');
+                          readSQLite();
+                        },
+                      );
                     },
-                    icon: Icon(Icons.delete_forever)),
-              ),
-            ],
-          ),
-        ),
+                  ),
+                )
+              ],
+            ),
+          );
+        },
       );
 
   Future<Null> confirmDeleteData() async {
@@ -303,7 +329,6 @@ class _ShowCartState extends State<ShowCart> {
       builder: (context) => SimpleDialog(
         title: Text(
           'คุณต้องการจะลบรายการน้ำดื่มทั้งหมดใช่ไหม ?',
-          style: MyStyle().mainh2Title,
         ),
         children: [
           Row(
@@ -382,11 +407,12 @@ class _ShowCartState extends State<ShowCart> {
         'water_id == $water_id, water_brand_id == $water_brand_id, size == $size, water_brand_name == $water_brand_name, price == $price, amount == $amount, sum == $sum ');
 
     String? url =
-        '${MyConstant().domain}/WaterShop/addOrder.php?isAdd=true&orderDateTime=$orderDateTime&user_id=$user_id&user_name=$user_name&water_id=$water_id&water_brand_id=$water_brand_id&size=$size&distance=$distance&transport=$transport&water_brand_name=$water_brand_name&price=$price&amount=$amount&sum=$sum&riderId=none&status=userOrder';
+        '${MyConstant().domain}/WaterShop/addOrder.php?isAdd=true&orderDateTime=$orderDateTime&user_id=$user_id&user_name=$user_name&water_id=$water_id&water_brand_id=$water_brand_id&size=$size&distance=$distance&transport=$transport&water_brand_name=$water_brand_name&price=$price&amount=$amount&sum=$sum&riderId=none&payment_status=payondelivery&status=userorder';
 
     await Dio().get(url).then((value) {
       if (value.toString() == 'true') {
         claerAllSQLite();
+        notificationTosShop(user_name!);
       } else {
         normalDialog(context, 'ไม่สามารถ สั่งซื้อได้ กรุณาลองใหม่');
       }
@@ -400,5 +426,33 @@ class _ShowCartState extends State<ShowCart> {
     await SQLiteHelper().deleteAllData().then((value) {
       readSQLite();
     });
+  }
+
+  Future<Null> notificationTosShop(String user_name) async {
+    String? urlFindToken =
+        '${MyConstant().domain}/WaterShop/getUserWhereId.php?isAdd=true&id=46';
+
+    await Dio().get(urlFindToken).then((value) {
+      var result = json.decode(value.data);
+      print('result ==>> $result');
+      for (var json in result) {
+        UserModel model = UserModel.fromJson(json);
+        String tokenShop = model.token!;
+        print('tokenShop ==>> $tokenShop');
+        String title = 'มีการสั่งซื้อจากuser$user_name';
+        String body = 'กรุณากดยืนยันเพื่อแจ้งลูกค้า';
+
+        String urlSendToken =
+            '${MyConstant().domain}/WaterShop/apiNotification.php?isAdd=true&token=$tokenShop&title=$title&body=$body';
+        sendNotificationToShop(urlSendToken);
+      }
+    });
+  }
+
+  Future<Null> sendNotificationToShop(String urlSendToken) async {
+    await Dio().get(urlSendToken).then(
+          (value) => normalDialog2(
+              context, 'การสั่งซื้อส่งไปที่ร้านแล้ว', 'กรุณารอรับการจัดส่ง'),
+        );
   }
 }
