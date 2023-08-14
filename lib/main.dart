@@ -1,4 +1,5 @@
 import 'package:application_drinking_water_shop/screen/home.dart';
+import 'package:application_drinking_water_shop/screen/splash_screen.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -46,7 +47,14 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Drinking waterX Shop',
-      home: Home(),
+      initialRoute: '/',
+      routes: {
+        // When navigating to the "/" route, build the FirstScreen widget.
+        '/': (context) => SplashScreen(),
+        // When navigating to the "/second" route, build the SecondScreen widget.
+        // '/home': (context) => Hometab(),
+        'home_tab': (context) => HomePage(),
+      },
     );
   }
 }

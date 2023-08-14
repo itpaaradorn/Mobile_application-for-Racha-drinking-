@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:application_drinking_water_shop/model/cart_model.dart';
+import 'package:application_drinking_water_shop/model/water_model.dart';
 import 'package:application_drinking_water_shop/screen/payment.dart';
 import 'package:application_drinking_water_shop/utility/my_constant.dart';
 import 'package:application_drinking_water_shop/utility/my_style.dart';
@@ -23,6 +24,9 @@ class ShowCart extends StatefulWidget {
 
 class _ShowCartState extends State<ShowCart> {
   List<CartModel> cartModels = [];
+
+  WaterModel? waterModel;
+  String? water_id ,amount, quantity;
   int total = 0;
   bool ststus = true;
 
@@ -407,19 +411,27 @@ class _ShowCartState extends State<ShowCart> {
         'water_id == $water_id, water_brand_id == $water_brand_id, size == $size, water_brand_name == $water_brand_name, price == $price, amount == $amount, sum == $sum ');
 
     String? url =
-        '${MyConstant().domain}/WaterShop/addOrder.php?isAdd=true&orderDateTime=$orderDateTime&user_id=$user_id&user_name=$user_name&water_id=$water_id&water_brand_id=$water_brand_id&size=$size&distance=$distance&transport=$transport&water_brand_name=$water_brand_name&price=$price&amount=$amount&sum=$sum&riderId=none&payment_status=payondelivery&status=userorder';
+        '${MyConstant().domain}/WaterShop/addOrder.php?isAdd=true&orderDateTime=$orderDateTime&user_id=$user_id&user_name=$user_name&water_id=$water_id&water_brand_id=$water_brand_id&size=$size&distance=$distance&transport=$transport&water_brand_name=$water_brand_name&price=$price&amount=$amount&sum=$sum&riderId=none&pamentStatus=payondelivery&status=userorder';
 
     await Dio().get(url).then((value) {
       if (value.toString() == 'true') {
-        claerAllSQLite();
-        notificationTosShop(user_name!);
+        clearOrderSQLite();
+        notificationToShop(user_name!);
       } else {
         normalDialog(context, 'ไม่สามารถ สั่งซื้อได้ กรุณาลองใหม่');
       }
     });
   }
 
-  Future<Null> claerAllSQLite() async {
+
+
+
+
+
+
+
+
+  Future<Null> clearOrderSQLite() async {
     Toast.show("ทำรายการสั่งซื้อ เสร็จสิ้น",
         duration: Toast.lengthLong, gravity: Toast.bottom);
 
@@ -428,18 +440,18 @@ class _ShowCartState extends State<ShowCart> {
     });
   }
 
-  Future<Null> notificationTosShop(String user_name) async {
+  Future<Null> notificationToShop(String user_name) async {
     String? urlFindToken =
         '${MyConstant().domain}/WaterShop/getUserWhereId.php?isAdd=true&id=46';
 
     await Dio().get(urlFindToken).then((value) {
       var result = json.decode(value.data);
-      print('result ==>> $result');
+      // print('result ==>> $result');
       for (var json in result) {
         UserModel model = UserModel.fromJson(json);
         String tokenShop = model.token!;
-        print('tokenShop ==>> $tokenShop');
-        String title = 'มีการสั่งซื้อจากuser$user_name';
+        // print('tokenShop ==>> $tokenShop');
+        String title = 'มีการสั่งซื้อจาก user $user_name';
         String body = 'กรุณากดยืนยันเพื่อแจ้งลูกค้า';
 
         String urlSendToken =

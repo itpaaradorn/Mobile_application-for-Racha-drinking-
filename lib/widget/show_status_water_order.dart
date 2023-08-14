@@ -58,7 +58,7 @@ class _ShowStatusWaterOrderState extends State<ShowStatusWaterOrder> {
                           'เนื่องจากร้านได้ยืนยันการสั่งซื้อของคุณแล้ว กรุณาติดต่อทางร้านค่ะ!');
                     } else if (orderModels[index].status == 'RiderHandle') {
                       normalDialog2(context, 'ไม่สามารถยกเลิกการสั่งซื้อ',
-                          'เนื่องจากกำลังจัดสั่งรายแก๊สให้คุณ กรุณาติดต่อทางร้านค่ะ!');
+                          'เนื่องจากกำลังจัดสั่งรายน้ำดื่มให้คุณ กรุณาติดต่อทางร้านค่ะ!');
                     } else if (orderModels[index].status == 'Finish') {
                       normalDialog2(context, 'รายการสั่งซื้อของท่านสำเร็จแล้ว!',
                           'กรุณาติดต่อทางร้านค่ะ');
@@ -68,9 +68,7 @@ class _ShowStatusWaterOrderState extends State<ShowStatusWaterOrder> {
                   },
                   child: Text(
                     'ยกเลิกการสั่งซื้อ',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                 ),
                 TextButton(
@@ -104,7 +102,7 @@ class _ShowStatusWaterOrderState extends State<ShowStatusWaterOrder> {
             ),
             buildStepIndicator(statusInts[index]),
             MyStyle().mySixedBox(),
-            
+
             buildDatatimeOrder(index),
             buildDistance(index),
             buildTransport(index),
@@ -112,7 +110,9 @@ class _ShowStatusWaterOrderState extends State<ShowStatusWaterOrder> {
             buildLisviewMenuWater(index),
             MyStyle().mySixedBox(),
             buildTotal(index),
-            SizedBox(height: 30,)
+            SizedBox(
+              height: 30,
+            )
             // buildBrandWater(index),
           ],
         ),
@@ -128,7 +128,7 @@ class _ShowStatusWaterOrderState extends State<ShowStatusWaterOrder> {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
               ElevatedButton.icon(
-                onPressed: () async {
+                onPressed: () {
                   cancleOrderUser(index);
                   Navigator.pop(context);
                 },
@@ -202,15 +202,14 @@ class _ShowStatusWaterOrderState extends State<ShowStatusWaterOrder> {
               ],
             ),
           ),
-         Expanded(
+          Expanded(
             flex: 2,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 orderModels[index].status == 'Cancle'
                     ? MyStyle().showTitleH3('ยกเลิก')
-                    : MyStyle()
-                        .showTitle('${totalInts[index].toString()} THB'),
+                    : MyStyle().showTitle('${totalInts[index].toString()} THB'),
               ],
             ),
           ),
@@ -332,13 +331,9 @@ class _ShowStatusWaterOrderState extends State<ShowStatusWaterOrder> {
   }
 
   Future<Null> readOrderFormIdUser() async {
-    
-if (orderModels.length != 0) {
+    if (orderModels.length != 0) {
       orderModels.clear();
     }
-
-
-
 
     if (user_id != null) {
       String url =
@@ -395,6 +390,12 @@ if (orderModels.length != 0) {
     }
   }
 
+  Future refresh() async {
+    setState(() {
+      readOrderFormIdUser();
+    });
+  }
+
   List<String> changeAreey(String string) {
     List<String> list = [];
     String myString = string.substring(1, string.length - 1);
@@ -407,7 +408,8 @@ if (orderModels.length != 0) {
     }
     return list;
   }
-   Future<Null> updateorderId() async {
+
+  Future<Null> updateorderId() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     String? user_id = preferences.getString(MyConstant().keyId);
     String order_id = orderModels[0].orderId!;
@@ -419,5 +421,4 @@ if (orderModels.length != 0) {
           );
     }
   }
-
 }

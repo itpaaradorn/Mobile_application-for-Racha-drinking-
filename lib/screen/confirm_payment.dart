@@ -106,7 +106,7 @@ class _ConfirmPaymentState extends State<ConfirmPayment> {
       child: ElevatedButton(
         onPressed: () {
           if (file == null) {
-            normalDialog(context, 'กรุณาแนบใบเสร็จชำระเงินก่อนสั่งซื้อค่ะ');
+            normalDialog(context, 'กรุณาแนบใบเสร็จชำระเงินก่อนสั่งซื้อ');
           } else {
             MaterialPageRoute route = MaterialPageRoute(
               builder: (context) => ShowCart(),

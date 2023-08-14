@@ -13,44 +13,44 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class Home extends StatefulWidget {
+class HomePage extends StatefulWidget {
   @override
-  State<Home> createState() => _HomeState();
+  State<HomePage> createState() => _HomePageState();
 }
 
-class _HomeState extends State<Home> {
+class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
     checkPreferance();
-    // getToken();'
-    aboutNotification();
+    getToken();
+    // aboutNotification();
   }
 
-  // Future<void> getToken() async {
-  //   String? token = await FirebaseMessaging.instance.getToken();
-  //   print('token ====>>> $token');
-  // }
+  Future<void> getToken() async {
+    FirebaseMessaging messaging = FirebaseMessaging.instance;
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    String? idLogin = preferences.getString(MyConstant().keyId);
+// use the returned token to send messages to users from your custom server
+    String? token = await messaging.getToken(
+      vapidKey: "BGpdLRs......",
+    );
+    print('token ==> $token');
+    print('idLogin ==> $idLogin');
+    if (idLogin != null && idLogin.isNotEmpty) {
+      String url =
+          '${MyConstant().domain}/WaterShop/editTokenWhereId.php?isAdd=true&id=$idLogin&Token=$token';
+      await Dio().get(url).then(
+            (value) => print('##### token update success #####'),
+          );
+    }
+  }
 
   Future<Null> checkPreferance() async {
     try {
-      // ignore: unused_local_variable
-      FirebaseMessaging messaging = FirebaseMessaging.instance;
-      String? token = await FirebaseMessaging.instance.getToken();
-      print('token ====>>> $token');
 
       SharedPreferences preferences = await SharedPreferences.getInstance();
-      String? chooseType = preferences.getString('chooseType');
-      String? idlogin = preferences.getString('id');
-      print('idlogin == $idlogin');
-
-      if (idlogin != null && idlogin.isNotEmpty) {
-        String? url =
-            '${MyConstant().domain}/WaterShop/editTokenWhereId.php?isAdd=true&id=$idlogin&Token=$token';
-        await Dio()
-            .get(url)
-            .then((value) => print('####### Update Token Success ######'));
-      }
+      String? chooseType = preferences.getString(MyConstant().keyType);
 
       if (chooseType != null && chooseType.isNotEmpty) {
         if (chooseType == 'Customer') {

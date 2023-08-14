@@ -87,7 +87,7 @@ class _OrderListShopState extends State<OrderListShop> {
   }
 
   Widget showContent() {
-    return status ? showListOrderGas() : buildNoneOrder();
+    return status ? showListOrderWater() : buildNoneOrder();
   }
 
   Center buildNoneOrder() {
@@ -116,10 +116,11 @@ class _OrderListShopState extends State<OrderListShop> {
     });
   }
 
-  Widget showListOrderGas() {
+  Widget showListOrderWater() {
     return RefreshIndicator(
       onRefresh: refresh,
       child: ListView.builder(
+        shrinkWrap: true,
         itemCount: ordermodels.length,
         itemBuilder: (context, index) => Card(
           color: index % 2 == 0 ? Colors.grey.shade100 : Colors.grey.shade100,
@@ -133,7 +134,8 @@ class _OrderListShopState extends State<OrderListShop> {
                     .showTitleH3('คำสั่งซื้อ : ${ordermodels[index].orderId}'),
                 MyStyle().showTitleH3(
                     'เวลาสั่งซื้อ : ${ordermodels[index].orderDateTime}'),
-                MyStyle().showTitleH3('เวลาสั่งซื้อ : '),
+                MyStyle().showTitleH3(
+                    'สถานะการชำระเงิน : ${ordermodels[index].pamentStatus}'),
                 MyStyle().showTitleH3('สถานะการจัดส่ง : รอยืนยัน'),
                 MyStyle().mySixedBox(),
                 buildTitle(),
@@ -210,31 +212,9 @@ class _OrderListShopState extends State<OrderListShop> {
                     ElevatedButton.icon(
                       style: const ButtonStyle(
                         backgroundColor:
-                            MaterialStatePropertyAll<Color>(Colors.blue),
-                      ),
-                     onPressed: () async {
-                        updateStatusConfirmOrder(index).then((value) {
-                          normalDialog(
-                              context, 'ส่งรายการน้ำดื่มไปยังพนักงานแล้วครับ');
-                          Navigator.pop(context);
-                          findOrderShop();
-                        });
-                      },
-                      icon: Icon(
-                        Icons.check_circle,
-                        color: Color.fromARGB(255, 255, 255, 255),
-                      ),
-                      label: Text(
-                        'Confirm',
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ),
-                    ElevatedButton.icon(
-                      style: const ButtonStyle(
-                        backgroundColor:
                             MaterialStatePropertyAll<Color>(Colors.red),
                       ),
-                      onPressed: () async {
+                      onPressed: () {
                         confirmDeleteCancleOrder(index);
                       },
                       icon: Icon(
@@ -242,7 +222,31 @@ class _OrderListShopState extends State<OrderListShop> {
                         color: Colors.white,
                       ),
                       label: Text(
-                        'Cancel',
+                        'Cancle Order',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                    ElevatedButton.icon(
+                      style: const ButtonStyle(
+                        backgroundColor:
+                            MaterialStatePropertyAll<Color>(Colors.blue),
+                      ),
+                      onPressed: () {
+                        updateStatusConfirmOrder(index).then((value) {
+                          normalDialog(
+                              context, 'ส่งรายการน้ำดื่มไปยังพนักงานแล้วครับ');
+                          Navigator.pop(context);
+                          setState(() {
+                            findOrderShop();
+                          });
+                        });
+                      },
+                      icon: Icon(
+                        Icons.check_circle,
+                        color: Color.fromARGB(255, 255, 255, 255),
+                      ),
+                      label: Text(
+                        'Confirm Order',
                         style: TextStyle(color: Colors.white),
                       ),
                     ),
@@ -256,18 +260,6 @@ class _OrderListShopState extends State<OrderListShop> {
     );
   }
 
-  Future<Null> cancleOrderUser(int index) async {
-    String? order_id = ordermodels[index].orderId;
-    String url =
-        '${MyConstant().domain}/WaterShop/cancleOrderWhereorderId.php?isAdd=true&status=Cancle&orderId=$order_id';
-
-    await Dio().get(url).then((value) {
-      notificationCancleShop(index);
-      findOrderShop();
-      normalDialog2(
-          context, 'ยกเลิกรายการสั่งซื้อสำเร็จ', 'รายการสั่งซื้อที่ $order_id');
-    });
-  }
 
   Future<Null> confirmDeleteCancleOrder(int index) async {
     showDialog(
@@ -281,27 +273,23 @@ class _OrderListShopState extends State<OrderListShop> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
-              ElevatedButton(
-                child: Text(' ตกลง '),
-                onPressed: () async {
-                  updateStatusConfirmOrder(index).then((value) {
-                    normalDialog(context, 'ส่งรายการแก๊สไปยังพนักงานแล้วค่ะ');
-                    Navigator.pop(context);
-                    findOrderShop();
-                  });
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue,
+              TextButton(
+                child: Text(
+                  ' ตกลง ',
+                  style: MyStyle().mainDackTitle,
                 ),
+                onPressed: () async {
+                  cancleOrderUser(index);
+                },
               ),
-              ElevatedButton(
-                child: Text(' ยกเลิก '),
-                onPressed: () {
+              TextButton(
+                child: Text(
+                  ' ยกเลิก ',
+                  style: MyStyle().mainDackTitle,
+                ),
+                onPressed: () async {
                   Navigator.pop(context);
                 },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red,
-                ),
               ),
             ],
           ),
@@ -348,12 +336,12 @@ class _OrderListShopState extends State<OrderListShop> {
     );
   }
 
+
+
   Future<Null> updateStatusConfirmOrder(int index) async {
-    String user_id = ordermodels[index].userId!;
+    String order_id = ordermodels[index].orderId!;
     String path =
-        '${MyConstant().domain}/WaterShop/editStatusWhereuser_id.php?isAdd=true&status=shopprocess&orderId=$user_id';
-
-
+        '${MyConstant().domain}/WaterShop/editStatusWhereuser_id.php?isAdd=true&status=shopprocess&orderId=$order_id';
 
     await Dio().get(path).then(
       (value) {
@@ -363,6 +351,19 @@ class _OrderListShopState extends State<OrderListShop> {
         }
       },
     );
+  }
+
+  Future<Null> cancleOrderUser(int index) async {
+    String? order_id = ordermodels[index].orderId;
+    String url =
+        '${MyConstant().domain}/WaterShop/cancleOrderWhereorderId.php?isAdd=true&status=Cancle&orderId=$order_id';
+
+    await Dio().get(url).then((value) {
+      notificationCancleShop(index);
+      findOrderShop();
+      normalDialog2(
+          context, 'ยกเลิกรายการสั่งซื้อสำเร็จ', 'รายการสั่งซื้อที่ $order_id');
+    });
   }
 
 
@@ -392,7 +393,7 @@ class _OrderListShopState extends State<OrderListShop> {
     });
   }
 
-    Future<Null> notificationtoShop(int index) async {
+  Future<Null> notificationtoShop(int index) async {
     String id = ordermodels[index].userId!;
     String urlFindToken =
         '${MyConstant().domain}WaterShop/getUserWhereId.php?isAdd=true&id=$id';
