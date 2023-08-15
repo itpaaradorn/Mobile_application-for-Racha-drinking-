@@ -160,6 +160,14 @@ class MyStyle {
           fontWeight: FontWeight.bold,
         ),
       );
+  Text showTitleH33(String title) => Text(
+        title,
+        style: TextStyle(
+          fontSize: 16.0,
+          color: const Color.fromARGB(255, 19, 19, 19),
+          fontWeight: FontWeight.bold,
+        ),
+      );
   Text showTitleHDack(String title) => Text(
         title,
         style: TextStyle(
@@ -215,6 +223,14 @@ class MyStyle {
     fontWeight: FontWeight.bold,
     color: Colors.black,
   );
+
+
+  Container showLogoEmp() {
+    return Container(
+      width: 250.0,
+      child: Image.asset('images/rider.PNG.png'),
+    );
+  }
 
   BoxDecoration myBoxDecoration(String namePic) {
     return BoxDecoration(

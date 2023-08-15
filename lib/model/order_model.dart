@@ -49,11 +49,9 @@ class OrderModel {
     amount = json['amount'];
     sum = json['sum'];
     riderId = json['riderId'];
-    pamentStatus = json['payment_status'];
+    pamentStatus = json['pamentStatus'];
     status = json['status'];
   }
-
-
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
@@ -71,7 +69,7 @@ class OrderModel {
     data['amount'] = this.amount;
     data['sum'] = this.sum;
     data['riderId'] = this.riderId;
-    data['payment_status'] = this.pamentStatus;
+    data['pamentStatus'] = this.pamentStatus;
     data['status'] = this.status;
     return data;
   }

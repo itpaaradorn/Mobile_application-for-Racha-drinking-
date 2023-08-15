@@ -1,8 +1,9 @@
 import 'dart:io';
 
-import 'package:application_drinking_water_shop/screen/main_emp.dart';
+import 'package:application_drinking_water_shop/screen/employee/main_emp.dart';
 import 'package:application_drinking_water_shop/screen/main_shop.dart';
 import 'package:application_drinking_water_shop/screen/main_user.dart';
+import 'package:application_drinking_water_shop/screen/profilepage.dart';
 import 'package:application_drinking_water_shop/screen/signIn.dart';
 import 'package:application_drinking_water_shop/screen/signUp.dart';
 import 'package:application_drinking_water_shop/utility/my_constant.dart';
@@ -13,12 +14,28 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class HomePage extends StatefulWidget {
+import '../widget/show_status_water_order.dart';
+
+class Home extends StatefulWidget {
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<Home> createState() => _HomeState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomeState extends State<Home> {
+int index = 0;
+  Widget? currentWidget;
+
+  String? currentPage;
+  Widget? tabbarWidget;
+  bool exitPage = false;
+  final pages = <Widget>[
+    
+    ShowStatusWaterOrder(),
+    AccountPage(),
+  ];
+
+
+
   @override
   void initState() {
     super.initState();
@@ -48,7 +65,6 @@ class _HomePageState extends State<HomePage> {
 
   Future<Null> checkPreferance() async {
     try {
-
       SharedPreferences preferences = await SharedPreferences.getInstance();
       String? chooseType = preferences.getString(MyConstant().keyType);
 
@@ -76,7 +92,9 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        title: Text('Welcome guest user !'),
+      ),
       drawer: showDrawer(),
     );
   }
@@ -132,8 +150,6 @@ class _HomePageState extends State<HomePage> {
 
       // FirebaseMessaging firebaseMessaging = FirebaseMessaging.instance;
       // await firebaseMessaging.con
-
-
     } else if (Platform.isIOS) {
       print('aboutNoti Work IOS');
     }

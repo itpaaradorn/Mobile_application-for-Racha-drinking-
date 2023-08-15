@@ -8,7 +8,7 @@ Future<Null> signOutProcess(BuildContext context) async {
   // exit(0);
 
   MaterialPageRoute route = MaterialPageRoute(
-    builder: (context) => HomePage(),
+    builder: (context) => Home(),
   );
   Navigator.pushAndRemoveUntil(context, route, (route) => false);
 }
