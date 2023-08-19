@@ -12,7 +12,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../configs/api.dart';
 import '../../model/user_model.dart';
 import '../../utility/my_constant.dart';
-import '../../utility/normal_dialog.dart';
+import '../../utility/dialog.dart';
 import '../../widget/order_emp_process.dart';
 import '../../widget/order_emp_shop.dart';
 
@@ -169,8 +169,8 @@ class _MainEmpState extends State<MainEmp> {
           Icons.home,
           color: Colors.blueAccent,
         ),
-        title: Text('รายการแก๊สที่ลูกค้าสั่ง'),
-        subtitle: Text('รายการแก๊สที่ยังไม่ได้ส่งลูกค้า'),
+        title: Text('รายการน้ำดื่มที่ลูกค้าสั่ง'),
+        subtitle: Text('รายการน้ำดื่มที่ยังไม่ได้ส่งลูกค้า'),
         onTap: () {
           setState(() {
             currentWidget = OrderConfirmEmp();
@@ -185,7 +185,7 @@ class _MainEmpState extends State<MainEmp> {
           color: Colors.orange,
         ),
         title: Text('กำลังจัดส่ง'),
-        subtitle: Text('รายการแก๊สที่กำลังจัดส่ง'),
+        subtitle: Text('รายการน้ำดื่มที่กำลังจัดส่ง'),
         onTap: () {
           setState(() {
             currentWidget = OrderProcessEmp();

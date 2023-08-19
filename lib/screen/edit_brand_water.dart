@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../utility/my_constant.dart';
-import '../utility/normal_dialog.dart';
+import '../utility/dialog.dart';
 
 class EditBrandWater extends StatefulWidget {
   final BrandWaterModel brandWaterModel;

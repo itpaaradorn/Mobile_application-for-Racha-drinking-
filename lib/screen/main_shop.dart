@@ -12,7 +12,7 @@ import 'package:application_drinking_water_shop/widget/show_accountcs.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 
-import '../utility/normal_dialog.dart';
+import '../utility/dialog.dart';
 import '../widget/list_brand_water.dart';
 import '../widget/order_cofirm_shop.dart';
 import '../widget/order_process.dart';

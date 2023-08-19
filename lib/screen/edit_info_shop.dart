@@ -5,7 +5,7 @@ import 'dart:math';
 import 'package:application_drinking_water_shop/model/user_model.dart';
 import 'package:application_drinking_water_shop/utility/my_constant.dart';
 import 'package:application_drinking_water_shop/utility/my_style.dart';
-import 'package:application_drinking_water_shop/utility/normal_dialog.dart';
+import 'package:application_drinking_water_shop/utility/dialog.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';

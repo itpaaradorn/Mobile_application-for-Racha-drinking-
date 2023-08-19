@@ -6,7 +6,7 @@ import 'package:application_drinking_water_shop/model/brand_model.dart';
 import 'package:application_drinking_water_shop/model/water_model.dart';
 import 'package:application_drinking_water_shop/utility/my_constant.dart';
 import 'package:application_drinking_water_shop/utility/my_style.dart';
-import 'package:application_drinking_water_shop/utility/normal_dialog.dart';
+import 'package:application_drinking_water_shop/utility/dialog.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -23,18 +23,16 @@ class AddMenuWater extends StatefulWidget {
 class _AddMenuWaterState extends State<AddMenuWater> {
   WaterModel? waterModel;
   File? file;
-  String? id, brandname, price, size, idbrand,quantity,idShop;
+  String? id, brandname, price, size, idbrand, quantity, idShop;
   String? selectvalue;
   List<BrandWaterModel> brandModels = [];
 
-   @override
+  @override
   void initState() {
     // TODO: implement initState
     super.initState();
     readBrandWaterShop();
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +48,7 @@ class _AddMenuWaterState extends State<AddMenuWater> {
             showTitleWater('รายละเอียดน้ำดื่ม'),
             // nameForm(),
             Dropdownbrandwater(),
-           
+
             MyStyle().mySixedBox(),
             sizeWater(),
             priceWater(),
@@ -122,13 +120,13 @@ class _AddMenuWaterState extends State<AddMenuWater> {
     } catch (e) {}
   }
 
-   Future<Null> readBrandWaterShop() async {
-
+  Future<Null> readBrandWaterShop() async {
     if (brandModels.length != 0) {
       brandModels.clear();
     }
 
-    String url = '${MyConstant().domain}/WaterShop/getWaterbrand.php?isAdd=true&idShop=46';
+    String url =
+        '${MyConstant().domain}/WaterShop/getWaterbrand.php?isAdd=true&idShop=46';
 
     await Dio().get(url).then((value) {
       // print('value ==> $value');
@@ -147,7 +145,6 @@ class _AddMenuWaterState extends State<AddMenuWater> {
     });
   }
 
-
   Widget Dropdownbrandwater() {
     return Container(
       width: 300,
@@ -156,13 +153,20 @@ class _AddMenuWaterState extends State<AddMenuWater> {
           value: selectvalue,
           items: brandModels.map((BrandWaterModel model) {
             return DropdownMenuItem(
-              value: model.brandId,
+              value: model,
               child: Text(model.brandName!),
             );
           }).toList(),
           onChanged: (value) {
             setState(() {
-              idbrand = value;
+              BrandWaterModel? model;
+              model = value as BrandWaterModel?;
+              idbrand = value!.brandId;
+              brandname = value.brandName;
+              // selectvalue = value!.brandName.toString();
+
+              // print('value ==== ${value!.brandName} ${value.brandId}');
+              // print('selectvalue ==== $selectvalue');
             });
           }),
     );
@@ -225,7 +229,6 @@ class _AddMenuWaterState extends State<AddMenuWater> {
         ],
       );
 
-  
   Row groupImage() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,

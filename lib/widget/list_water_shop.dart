@@ -109,7 +109,7 @@ class _ListWaterMenuShopState extends State<ListWaterMenuShop> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      'ID: ${waterModels![index].id!} ',
+                      'ยี่ห้อ: ${waterModels![index].brandname!} ',
                       style: MyStyle().mainTitle,
                     ),
                     Text(

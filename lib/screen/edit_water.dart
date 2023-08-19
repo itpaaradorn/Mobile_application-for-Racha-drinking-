@@ -1,12 +1,15 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:application_drinking_water_shop/model/water_model.dart';
 import 'package:application_drinking_water_shop/utility/my_constant.dart';
 import 'package:application_drinking_water_shop/utility/my_style.dart';
-import 'package:application_drinking_water_shop/utility/normal_dialog.dart';
+import 'package:application_drinking_water_shop/utility/dialog.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+
+import '../model/brand_model.dart';
 
 class EditWaterMenu extends StatefulWidget {
   // ignore: prefer_typing_uninitialized_variables
@@ -19,14 +22,17 @@ class EditWaterMenu extends StatefulWidget {
 
 class _EditWaterMenuState extends State<EditWaterMenu> {
   WaterModel? waterModel;
+  BrandWaterModel? selectedModel;
   File? file;
   String? brandname, price, size, pathImage, idbrand, quantity;
-  String? selectedValue;
+  String? selectvalue;
+  List<BrandWaterModel> brandModels = [];
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    readBrandWaterShop();
     waterModel = widget.waterModel;
     brandname = waterModel?.brandname;
     price = waterModel?.price;
@@ -40,7 +46,7 @@ class _EditWaterMenuState extends State<EditWaterMenu> {
     return Scaffold(
       floatingActionButton: uploadButton(),
       appBar: AppBar(
-        title: Text('แก้ไข รายการน้ำดื่ม ID: ${waterModel!.id}'),
+        title: Text('แก้ไข ${waterModel!.brandname} สินค้า ID: ${waterModel!.id}'),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -49,7 +55,8 @@ class _EditWaterMenuState extends State<EditWaterMenu> {
             Container(
               margin: EdgeInsets.only(top: 20),
             ),
-            nameWater(),
+            // nameWater(),
+            Dropdownbrandwater(),
             groupImage(),
             sizeWater(),
             priceWater(),
@@ -125,6 +132,8 @@ class _EditWaterMenuState extends State<EditWaterMenu> {
     String url =
         '${MyConstant().domain}/WaterShop/editWater.php?isAdd=true&id=$id&brandname=$brandname&PathImage=$pathImage&Price=$price&Size=$size&idbrand=$idbrand&quantity=$quantity';
 
+    print('url === $url');
+
     await Dio().get(url).then((value) {
       if (value.toString() == 'true') {
         Navigator.pop(context);
@@ -170,6 +179,63 @@ class _EditWaterMenuState extends State<EditWaterMenu> {
         file = File(object!.path);
       });
     } catch (e) {}
+  }
+
+  Future<Null> readBrandWaterShop() async {
+    if (brandModels.length != 0) {
+      brandModels.clear();
+    }
+
+    String url =
+        '${MyConstant().domain}/WaterShop/getWaterbrand.php?isAdd=true&idShop=46';
+
+    await Dio().get(url).then((value) {
+      // print('value ==> $value');
+      var result = json.decode(value.data);
+      // print('result ==> $result');
+
+      for (var item in result) {
+        // print('item ==> $item');
+        BrandWaterModel model = BrandWaterModel.fromJson(item);
+        // print('brand ==>> ${model.brandId}');
+
+        setState(() {
+          brandModels.add(model);
+        });
+      }
+    });
+  }
+
+  Widget Dropdownbrandwater() {
+    return Container(
+      width: 300,
+      child: DropdownButtonFormField(
+          hint: selectedModel
+              ?.brandName != null ? Text('${selectedModel
+              ?.brandName}') : Text('กรุณาเลือกยี่ห้อ'),
+          value: selectedModel
+              ?.brandName, // Use the selected model's brandName as the value
+          items: brandModels.map((BrandWaterModel model) {
+            return DropdownMenuItem(
+              value: model.brandName, // Set the value to the model's brandName
+              child: Text(model.brandName!),
+            );
+          }).toList(),
+          onChanged: (value) {
+            setState(() {
+              // Find the corresponding model based on the selected brandName
+              selectedModel =
+                  brandModels.firstWhere((model) => model.brandName == value);
+
+              // You can access the selected model's properties here
+              idbrand = selectedModel?.brandId ?? '';
+              brandname = selectedModel?.brandName ?? '';
+
+              print('selectedModel ==== ${selectedModel!.brandId}  ${selectedModel!.brandName}');
+ 
+            });
+          }),
+    );
   }
 
   Widget nameWater() => Row(

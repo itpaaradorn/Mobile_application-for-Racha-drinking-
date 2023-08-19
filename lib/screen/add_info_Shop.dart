@@ -3,7 +3,7 @@ import 'dart:math';
 
 import 'package:application_drinking_water_shop/utility/my_constant.dart';
 import 'package:application_drinking_water_shop/utility/my_style.dart';
-import 'package:application_drinking_water_shop/utility/normal_dialog.dart';
+import 'package:application_drinking_water_shop/utility/dialog.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';

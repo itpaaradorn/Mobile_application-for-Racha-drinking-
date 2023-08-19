@@ -3,7 +3,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
 import '../utility/my_constant.dart';
-import '../utility/normal_dialog.dart';
+import '../utility/dialog.dart';
 
 class AddAccountEMP extends StatefulWidget {
   const AddAccountEMP({super.key});

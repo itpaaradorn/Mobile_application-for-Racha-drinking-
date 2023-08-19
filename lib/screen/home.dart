@@ -8,7 +8,7 @@ import 'package:application_drinking_water_shop/screen/signIn.dart';
 import 'package:application_drinking_water_shop/screen/signUp.dart';
 import 'package:application_drinking_water_shop/utility/my_constant.dart';
 import 'package:application_drinking_water_shop/utility/my_style.dart';
-import 'package:application_drinking_water_shop/utility/normal_dialog.dart';
+import 'package:application_drinking_water_shop/utility/dialog.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
@@ -116,7 +116,7 @@ int index = 0;
       onTap: () {
         Navigator.pop(context);
         MaterialPageRoute route =
-            MaterialPageRoute(builder: (value) => Signin());
+            MaterialPageRoute(builder: (value) => LoginPage());
         Navigator.push(context, route);
       },
     );

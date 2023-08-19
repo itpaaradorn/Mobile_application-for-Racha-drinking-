@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import '../configs/api.dart';
 import '../model/order_model.dart';
 import '../utility/my_constant.dart';
-import '../utility/normal_dialog.dart';
+import '../utility/dialog.dart';
 
 class OrderListShop extends StatefulWidget {
   @override
@@ -189,7 +189,7 @@ class _OrderListShopState extends State<OrderListShop> {
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
                             Text(
-                              'รวมทั้งหมด :  ',
+                              'รวมทั้งหมด :',
                               style: MyStyle().mainh1Title,
                             ),
                           ],
@@ -197,9 +197,14 @@ class _OrderListShopState extends State<OrderListShop> {
                       ),
                       Expanded(
                         flex: 2,
-                        child: Text(
-                          '${totals[index].toString()} บาท',
-                          style: MyStyle().mainhATitle,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            ordermodels[index].status == 'Cancle'
+                                ? MyStyle().showTitleH3('ยกเลิก')
+                                : Text(
+                                    '${totals[index].toString()} บาท',style: MyStyle().mainhATitle,),
+                          ],
                         ),
                       ),
                     ],
@@ -259,7 +264,6 @@ class _OrderListShopState extends State<OrderListShop> {
       ),
     );
   }
-
 
   Future<Null> confirmDeleteCancleOrder(int index) async {
     showDialog(
@@ -336,8 +340,6 @@ class _OrderListShopState extends State<OrderListShop> {
     );
   }
 
-
-
   Future<Null> updateStatusConfirmOrder(int index) async {
     String order_id = ordermodels[index].orderId!;
     String path =
@@ -365,10 +367,6 @@ class _OrderListShopState extends State<OrderListShop> {
           context, 'ยกเลิกรายการสั่งซื้อสำเร็จ', 'รายการสั่งซื้อที่ $order_id');
     });
   }
-
-
-
-
 
   Future<Null> notificationCancleShop(int index) async {
     String id = ordermodels[index].userId!;

@@ -15,7 +15,7 @@ import 'package:location/location.dart';
 import 'package:toast/toast.dart';
 
 import '../configs/api.dart';
-import '../utility/normal_dialog.dart';
+import '../utility/dialog.dart';
 
 class ShowMenuWater extends StatefulWidget {
   final BrandWaterModel brandWaterModel;

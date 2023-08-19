@@ -1,4 +1,3 @@
-
 import 'dart:convert';
 
 import 'package:application_drinking_water_shop/utility/my_style.dart';
@@ -11,8 +10,7 @@ import '../utility/account_widget.dart';
 import '../utility/app_icon.dart';
 import '../utility/big_text.dart';
 import '../utility/my_constant.dart';
-
-
+import 'edit_profile_location.dart';
 
 class AccountPage extends StatefulWidget {
   const AccountPage({Key? key}) : super(key: key);
@@ -22,146 +20,167 @@ class AccountPage extends StatefulWidget {
 }
 
 class _AccountPageState extends State<AccountPage> {
-
-  UserModel? model;
-  String? name,phone,address;
+  UserModel? userModel;
+  String? id, avatar_image, address, phone, name, password;
+  bool loadstatus = true;
 
   @override
   void initState() {
+    // TODO: implement initState
+    getImageformUser();
     super.initState();
-    readDataUser();
   }
 
-  Future<Null> readDataUser() async {
+  Future<Null> getImageformUser() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
-    String? id = preferences.getString('id');
+    id = preferences.getString('id');
     String url =
-        '${MyConstant().domain}/WaterShop/getUserWhereId.php?isAdd=true&id=$id';
+        '${MyConstant().domain}/WaterShop/getuserwhereidAvatar.php?isAdd=true&id=$id';
 
     await Dio().get(url).then((value) {
-
-      if(value.toString() != 'null') {
+      if (value.toString() != 'null') {
         var result = json.decode(value.data);
-
         for (var map in result) {
           setState(() {
-            model = UserModel.fromJson(map);
-            name = model!.name;
-            phone = model!.phone;
-            address = model!.address;
+            userModel = UserModel.fromJson(map);
+            address = userModel?.address;
+            phone = userModel?.phone;
+            name = userModel?.name;
+            loadstatus = false;
           });
+          // print('nameShop = ${userModel.urlpicture}');
         }
       }
     });
   }
 
-
   @override
   Widget build(BuildContext context) {
-    return  Scaffold(
-      body: model != null ? Container(
-        width: double.maxFinite,
-        margin: EdgeInsets.only(top: 20),
-        child: Column(
-          // profile Icons
-          children: [
-            AppIcon(
-              icon: Icons.person,
-              backgroundColor: Colors.blueAccent,
-              iconColor: Colors.white,
-              iconSize: 80,
-              size: 150,
-            ),
-            SizedBox(
-              height: 30,
-            ),
-            Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    //name
-                    AccountWidget(
-                      appIcon: AppIcon(
-                        icon: Icons.person,
-                        backgroundColor: Colors.blueAccent,
-                        iconColor: Colors.white,
-                        iconSize: 25,
-                        size: 50,
-                      ),
-                      bigText: BigText(
-                        text: name!,
-                      ),
-                    ),
-                    SizedBox(
-                      height: 20,
-                    ),
-                    //phone
-                    AccountWidget(
-                      appIcon: AppIcon(
-                        icon: Icons.phone,
-                        backgroundColor: Colors.amber,
-                        iconColor: Colors.white,
-                        iconSize: 25,
-                        size: 50,
-                      ),
-                      bigText: BigText(
-                        text: phone!,
-                      ),
-                    ),
-                    SizedBox(
-                      height: 15,
-                    ),
-                    //email
+    return Scaffold(
+      body: userModel != null
+          ? Container(
+              width: double.maxFinite,
+              margin: EdgeInsets.only(top: 25),
+              child: Column(
+                // profile Icons
+                children: [
+                  Text(
+                    "Profile & Location",
+                    style: TextStyle(fontSize: 28, fontWeight: FontWeight.w500),
+                  ),
+                  MyStyle().mySixedBox(),
+                  AppIcon(
+                    icon: Icons.person,
+                    backgroundColor: Colors.blueAccent,
+                    iconColor: Colors.white,
+                    iconSize: 80,
+                    size: 150,
+                  ),  
+                  SizedBox(
+                    height: 30,
+                  ),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          //name
+                          AccountWidget(
+                            appIcon: AppIcon(
+                              icon: Icons.person,
+                              backgroundColor: Colors.blueAccent,
+                              iconColor: Colors.white,
+                              iconSize: 25,
+                              size: 50,
+                            ),
+                            bigText: BigText(
+                              text: name!,
+                            ),
+                          ),
+                          SizedBox(
+                            height: 20,
+                          ),
+                          //phone
+                          AccountWidget(
+                            appIcon: AppIcon(
+                              icon: Icons.phone,
+                              backgroundColor: Colors.amber,
+                              iconColor: Colors.white,
+                              iconSize: 25,
+                              size: 50,
+                            ),
+                            bigText: BigText(
+                              text: phone!,
+                            ),
+                          ),
+                          SizedBox(
+                            height: 15,
+                          ),
+                          //email
 
-                    //address
-                    GestureDetector(
-                      onTap: () {
-                        // MaterialPageRoute route = MaterialPageRoute(
-                        //   builder: (context) => 
-                        // );
-                        // Navigator.push(context, route).then(
-                        //       (value) => readDataUser(),
-                        // );
-                      },
-                      child: AccountWidget(
-                        appIcon: AppIcon(
-                          icon: Icons.location_on,
-                          backgroundColor: Colors.amber,
-                          iconColor: Colors.white,
-                          iconSize: 25,
-                          size: 50,
-                        ),
-                        bigText: BigText(
-                          text: address!.length >= 100 ? "...." : address!,
-                        ),
+                          //address
+                          AccountWidget(
+                            appIcon: AppIcon(
+                              icon: Icons.location_on,
+                              backgroundColor: Colors.amber,
+                              iconColor: Colors.white,
+                              iconSize: 25,
+                              size: 50,
+                            ),
+                            bigText: BigText(
+                              text: address!.length >= 100 ? "...." : address!,
+                            ),
+                          ),
+
+                          SizedBox(
+                            height: 15,
+                          ),
+                          GestureDetector(
+                            onTap: () {
+                              MaterialPageRoute route = MaterialPageRoute(
+                                  builder: (context) => EditProfileLocation(
+                                      userModel: userModel!));
+                              Navigator.push(context, route).then(
+                                (value) => getImageformUser(),
+                              );
+                            },
+                            child: AccountWidget(
+                              appIcon: AppIcon(
+                                icon: Icons.settings,
+                                backgroundColor: Colors.redAccent,
+                                iconColor: Colors.white,
+                                iconSize: 25,
+                                size: 50,
+                              ),
+                              bigText: BigText(
+                                text: "Setting",
+                              ),
+                            ),
+                          ),
+                          //message
+
+                          SizedBox(
+                            height: 15,
+                          ),
+                        ],
                       ),
                     ),
-                    SizedBox(
-                      height: 15,
-                    ),
-                    //message
-                    AccountWidget(
-                      appIcon: AppIcon(
-                        icon: Icons.settings,
-                        backgroundColor: Colors.redAccent,
-                        iconColor: Colors.white,
-                        iconSize: 25,
-                        size: 50,
-                      ),
-                      bigText: BigText(
-                        text: "Setting",
-                      ),
-                    ),
-                    SizedBox(
-                      height: 15,
-                    ),
-                  ],
-                ),
+                  ),
+                ],
               ),
-            ),
-          ],
+            )
+          : MyStyle().showProgress(),
+    );
+  }
+
+  Widget buildAvatarImage() {
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        CircleAvatar(
+          backgroundImage:
+              NetworkImage('${MyConstant().domain}${userModel?.urlpicture}'),
         ),
-      ) : MyStyle().showProgress(),
+      ],
     );
   }
 }

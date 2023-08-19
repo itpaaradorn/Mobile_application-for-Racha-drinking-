@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:application_drinking_water_shop/screen/notification.dart';
 import 'package:application_drinking_water_shop/screen/profilepage.dart';
 import 'package:application_drinking_water_shop/screen/show_shop_cart.dart';
 import 'package:application_drinking_water_shop/utility/my_style.dart';
@@ -12,7 +13,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../utility/normal_dialog.dart';
+import '../utility/dialog.dart';
 import '../widget/tab_bar_material.dart';
 
 class MainUser extends StatefulWidget {
@@ -27,10 +28,8 @@ class _MainUserState extends State<MainUser> {
   int index = 0;
   final pages = <Widget>[
     ShowListShop(),
-    // History(),
-    // NotificationPage(),
     ShowStatusWaterOrder(),
-    AccountPage(),
+    NotificationPage(),
     AccountPage(),
   ];
 

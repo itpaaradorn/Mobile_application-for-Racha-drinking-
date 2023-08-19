@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:steps_indicator/steps_indicator.dart';
 
-import '../utility/normal_dialog.dart';
+import '../utility/dialog.dart';
 
 class ShowStatusWaterOrder extends StatefulWidget {
   const ShowStatusWaterOrder({super.key});

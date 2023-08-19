@@ -105,6 +105,38 @@ Future<void> normalDialog2(
     ),
   );
 }
+Future<void> normalDialogChack(
+    BuildContext context, String title, String message) async {
+  showDialog(
+    context: context,
+    builder: (context) => SimpleDialog(
+      title: Container(
+        width: 150,
+        child: ListTile(
+          leading: Image.asset('images/order_ss.png'),
+          title: Text(
+            title,
+            style: TextStyle(fontFamily: 'Lato', fontWeight: FontWeight.bold),
+          ),
+          subtitle: Text(message),
+        ),
+      ),
+      children: <Widget>[
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: <Widget>[
+            TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: Text(
+                  'OK',
+                  style: TextStyle(color: Colors.blue),
+                )),
+          ],
+        )
+      ],
+    ),
+  );
+}
 
 class MyDialog {
   Future<Null> alertLocationService(

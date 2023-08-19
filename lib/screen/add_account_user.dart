@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 
 import '../utility/my_constant.dart';
-import '../utility/normal_dialog.dart';
+import '../utility/dialog.dart';
 
 class AddAccountUser extends StatefulWidget {
   const AddAccountUser({super.key});

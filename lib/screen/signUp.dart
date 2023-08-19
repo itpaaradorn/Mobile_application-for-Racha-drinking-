@@ -3,7 +3,7 @@ import 'dart:math';
 
 import 'package:application_drinking_water_shop/utility/my_constant.dart';
 import 'package:application_drinking_water_shop/utility/my_style.dart';
-import 'package:application_drinking_water_shop/utility/normal_dialog.dart';
+import 'package:application_drinking_water_shop/utility/dialog.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
@@ -34,6 +34,7 @@ class _SignUpState extends State<SignUp> {
 
   bool passwordVisible = true;
   bool confirmPassVissible = true;
+  bool isHidden = false;
 
   @override
   void initState() {
@@ -53,7 +54,7 @@ class _SignUpState extends State<SignUp> {
     });
   }
 
-  Future<Null> checkPermission() async {
+ Future<Null> checkPermission() async {
     bool locationService;
     LocationPermission locationPermission;
 
@@ -64,27 +65,21 @@ class _SignUpState extends State<SignUp> {
       if (locationPermission == LocationPermission.denied) {
         locationPermission == await Geolocator.requestPermission();
         if (locationPermission == LocationPermission.deniedForever) {
-          MyDialog().alertLocationService(
-              context, 'ไม่อนุญาติแชร์ Location', 'โปรดแชร์ Location');
-        } else {
-          // findLatLng();
-        }
+          normalDialog(context, 'ไม่อนุญาติแชร์ Location โปรดแชร์ Location');
+        } else {}
       } else {
         if (locationPermission == LocationPermission.deniedForever) {
-          MyDialog().alertLocationService(
-              context, 'ไม่อนุญาติแชร์ Location', 'โปรดแชร์ Location');
-        } else {
-          // findLatLng();
-        }
+          normalDialog(context, 'ไม่อนุญาติแชร์ Location โปรดแชร์ Location');
+        } else {}
       }
     } else {
       print('Service Location Close');
-      MyDialog().alertLocationService(context, 'Location service ปิดอยู่ ?',
-          'กรุณาเปิดตำแหน่งของท่านก่อนใช้บริการค่ะ');
+      normalDialog(context,
+          'Location service ปิดอยู่ ? กรุณาเปิดตำแหน่งของท่านก่อนใช้บริการค่ะ');
     }
   }
 
-   @override
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -98,11 +93,16 @@ class _SignUpState extends State<SignUp> {
           child: SingleChildScrollView(
             child: Column(
               children: <Widget>[
+                SizedBox(
+                  height: 20,
+                ),
                 showAppname(),
-                MyStyle().mySixedBox(),
-                MyStyle().showTitleH2('รูปภาพ'),
-                MyStyle().mySixedBox(),
-                buildAvatar(),
+                // MyStyle().mySixedBox(),
+                // MyStyle().showTitleH2('รูปภาพ'),
+                // SizedBox(
+                //   height: 20,
+                // ),
+                // buildAvatar(),
                 MyStyle().mySixedBox(),
                 nameForm(),
                 MyStyle().mySixedBox(),
@@ -110,8 +110,8 @@ class _SignUpState extends State<SignUp> {
                 MyStyle().mySixedBox(),
                 passwordForm(),
                 MyStyle().mySixedBox(),
-                MyStyle().showTitleH2('ข้อมูลติดต่อ | ที่อยู่:'),
-                MyStyle().mySixedBox(),
+                // MyStyle().showTitleH2('ข้อมูลติดต่อ | ที่อยู่:'),
+                // MyStyle().mySixedBox(),
                 phoneForm(),
                 MyStyle().mySixedBox(),
                 addressForm(),
@@ -129,10 +129,6 @@ class _SignUpState extends State<SignUp> {
       ),
     );
   }
- 
-
-           
-
 
   Widget registerButton() => Container(
       width: 250.0,
@@ -142,7 +138,7 @@ class _SignUpState extends State<SignUp> {
               'name = $name, user = $user, password = $password, chooseType = $customer phone = $phone address =$address');
           if (formKey.currentState!.validate()) {
             uploadPictureAndInsertData();
-          } 
+          }
         },
         child: Text('สมัครสมาชิก'),
       ));
@@ -179,7 +175,7 @@ class _SignUpState extends State<SignUp> {
   //   }
   // }
 
-   Future<Null> uploadPictureAndInsertData() async {
+  Future<Null> uploadPictureAndInsertData() async {
     String name = nameController.text;
     String address = addressController.text;
     String phone = phoneController.text;
@@ -204,7 +200,8 @@ class _SignUpState extends State<SignUp> {
         } else {
           // Have Avatar
           print('### process Upload Avatar');
-          String apiSaveAvatar = '${MyConstant().domain}/WaterShop/saveAvatar.php';
+          String apiSaveAvatar =
+              '${MyConstant().domain}/WaterShop/saveAvatar.php';
           int i = Random().nextInt(100000);
           String nameAvatar = 'avatar$i.jpg';
           Map<String, dynamic> map = Map();
@@ -227,7 +224,8 @@ class _SignUpState extends State<SignUp> {
       }
     });
   }
-   Future<Null> processInsertMySQL(
+
+  Future<Null> processInsertMySQL(
       {String? name,
       String? address,
       String? phone,
@@ -244,14 +242,6 @@ class _SignUpState extends State<SignUp> {
       }
     });
   }
-
-
-
-
-
-
-
-
 
   Row buildAvatar() {
     return Row(
@@ -291,8 +281,7 @@ class _SignUpState extends State<SignUp> {
     } catch (e) {}
   }
 
-
-    Widget buildMap() => Container(
+  Widget buildMap() => Container(
         color: Colors.grey,
         width: double.infinity,
         height: 250,
@@ -307,7 +296,7 @@ class _SignUpState extends State<SignUp> {
                 markers: setMarker(),
               ),
       );
-        Set<Marker> setMarker() => <Marker>[
+  Set<Marker> setMarker() => <Marker>[
         Marker(
           markerId: MarkerId('id'),
           position: LatLng(lat!, lng!),
@@ -316,167 +305,164 @@ class _SignUpState extends State<SignUp> {
         ),
       ].toSet();
 
+  Widget nameForm() => Container(
+        margin: EdgeInsets.only(top: 10),
+        width: 270.0,
+        child: TextFormField(
+          controller: nameController,
+          keyboardType: TextInputType.name,
+          validator: (value) {
+            if (value.toString().isEmpty) {
+              return 'กรุณากรอก name ด้วย ค่ะ';
+            }
+          },
+          decoration: const InputDecoration(
+            prefixIcon: Icon(
+              Icons.account_box,
+              color: Colors.blueAccent,
+            ),
+            labelStyle: TextStyle(
+              color: Colors.blue,
+            ),
+            labelText: 'Name :',
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.blueAccent),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.blue),
+            ),
+          ),
+        ),
+      );
 
+  Widget userForm() => Container(
+        margin: EdgeInsets.only(top: 10),
+        width: 270.0,
+        child: TextFormField(
+          controller: userController,
+          keyboardType: TextInputType.emailAddress,
+          validator: (value) {
+            if (value.toString().isEmpty) {
+              return 'กรุณากรอก email ด้วย ค่ะ';
+            } else {}
+          },
+          decoration: InputDecoration(
+            prefixIcon: Icon(
+              Icons.account_box,
+              color: Colors.blueAccent,
+            ),
+            labelStyle: TextStyle(
+              color: Colors.blue,
+            ),
+            labelText: 'Email :',
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.blueAccent),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.blue),
+            ),
+          ),
+        ),
+      );
 
+  Widget passwordForm() => Container(
+        margin: EdgeInsets.only(top: 10),
+        width: 270.0,
+        child: TextFormField(
+          obscureText: isHidden,
+          controller: passwordController,
+          validator: (value) {
+            if (value.toString().isEmpty) {
+              return 'กรุณากรอก password ด้วย ค่ะ';
+            } else {}
+          },
+          decoration: InputDecoration(
+            prefixIcon: Icon(
+              Icons.lock,
+              color: Colors.blueAccent,
+            ),
+            labelStyle: TextStyle(
+              color: Colors.blue,
+            ),
+            suffixIcon: IconButton(
+                icon: isHidden
+                    ? Icon(Icons.visibility_off)
+                    : Icon(Icons.visibility),
+                onPressed: togglePasswordVisibility),
+            labelText: 'Password :',
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.blueAccent),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.blue),
+            ),
+          ),
+        ),
+      );
 
-  Widget nameForm() => Row(
+  void togglePasswordVisibility() => setState(() => isHidden = !isHidden);
+
+  Widget phoneForm() => Container(
+        margin: EdgeInsets.only(top: 10),
+        width: 270.0,
+        child: TextFormField(
+          controller: phoneController,
+          keyboardType: TextInputType.name,
+          validator: (value) {
+            if (value.toString().isEmpty) {
+              return 'กรุณากรอก เบอร์โทร ด้วย ค่ะ';
+            } else {}
+          },
+          decoration: const InputDecoration(
+            prefixIcon: Icon(
+              Icons.phone,
+              color: Colors.blueAccent,
+            ),
+            labelStyle: TextStyle(
+              color: Colors.blue,
+            ),
+            labelText: 'Phone :',
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.blueAccent),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.blue),
+            ),
+          ),
+        ),
+      );
+
+  Widget addressForm() => Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Container(
             margin: EdgeInsets.only(top: 10),
             width: 250.0,
             child: TextFormField(
-              controller: nameController,
-              validator: (value) {
-                if (value!.isEmpty) {
-                  return 'กรุณากรอก Name ด้วย ค่ะ';
-                } else {}
-              },
-              decoration: InputDecoration(
-                prefixIcon: Icon(
-                  Icons.face,
-                  color: MyStyle().darkColor,
-                ),
-                labelStyle: TextStyle(
-                  color: MyStyle().darkColor,
-                ),
-                hintText: 'Name :',
-                enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: MyStyle().darkColor)),
-                focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: MyStyle().primaryColor)),
-              ),
-            ),
-          ),
-        ],
-      );
-
-  Widget userForm() => Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            width: 250.0,
-            child: TextFormField(
-              controller: userController,
-              validator: (value) {
-                if (value!.isEmpty) {
-                  return 'กรุณากรอก User ด้วย ค่ะ';
-                } else {}
-              },
-              onChanged: (value) => user = value.trim(),
-              decoration: InputDecoration(
-                prefixIcon: Icon(
-                  Icons.account_box,
-                  color: MyStyle().darkColor,
-                ),
-                labelStyle: TextStyle(color: MyStyle().darkColor),
-                labelText: 'User :',
-                enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: MyStyle().darkColor)),
-                focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: MyStyle().primaryColor)),
-              ),
-            ),
-          ),
-        ],
-      );
-
-  Widget passwordForm() => Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            width: 250.0,
-            child: TextFormField(
-              controller: passwordController,
-              validator: (value) {
-                if (value!.isEmpty) {
-                  return 'กรุณากรอก Password ด้วย ค่ะ';
-                } else {}
-              },
-              onChanged: (value) => password = value.trim(),
-              obscureText: passwordVisible,
-              decoration: InputDecoration(
-                prefixIcon: Icon(
-                  Icons.lock,
-                  color: MyStyle().darkColor,
-                ),
-                labelStyle: TextStyle(color: MyStyle().darkColor),
-                labelText: 'Password :',
-                enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: MyStyle().darkColor)),
-                focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: MyStyle().primaryColor)),
-                suffixIcon: IconButton(
-                  icon: Icon(
-                      passwordVisible ? Icons.visibility_off : Icons.visibility,
-                      color: Colors.blue.shade900),
-                  onPressed: () {
-                    setState(() {
-                      passwordVisible = !passwordVisible;
-                    });
-                  },
-                ),
-              ),
-            ),
-          ),
-        ],
-      );
-  Widget phoneForm() => Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            width: 250.0,
-            child: TextFormField(
-              controller: phoneController,
-              keyboardType: TextInputType.phone,
-              validator: (value) {
-                if (value!.isEmpty) {
-                  return 'กรุณากรอก Phone ด้วย ค่ะ';
-                } else {}
-              },
-              onChanged: (value) => phone = value.trim(),
-              decoration: InputDecoration(
-                prefixIcon: Icon(
-                  Icons.phone,
-                  color: MyStyle().darkColor,
-                ),
-                labelStyle: TextStyle(color: MyStyle().darkColor),
-                labelText: 'Phone :',
-                enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: MyStyle().darkColor)),
-                focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: MyStyle().primaryColor)),
-              ),
-            ),
-          ),
-        ],
-      );
-  Widget addressForm() => Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            width: 250.0,
-            child: TextFormField(
               controller: addressController,
               validator: (value) {
-                if (value!.isEmpty) {
-                  return 'กรุณากรอก Address ด้วย ค่ะ';
+                if (value.toString().isEmpty) {
+                  return 'กรุณากรอก ที่อยู่ ด้วย ค่ะ';
                 } else {}
               },
-              keyboardType: TextInputType.multiline,
               maxLines: 3,
-              onChanged: (value) => address = value.trim(),
               decoration: InputDecoration(
-                prefixIcon: Icon(
-                  Icons.home,
-                  color: MyStyle().darkColor,
+                hintText: 'Address :',
+                prefixIcon: Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 0, 0, 40),
+                  child: Icon(
+                    Icons.home,
+                    color: Colors.blue,
+                  ),
                 ),
-                labelStyle: TextStyle(color: MyStyle().darkColor),
+                labelStyle: TextStyle(
+                  color: Colors.blueAccent,
+                ),
                 labelText: 'Address :',
                 enabledBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: MyStyle().darkColor)),
+                    borderSide: BorderSide(color: Colors.blue)),
                 focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: MyStyle().primaryColor)),
+                    borderSide: BorderSide(color: Colors.blueAccent)),
               ),
             ),
           ),
@@ -487,7 +473,7 @@ class _SignUpState extends State<SignUp> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        MyStyle().showTitle('สมัครสมาชิก'),
+        Text('สมัครสมาชิก',style: TextStyle(color: Colors.blue.shade800,fontSize: 35.0),)
       ],
     );
   }

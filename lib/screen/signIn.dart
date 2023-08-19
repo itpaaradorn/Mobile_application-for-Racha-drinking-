@@ -7,17 +7,19 @@ import 'package:application_drinking_water_shop/screen/main_user.dart';
 import 'package:application_drinking_water_shop/screen/signUp.dart';
 import 'package:application_drinking_water_shop/utility/my_constant.dart';
 import 'package:application_drinking_water_shop/utility/my_style.dart';
-import 'package:application_drinking_water_shop/utility/normal_dialog.dart';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class Signin extends StatefulWidget {
+import '../utility/dialog.dart';
+
+class LoginPage extends StatefulWidget {
   @override
-  _SigninState createState() => _SigninState();
+  _LoginPageState createState() => _LoginPageState();
 }
 
-class _SigninState extends State<Signin> {
+class _LoginPageState extends State<LoginPage> {
   // Field
 
   String? user, password;

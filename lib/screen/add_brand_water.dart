@@ -8,7 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../utility/my_constant.dart';
 import '../utility/my_style.dart';
-import '../utility/normal_dialog.dart';
+import '../utility/dialog.dart';
 
 class AddbrandWater extends StatefulWidget {
   const AddbrandWater({super.key});

@@ -16,7 +16,7 @@ import '../model/cart_model.dart';
 import '../model/user_model.dart';
 import '../utility/my_constant.dart';
 import '../utility/my_style.dart';
-import '../utility/normal_dialog.dart';
+import '../utility/dialog.dart';
 import '../utility/sqlite_helper.dart';
 
 class ConfirmPayment extends StatefulWidget {
@@ -245,7 +245,7 @@ class _ConfirmPaymentState extends State<ConfirmPayment> {
         'water_id == $water_id, water_brand_id == $water_brand_id, size == $size, water_brand_name == $water_brand_name, price == $price, amount == $amount, sum == $sum ');
 
     String? url =
-        '${MyConstant().domain}/WaterShop/addOrder.php?isAdd=true&orderDateTime=$orderDateTime&user_id=$user_id&user_name=$user_name&water_id=$water_id&water_brand_id=$water_brand_id&size=$size&distance=$distance&transport=$transport&water_brand_name=$water_brand_name&price=$price&amount=$amount&sum=$sum&riderId=none&payment_status=payondelivery&status=userorder';
+        '${MyConstant().domain}/WaterShop/addOrder.php?isAdd=true&orderDateTime=$orderDateTime&user_id=$user_id&user_name=$user_name&water_id=$water_id&water_brand_id=$water_brand_id&size=$size&distance=$distance&transport=$transport&water_brand_name=$water_brand_name&price=$price&amount=$amount&sum=$sum&riderId=none&pamentStatus=confirmpayment&status=userorder';
 
     await Dio().get(url).then((value) {
       if (value.toString() == 'true') {

@@ -7,9 +7,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../configs/api.dart';
 import '../model/order_model.dart';
 import '../model/user_model.dart';
+import '../screen/employee/follow_map_customer.dart';
 import '../utility/my_constant.dart';
 import '../utility/my_style.dart';
-import '../utility/normal_dialog.dart';
+import '../utility/dialog.dart';
 
 class OrderConfirmEmp extends StatefulWidget {
   const OrderConfirmEmp({super.key});
@@ -45,11 +46,12 @@ class _OrderConfirmEmpState extends State<OrderConfirmEmp> {
       ],
     );
   }
-   Widget showContent() {
+
+  Widget showContent() {
     return status ? showListOrderWater() : buildNoneOrder();
   }
 
- Center buildNoneOrder() {
+  Center buildNoneOrder() {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -68,9 +70,6 @@ class _OrderConfirmEmpState extends State<OrderConfirmEmp> {
       ),
     );
   }
-
-
-
 
   Future<Null> findOrderShop() async {
     if (ordermodels.length != 0) {
@@ -124,8 +123,6 @@ class _OrderConfirmEmpState extends State<OrderConfirmEmp> {
       findOrderShop();
     });
   }
-
- 
 
   Widget showListOrderWater() {
     return RefreshIndicator(
@@ -199,7 +196,7 @@ class _OrderConfirmEmpState extends State<OrderConfirmEmp> {
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
                             Text(
-                              'รวมทั้งหมด :  ',
+                              'รวมทั้งหมด : ',
                               style: MyStyle().mainh1Title,
                             ),
                           ],
@@ -219,23 +216,40 @@ class _OrderConfirmEmpState extends State<OrderConfirmEmp> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    // ElevatedButton.icon(
-                    //   style: const ButtonStyle(
-                    //     backgroundColor:
-                    //         MaterialStatePropertyAll<Color>(Colors.red),
-                    //   ),
-                    //   onPressed: () {
-                    //     confirmDeleteCancleOrder(index);
-                    //   },
-                    //   icon: Icon(
-                    //     Icons.cancel,
-                    //     color: Colors.white,
-                    //   ),
-                    //   label: Text(
-                    //     'Cancle Order',
-                    //     style: TextStyle(color: Colors.white),
-                    //   ),
-                    // ),
+                    ElevatedButton(
+                      onPressed: () {
+                        // MaterialPageRoute route = MaterialPageRoute(
+                        //   builder: (context) => EditOrderEmp(
+                        //     orderModel: orderModels[index],
+                        //   ),
+                        // );
+                        // Navigator.push(context, route).then(
+                        //   (value) => findOrderShop(),
+                        // );
+                      },
+                      child: Text("แก้ไข"),
+                    ),
+                    ElevatedButton(
+                      onPressed: () {
+                        confirmDeleteCancleOrder(index);
+                      },
+                      child: Text("ลบ"),
+                    ),
+                    ElevatedButton(
+                      style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStateProperty.all<Color>(Colors.green),
+                      ),
+                      onPressed: () {
+                        MaterialPageRoute route = MaterialPageRoute(
+                          builder: (context) => FollowMapCustomer(
+                            orderModel: ordermodels[index],
+                          ),
+                        );
+                        Navigator.push(context, route);
+                      },
+                      child: Icon(Icons.navigation),
+                    ),
                     ElevatedButton.icon(
                       style: const ButtonStyle(
                         backgroundColor:
@@ -243,8 +257,7 @@ class _OrderConfirmEmpState extends State<OrderConfirmEmp> {
                       ),
                       onPressed: () {
                         updateStatusConfirmOrder(index).then((value) {
-                          normalDialog(
-                              context, 'ส่งรายการแจ้งเตือนไปยังลูกค้าแล้วครับ');
+                          normalDialog2(context, "กำลังจัดส่ง", "อัพเดทสถานะจัดส่ง");
                           Navigator.pop(context);
                           setState(() {
                             findOrderShop();
@@ -308,6 +321,43 @@ class _OrderConfirmEmpState extends State<OrderConfirmEmp> {
     );
   }
 
+  Future<Null> confirmDeleteCancleOrder(int index) async {
+    showDialog(
+      context: context,
+      builder: (context) => SimpleDialog(
+        title: Text(
+          'คุณต้องการยกเลิกรายการ สั่งซื้อน้ำดื่มที่ ${ordermodels[index].orderId} ใช่ไหม ?',
+          style: MyStyle().mainDackTitle,
+        ),
+        children: <Widget>[
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: <Widget>[
+              TextButton(
+                child: Text(
+                  ' ตกลง ',
+                  style: MyStyle().mainDackTitle,
+                ),
+                onPressed: () async {
+                  cancleOrderUser(index);
+                },
+              ),
+              TextButton(
+                child: Text(
+                  ' ยกเลิก ',
+                  style: MyStyle().mainDackTitle,
+                ),
+                onPressed: () async {
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
   Future<Null> updateStatusConfirmOrder(int index) async {
     String? orderId = ordermodels[index].orderId;
     SharedPreferences preferences = await SharedPreferences.getInstance();
@@ -323,6 +373,18 @@ class _OrderConfirmEmpState extends State<OrderConfirmEmp> {
         }
       },
     );
+  }
+
+  Future<Null> cancleOrderUser(int index) async {
+    String? order_id = ordermodels[index].orderId;
+    String url =
+        '${MyConstant().domain}/WaterShop/cancleOrderWhereorderId.php?isAdd=true&status=Cancle&orderId=$order_id';
+
+    await Dio().get(url).then((value) {
+      findOrderShop();
+      normalDialog2(
+          context, 'ยกเลิกรายการสั่งซื้อสำเร็จ', 'รายการสั่งซื้อที่ $order_id');
+    });
   }
 
   Future<Null> notificationtoShop(int index) async {
