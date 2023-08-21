@@ -43,7 +43,11 @@ class _ShowStatusWaterOrderState extends State<ShowStatusWaterOrder> {
     return statusAvatar ? buildNonOrder() : buildContant();
   }
 
-  Widget buildContant() => ListView.builder(
+
+  Widget buildContant() {
+    return RefreshIndicator(
+      onRefresh: refresh,
+      child: ListView.builder(
         padding: EdgeInsets.all(20),
         itemCount: orderModels.length,
         itemBuilder: (context, index) => Column(
@@ -116,7 +120,15 @@ class _ShowStatusWaterOrderState extends State<ShowStatusWaterOrder> {
             // buildBrandWater(index),
           ],
         ),
-      );
+      ),
+    );
+  }
+
+  Future refresh() async {
+    setState(() {
+      readOrderFormIdUser();
+    });
+  }
 
   Future<Null> confirmDeleteCancleOrder(int index) async {
     showDialog(
@@ -127,35 +139,22 @@ class _ShowStatusWaterOrderState extends State<ShowStatusWaterOrder> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
-              ElevatedButton.icon(
+              ElevatedButton(
+                child: Text('ตกลง'),
                 onPressed: () {
+                  Navigator.pop(context);
                   cancleOrderUser(index);
-                  Navigator.pop(context);
                 },
-                icon: Icon(
-                  Icons.check,
-                  color: Colors.white,
-                ),
-                label: Text(
-                  'ตกลง',
-                  style: TextStyle(color: Colors.white),
-                ),
               ),
-              ElevatedButton.icon(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                icon: Icon(
-                  Icons.clear,
-                  color: Colors.white,
-                ),
-                label: Text(
-                  'ยกเลิก',
-                  style: TextStyle(color: Colors.white),
+              ElevatedButton(
+                child: Text('ยกเลิก'),
+                onPressed: () => Navigator.pop(context),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red,
                 ),
               ),
             ],
-          ),
+          )
         ],
       ),
     );
@@ -168,7 +167,7 @@ class _ShowStatusWaterOrderState extends State<ShowStatusWaterOrder> {
 
     await Dio().get(url).then((value) {
       readOrderFormIdUser();
-      normalDialog2(
+      normalDialogChack(
           context, 'ยกเลิกรายการสั่งซื้อสำเร็จ', 'รายการสั่งซื้อที่ $order_id');
     });
   }
@@ -390,11 +389,7 @@ class _ShowStatusWaterOrderState extends State<ShowStatusWaterOrder> {
     }
   }
 
-  Future refresh() async {
-    setState(() {
-      readOrderFormIdUser();
-    });
-  }
+  
 
   List<String> changeAreey(String string) {
     List<String> list = [];

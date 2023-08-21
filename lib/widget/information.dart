@@ -130,7 +130,7 @@ class _InformationState extends State<Information> {
   }
 
   Widget showNodata(BuildContext context) =>
-      MyStyle().titleCenter('ยังไม่มีข้อมูลกรุณาเพิ่มด้วยครับ !!');
+      MyStyle().titleCenter(context,'ยังไม่มีข้อมูลกรุณาเพิ่มด้วยครับ !!');
 
   Row addAndEditButton() {
     return Row(

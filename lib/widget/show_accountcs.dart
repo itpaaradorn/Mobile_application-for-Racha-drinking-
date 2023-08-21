@@ -38,15 +38,18 @@ class _ShowAccountCsState extends State<ShowAccountCs> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: <Widget>[
-        loadStatus ? MyStyle().showProgress() : showContent(),
-        addAndEditButton(),
-      ],
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('จัดการข้อมูลลูกค้า'),
+      ),
+      body: Stack(
+        children: <Widget>[
+          loadStatus ? MyStyle().showProgress() : showContent(),
+          addAndEditButton(),
+        ],
+      ),
     );
   }
-
-  
 
   Widget showContent() {
     return status
@@ -66,10 +69,7 @@ class _ShowAccountCsState extends State<ShowAccountCs> {
               padding: EdgeInsets.all(14.0),
               width: MediaQuery.of(context).size.width * 0.4,
               height: MediaQuery.of(context).size.width * 0.4,
-              child: usermodels[index].urlpicture == null
-                  ? Image.network(
-                      '${MyConstant().domain}${usermodels[index].urlpicture}')
-                  : buildNoneAvatarImage(),
+              child: buildNoneAvatarImage(),
             ),
             Container(
               padding: EdgeInsets.all(15.0),
@@ -110,7 +110,7 @@ class _ShowAccountCsState extends State<ShowAccountCs> {
                               ),
                             );
                             Navigator.push(context, route).then(
-                                  (value) => readAccount(),
+                              (value) => readAccount(),
                             );
                           },
                         ),
@@ -136,7 +136,7 @@ class _ShowAccountCsState extends State<ShowAccountCs> {
       fit: StackFit.expand,
       children: [
         CircleAvatar(
-          backgroundImage: AssetImage('images/account.png'),
+          backgroundImage: AssetImage('images/account1.png'),
         ),
       ],
     );

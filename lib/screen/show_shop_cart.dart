@@ -425,16 +425,9 @@ class _ShowCartState extends State<ShowCart> {
 
 
 
-
-
-
-
-
-
   Future<Null> clearOrderSQLite() async {
     Toast.show("ทำรายการสั่งซื้อ เสร็จสิ้น",
         duration: Toast.lengthLong, gravity: Toast.bottom);
-
     await SQLiteHelper().deleteAllData().then((value) {
       readSQLite();
     });
@@ -451,7 +444,7 @@ class _ShowCartState extends State<ShowCart> {
         UserModel model = UserModel.fromJson(json);
         String tokenShop = model.token!;
         // print('tokenShop ==>> $tokenShop');
-        String title = 'มีการสั่งซื้อจาก user $user_name';
+        String title = 'มีการสั่งซื้อจาก คุณ $user_name';
         String body = 'กรุณากดยืนยันเพื่อแจ้งลูกค้า';
 
         String urlSendToken =
@@ -463,7 +456,7 @@ class _ShowCartState extends State<ShowCart> {
 
   Future<Null> sendNotificationToShop(String urlSendToken) async {
     await Dio().get(urlSendToken).then(
-          (value) => normalDialog2(
+          (value) => normalDialogChack(
               context, 'การสั่งซื้อส่งไปที่ร้านแล้ว', 'กรุณารอรับการจัดส่ง'),
         );
   }

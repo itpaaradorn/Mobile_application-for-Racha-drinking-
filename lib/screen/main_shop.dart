@@ -237,7 +237,7 @@ class _MainShopState extends State<MainShop> {
   UserAccountsDrawerHeader showHead() {
     return UserAccountsDrawerHeader(
         arrowColor: Colors.blueAccent,
-        currentAccountPicture: MyStyle().showLogo(),
+        currentAccountPicture: MyStyle().showLogoAdmin(),
         accountName: Text('Admin Login'),
         accountEmail: Text('bankch@gamil.com'));
   }

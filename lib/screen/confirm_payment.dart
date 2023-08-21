@@ -131,7 +131,7 @@ class _ConfirmPaymentState extends State<ConfirmPayment> {
       FormData data = FormData.fromMap(map);
       await Dio().post(apisaveSlip, data: data).then((value) async {
         String imageSlip = '/WaterShop/Slip/$nameSlip';
-        print('value == $value');
+        // print('value == $value');
         DateTime dateTime = DateTime.now();
         // print(dateTime.toString());
         String slipDateTime = DateFormat('yyyy-MM-dd HH:mm').format(dateTime);

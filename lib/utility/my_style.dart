@@ -126,13 +126,16 @@ class MyStyle {
         ),
       );
 
-  Widget titleCenter(String string) {
+   Widget titleCenter(BuildContext context, String string) {
     return Center(
-      child: Text(
-        string,
-        style: TextStyle(
-          fontSize: 20.0,
-          fontWeight: FontWeight.bold,
+      child: Container(
+        width: MediaQuery.of(context).size.width * 0.5,
+        child: Text(
+          string,
+          style: TextStyle(
+            fontSize: 24.0,
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ),
     );
@@ -163,7 +166,7 @@ class MyStyle {
   Text showTitleH33(String title) => Text(
         title,
         style: TextStyle(
-          fontSize: 16.0,
+          fontSize: 15.0,
           color: const Color.fromARGB(255, 19, 19, 19),
           fontWeight: FontWeight.bold,
         ),
@@ -231,6 +234,12 @@ class MyStyle {
       child: Image.asset('images/rider.PNG.png'),
     );
   }
+  Container showLogoAdmin() {
+    return Container(
+      width: 250.0,
+      child: Image.asset('images/admin.png'),
+    );
+  }
 
   BoxDecoration myBoxDecoration(String namePic) {
     return BoxDecoration(
@@ -254,4 +263,6 @@ class MyStyle {
   }
 
   MyStyle();
+
+  mySizebox() {}
 }

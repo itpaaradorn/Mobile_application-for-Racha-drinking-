@@ -7,7 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../configs/api.dart';
 import '../model/order_model.dart';
 import '../model/user_model.dart';
-import '../screen/employee/follow_map_customer.dart';
+import '../screen/employee/follow_map_emp.dart';
 import '../utility/my_constant.dart';
 import '../utility/my_style.dart';
 import '../utility/dialog.dart';

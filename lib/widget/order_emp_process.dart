@@ -8,7 +8,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../configs/api.dart';
 import '../model/order_model.dart';
 import '../model/user_model.dart';
-import '../screen/employee/follow_map_customer.dart';
+import '../screen/employee/follow_map_emp.dart';
 import '../utility/dialog.dart';
 import '../utility/my_constant.dart';
 import '../utility/my_style.dart';
@@ -344,8 +344,8 @@ class _OrderProcessEmpState extends State<OrderProcessEmp> {
         String tokenUser = model.token!;
         // print('tokenShop ==>> $tokenUser');
         String title =
-            'คุณ ${model.name} ทางร้านได้ยืนยันการสั่งซื้อของคุณแล้ว';
-        String body = 'กรุณารอรับสินค้าและตรวจสอบการสั่งซื้อ';
+            'คุณ ${model.name}การจัดส่งสินค้าสำเร็จ';
+        String body = 'กรุณาตรวจสอบการสั่งซื้อ';
 
         String urlSendToken =
             '${MyConstant().domain}/waterShop/apiNotification.php?isAdd=true&token=$tokenUser&title=$title&body=$body';

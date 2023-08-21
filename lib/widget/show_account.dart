@@ -36,15 +36,18 @@ class _ShowAccountState extends State<ShowAccount> {
 
   @override
   Widget build(BuildContext context) {
-    return  Stack(
-      children: <Widget>[
-        loadStatus ? MyStyle().showProgress() : showContent(),
-        addAndEditButton(),
-      ],
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('จัดการข้อมูลพนักงาน'),
+      ),
+      body: Stack(
+        children: <Widget>[
+          loadStatus ? MyStyle().showProgress() : showContent(),
+          addAndEditButton(),
+        ],
+      ),
     );
   }
-
- 
 
   Widget showContent() {
     return status
@@ -64,10 +67,7 @@ class _ShowAccountState extends State<ShowAccount> {
               padding: EdgeInsets.all(14.0),
               width: MediaQuery.of(context).size.width * 0.4,
               height: MediaQuery.of(context).size.width * 0.4,
-              child: usermodels[index].urlpicture == null
-                  ? Image.network(
-                      '${MyConstant().domain}${usermodels[index].urlpicture}')
-                  : buildNoneAvatarImage(),
+              child: buildNoneAvatarImage(),
             ),
             Container(
               padding: EdgeInsets.all(15.0),
@@ -77,6 +77,7 @@ class _ShowAccountState extends State<ShowAccount> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
+                    MyStyle().mySixedBox(),
                     Text(
                       'ID : ${usermodels[index].id} ',
                       style: MyStyle().mainhPTitle,
@@ -108,7 +109,7 @@ class _ShowAccountState extends State<ShowAccount> {
                               ),
                             );
                             Navigator.push(context, route).then(
-                                  (value) => readAccount(),
+                              (value) => readAccount(),
                             );
                           },
                         ),
@@ -134,7 +135,7 @@ class _ShowAccountState extends State<ShowAccount> {
       fit: StackFit.expand,
       children: [
         CircleAvatar(
-          backgroundImage: AssetImage('images/account.png'),
+          backgroundImage: AssetImage('images/account1.png'),
         ),
       ],
     );
