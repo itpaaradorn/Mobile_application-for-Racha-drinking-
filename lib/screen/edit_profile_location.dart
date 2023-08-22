@@ -1,6 +1,6 @@
 
 import 'dart:io';
-import 'dart:math';
+
 
 import 'package:application_drinking_water_shop/utility/my_style.dart';
 import 'package:dio/dio.dart';
@@ -38,7 +38,7 @@ class _EditProfileLocationState extends State<EditProfileLocation> {
     findLatLng();
     userModel = widget.userModel;
     user_id = userModel!.id;
-    urlpicture = userModel!.urlpicture;
+    urlpicture = userModel!.urlPicture;
     name = userModel!.name!;
     phone = userModel!.phone!;
     address = userModel!.address;

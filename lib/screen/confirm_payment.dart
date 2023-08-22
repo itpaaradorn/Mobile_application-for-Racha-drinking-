@@ -291,6 +291,6 @@ class _ConfirmPaymentState extends State<ConfirmPayment> {
 
   Future<Null> sendNotificationToShop(String urlSendToken) async {
     await Dio().get(urlSendToken).then((value) => normalDialogNoti(
-        context, 'การสั่งซื้อส่งไปที่ร้านแล้ว กรุณารอร้านจัดส่งครับ '));
+        context, 'การสั่งซื้อส่งไปที่ร้านแล้ว กรุณารอร้านจัดส่งค่ะ '));
   }
 }

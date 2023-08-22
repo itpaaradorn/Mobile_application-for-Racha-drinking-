@@ -57,10 +57,12 @@ class _ReceiptShopState extends State<ReceiptShop> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: <Widget>[
-        loadStatus ? MyStyle().showProgress() : showContent(),
-      ],
+    return Scaffold(appBar: AppBar(title: Text('ข้อมูลชำระเงิน'),),
+      body: Stack(
+        children: <Widget>[
+          loadStatus ? MyStyle().showProgress() : showContent(),
+        ],
+      ),
     );
   }
 

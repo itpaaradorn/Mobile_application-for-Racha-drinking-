@@ -400,7 +400,7 @@ class _OrderConfirmEmpState extends State<OrderConfirmEmp> {
         String tokenUser = model.token!;
         // print('tokenShop ==>> $tokenUser');
         String title =
-            'คุณ ${model.name} ทางร้านได้ยืนยันการสั่งซื้อของคุณแล้ว';
+            'คุณ ${model.name} พนักงงานกำลังจัดส่งสินค้าให้คุณแล้ว';
         String body = 'กรุณารอรับสินค้าและตรวจสอบการสั่งซื้อ';
 
         String urlSendToken =

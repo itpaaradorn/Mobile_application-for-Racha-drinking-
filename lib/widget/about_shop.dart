@@ -76,7 +76,7 @@ class _AboutShopState extends State<AboutShop> {
                 width: 180.0,
                 height: 180.0,
                 child: Image.network(
-                  '${MyConstant().domain}${userModel!.urlpicture}',
+                  '${MyConstant().domain}${userModel!.urlPicture}',
                   fit: BoxFit.cover,
                 ),
               ),

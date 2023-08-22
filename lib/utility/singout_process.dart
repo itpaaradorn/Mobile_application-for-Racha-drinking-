@@ -1,4 +1,5 @@
-import 'package:application_drinking_water_shop/screen/home.dart';
+
+import 'package:application_drinking_water_shop/screen/signIn.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -8,7 +9,7 @@ Future<Null> signOutProcess(BuildContext context) async {
   // exit(0);
 
   MaterialPageRoute route = MaterialPageRoute(
-    builder: (context) => Home(),
+    builder: (context) => LoginPage(),
   );
   Navigator.pushAndRemoveUntil(context, route, (route) => false);
 }

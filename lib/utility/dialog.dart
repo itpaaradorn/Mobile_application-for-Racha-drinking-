@@ -47,7 +47,7 @@ Future<void> normalDialogNoti(BuildContext context, String message) async {
                 },
                 child: Text(
                   'OK',
-                  style: TextStyle(color: Colors.red),
+                  style: TextStyle(color: Colors.blue),
                 )),
           ],
         )
@@ -97,7 +97,7 @@ Future<void> normalDialog2(
                 onPressed: () => Navigator.pop(context),
                 child: Text(
                   'OK',
-                  style: TextStyle(color: Colors.blue),
+                  style: TextStyle(color: Colors.blue)
                 )),
           ],
         )

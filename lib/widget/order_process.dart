@@ -35,10 +35,12 @@ class _OrderProcessShopState extends State<OrderProcessShop> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: <Widget>[
-        loadStatus ? buildNoneOrder() : showContent(),
-      ],
+    return Scaffold(appBar: AppBar(title: Text('รายการน้ำดื่มกำลังดำเนินการ'),),
+      body: Stack(
+        children: <Widget>[
+          loadStatus ? buildNoneOrder() : showContent(),
+        ],
+      ),
     );
   }
 

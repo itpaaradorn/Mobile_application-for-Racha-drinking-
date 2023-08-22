@@ -47,6 +47,7 @@ class _EditInfoShopState extends State<EditInfoShop> {
 
   Future<Null> readCurrentInfo() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
+    // ignore: unused_local_variable
     String? idShop = preferences.getString('id');
     // print('idShop ==> $idShop');
 
@@ -67,7 +68,7 @@ class _EditInfoShopState extends State<EditInfoShop> {
           nameShop = '${userModel?.nameShop}';
           address = '${userModel?.address}';
           phone = '${userModel?.phone}';
-          urlPicture = '${userModel?.urlpicture}';
+          urlPicture = '${userModel?.urlPicture}';
         },
       );
     }

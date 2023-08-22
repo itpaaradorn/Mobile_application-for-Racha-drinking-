@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-import '../../configs/api.dart';
+
 import '../../model/order_model.dart';
 import '../../model/user_model.dart';
 import '../../utility/my_constant.dart';

@@ -25,7 +25,7 @@ class _EditAccountEmpState extends State<EditAccountEmp> {
   void initState() {
     userModel = widget.userModel;
     id = userModel!.id;
-    urlpicture = userModel!.urlpicture;
+    urlpicture = userModel!.urlPicture;
     name = userModel!.name;
     phone = userModel!.phone;
     address = userModel!.address;

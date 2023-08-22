@@ -178,7 +178,7 @@ class _AccountPageState extends State<AccountPage> {
       children: [
         CircleAvatar(
           backgroundImage:
-              NetworkImage('${MyConstant().domain}${userModel?.urlpicture}'),
+              NetworkImage('${MyConstant().domain}${userModel?.urlPicture}'),
         ),
       ],
     );

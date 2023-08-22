@@ -4,6 +4,7 @@ class MyConstant {
   String domain = 'http://192.168.1.99/';
 
   static String urlPromptpay = 'https://promptpay.io/0840856164.png';
+  String google_api_key = "AIzaSyA4eILUWwVSWooVRlC2AYhXsB3YOtkETDw";
   String keyId = 'id';
   String keyType = 'ChooseType';
   String keyName = 'Name';

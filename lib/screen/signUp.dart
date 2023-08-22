@@ -94,28 +94,29 @@ class _SignUpState extends State<SignUp> {
             child: Column(
               children: <Widget>[
                 SizedBox(
-                  height: 20,
+                  height: 60,
                 ),
                 showAppname(),
-                // MyStyle().mySixedBox(),
+                MyStyle().mySixedBox(),
                 // MyStyle().showTitleH2('รูปภาพ'),
                 // SizedBox(
                 //   height: 20,
                 // ),
                 // buildAvatar(),
-                MyStyle().mySixedBox(),
+                
+                MyStyle().mySixedBox05(),
                 nameForm(),
-                MyStyle().mySixedBox(),
+                MyStyle().mySixedBox05(),
                 userForm(),
-                MyStyle().mySixedBox(),
+                MyStyle().mySixedBox05(),
                 passwordForm(),
-                MyStyle().mySixedBox(),
-                // MyStyle().showTitleH2('ข้อมูลติดต่อ | ที่อยู่:'),
                 // MyStyle().mySixedBox(),
+                // MyStyle().showTitleH2('ข้อมูลติดต่อ | ที่อยู่:'),
+                MyStyle().mySixedBox05(),
                 phoneForm(),
-                MyStyle().mySixedBox(),
+                MyStyle().mySixedBox05(),
                 addressForm(),
-                MyStyle().mySixedBox(),
+                MyStyle().mySixedBox05(),
                 buildMap(),
                 MyStyle().mySixedBox(),
                 registerButton(),
@@ -341,6 +342,7 @@ class _SignUpState extends State<SignUp> {
         child: TextFormField(
           controller: userController,
           keyboardType: TextInputType.emailAddress,
+          // ignore: body_might_complete_normally_nullable
           validator: (value) {
             if (value.toString().isEmpty) {
               return 'กรุณากรอก email ด้วย ค่ะ';

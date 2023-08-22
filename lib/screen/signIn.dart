@@ -29,7 +29,7 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Sign In'),
+        title: Text('Login'),
       ),
       body: GestureDetector(
         onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
@@ -152,14 +152,14 @@ class _LoginPageState extends State<LoginPage> {
           decoration: InputDecoration(
             prefixIcon: Icon(
               Icons.account_box,
-              color: MyStyle().darkColor,
+              color: Colors.blueAccent,
             ),
-            labelStyle: TextStyle(color: MyStyle().darkColor),
+            labelStyle: TextStyle(color: Colors.blue),
             labelText: 'User :',
             enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: MyStyle().darkColor)),
+                borderSide: BorderSide(color:  Colors.blueAccent)),
             focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: MyStyle().primaryColor)),
+                borderSide: BorderSide(color: Colors.blue)),
           ),
         ),
       );
@@ -172,18 +172,18 @@ class _LoginPageState extends State<LoginPage> {
           decoration: InputDecoration(
             prefixIcon: Icon(
               Icons.lock,
-              color: MyStyle().darkColor,
+              color: Colors.blueAccent,
             ),
-            labelStyle: TextStyle(color: MyStyle().darkColor),
+            labelStyle: TextStyle(color: Colors.blue),
             labelText: 'Password :',
             enabledBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: MyStyle().darkColor)),
+                borderSide: BorderSide(color: Colors.blueAccent)),
             focusedBorder: OutlineInputBorder(
-                borderSide: BorderSide(color: MyStyle().primaryColor)),
+                borderSide: BorderSide(color:Colors.blue)),
             suffixIcon: IconButton(
               icon: Icon(
                   passwordVisible ? Icons.visibility_off : Icons.visibility,
-                  color: Colors.blue.shade900),
+                  color: Colors.blue),
               onPressed: () {
                 setState(() {
                   passwordVisible = !passwordVisible;

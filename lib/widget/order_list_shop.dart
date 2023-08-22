@@ -79,10 +79,12 @@ class _OrderListShopState extends State<OrderListShop> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: <Widget>[
-        loadStatus ? buildNoneOrder() : showContent(),
-      ],
+    return Scaffold(appBar: AppBar(title: Text('รายการน้ำดื่มที่ลูกค้าสั่ง'),),
+      body: Stack(
+        children: <Widget>[
+          loadStatus ? buildNoneOrder() : showContent(),
+        ],
+      ),
     );
   }
 
@@ -409,7 +411,7 @@ class _OrderListShopState extends State<OrderListShop> {
 
         String urlSendToken =
             '${MyConstant().domain}/waterShop/apiNotification.php?isAdd=true&token=$tokenUser&title=$title&body=$body';
-        sendNotificationToShop(urlSendToken);
+        // sendNotificationToShop(urlSendToken);
       }
     });
   }

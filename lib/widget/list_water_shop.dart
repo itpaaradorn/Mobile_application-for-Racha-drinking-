@@ -71,11 +71,13 @@ class _ListWaterMenuShopState extends State<ListWaterMenuShop> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: <Widget>[
-        loadStatus! ? MyStyle().showProgress() : showContent(),
-        addMenuButton(),
-      ],
+    return Scaffold(appBar: AppBar(title: Text('ข้อมูลน้ำดื่ม'),),
+      body: Stack(
+        children: <Widget>[
+          loadStatus! ? MyStyle().showProgress() : showContent(),
+          addMenuButton(),
+        ],
+      ),
     );
   }
 

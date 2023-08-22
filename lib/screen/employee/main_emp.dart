@@ -127,7 +127,7 @@ class _MainEmpState extends State<MainEmp> {
         for (var map in result) {
           setState(() {
             userModel = UserModel.fromJson(map);
-            avatar = userModel?.urlpicture;
+            avatar = userModel?.urlPicture;
             name = userModel?.name;
             loadstatus = false;
           });

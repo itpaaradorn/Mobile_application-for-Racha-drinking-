@@ -40,10 +40,12 @@ class _OrderConfirmShopState extends State<OrderConfirmShop> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: <Widget>[
-        loadStatus ? buildNoneOrder() : showContent(),
-      ],
+    return Scaffold(appBar: AppBar(title: Text('รายการน้ำดื่มที่จัดส่งแล้ว'),),
+      body: Stack(
+        children: <Widget>[
+          loadStatus ? buildNoneOrder() : showContent(),
+        ],
+      ),
     );
   }
 

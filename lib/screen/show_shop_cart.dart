@@ -455,9 +455,7 @@ class _ShowCartState extends State<ShowCart> {
   }
 
   Future<Null> sendNotificationToShop(String urlSendToken) async {
-    await Dio().get(urlSendToken).then(
-          (value) => normalDialogChack(
-              context, 'การสั่งซื้อส่งไปที่ร้านแล้ว', 'กรุณารอรับการจัดส่ง'),
-        );
+    await Dio().get(urlSendToken).then((value) => normalDialogNoti(
+        context, 'การสั่งซื้อส่งไปที่ร้านแล้ว กรุณารอร้านจัดส่งค่ะ '));
   }
 }

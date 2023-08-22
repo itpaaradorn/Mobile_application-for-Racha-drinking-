@@ -7,7 +7,7 @@ class UserModel {
   String? nameShop;
   String? address;
   String? phone;
-  String? urlpicture;
+  String? urlPicture;
   String? lat;
   String? lng;
   String? token;
@@ -21,7 +21,7 @@ class UserModel {
       this.nameShop,
       this.address,
       this.phone,
-      this.urlpicture,
+      this.urlPicture,
       this.lat,
       this.lng,
       this.token});
@@ -35,7 +35,7 @@ class UserModel {
     nameShop = json['NameShop'];
     address = json['Address'];
     phone = json['Phone'];
-    urlpicture = json['Urlpicture'];
+    urlPicture = json['UrlPicture'];
     lat = json['Lat'];
     lng = json['Lng'];
     token = json['Token'];
@@ -51,12 +51,10 @@ class UserModel {
     data['NameShop'] = this.nameShop;
     data['Address'] = this.address;
     data['Phone'] = this.phone;
-    data['Urlpicture'] = this.urlpicture;
+    data['UrlPicture'] = this.urlPicture;
     data['Lat'] = this.lat;
     data['Lng'] = this.lng;
     data['Token'] = this.token;
     return data;
   }
-
-  static void add(UserModel model) {}
 }

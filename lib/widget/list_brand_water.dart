@@ -67,10 +67,12 @@ class _ListBrandWaterState extends State<ListBrandWater> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(children: [
-      loadStatus! ? MyStyle().showProgress() : showContent(),
-      addBrandWater(),
-    ]);
+    return Scaffold(appBar: AppBar(title: Text('ยี่ห้อน้ำดื่ม'),),
+      body: Stack(children: [
+        loadStatus! ? MyStyle().showProgress() : showContent(),
+        addBrandWater(),
+      ]),
+    );
   }
 
   Widget showContent() {

@@ -1,6 +1,8 @@
+import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 
+import 'package:application_drinking_water_shop/model/user_model.dart';
 import 'package:application_drinking_water_shop/utility/my_constant.dart';
 import 'package:application_drinking_water_shop/utility/my_style.dart';
 import 'package:application_drinking_water_shop/utility/dialog.dart';
@@ -21,6 +23,16 @@ class _AddInfoShopState extends State<AddInfoShop> {
   double? lat, lng;
   File? _image;
   String? nameShop, address, phone, urlImage;
+  UserModel? detailShopModel;
+
+
+
+  @override
+  void initState() {
+    super.initState();
+    findLatlng();
+    readCurrentInfo();
+  }
 
 
   Future getImage() async {
@@ -45,11 +57,7 @@ class _AddInfoShopState extends State<AddInfoShop> {
     });
   }
 
-  @override
-  void initState() {
-    super.initState();
-    findLatlng();
-  }
+  
 
   Future<Null> findLatlng() async {
     LocationData locationData = await findLocationData();
@@ -162,6 +170,27 @@ Future<Null> editShop() async {
         normalDialog(context, 'ไม่สามารถบันทึกข้อมูลได้กรุณาลองใหม่');
       }
     } catch (e) {}
+  }
+
+  Future<Null> readCurrentInfo() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    String? idshop = preferences.getString('id');
+    print('idshop --> $idshop');
+
+    String url =
+        '${MyConstant().domain}/WaterShop/getdetailShop.php?isAdd=true&id=46';
+    Response response = await Dio().get(url);
+    print('response ==> $response');
+
+    var result = json.decode(response.data);
+    print('result => $result');
+
+    for (var map in result) {
+      print('map ==> $map');
+      setState(() {
+        detailShopModel = UserModel.fromJson(map);
+      });
+    }
   }
 
 

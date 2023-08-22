@@ -32,7 +32,7 @@ class _InformationState extends State<Information> {
     String? id = preferences.getString('id');
 
     String url =
-        '${MyConstant().domain}/WaterShop/getUserWhereId.php?isAdd=true&id=$id';
+        '${MyConstant().domain}/WaterShop/getdetailShop.php?isAdd=true&id=$id';
     await Dio().get(url).then(
       (value) {
         // print('value = $value');
@@ -58,21 +58,23 @@ class _InformationState extends State<Information> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      children: <Widget>[
-        userModel == null
-            ? MyStyle().showProgress()
-            : userModel!.nameShop!.isEmpty
-                ? showNodata(context)
-                : showListinfoShop(),
-        addAndEditButton(),
-      ],
+    return Scaffold(appBar: AppBar(title: Text('รายละเอียดของร้าน ${userModel?.nameShop}'),),
+      body: Stack(
+        children: <Widget>[
+          userModel == null
+              ? MyStyle().showProgress()
+              : userModel!.nameShop!.isEmpty
+                  ? showNodata(context)
+                  : showListinfoShop(),
+          addAndEditButton(),
+        ],
+      ),
     );
   }
 
   Widget showListinfoShop() => Column(
         children: <Widget>[
-          MyStyle().showTitleH2('รายละเอียดของร้าน ${userModel?.nameShop}'),
+          MyStyle().mySixedBox(),
           showImage(),
           Row(
             children: [
@@ -90,7 +92,7 @@ class _InformationState extends State<Information> {
 
   Container showImage() {
     return Container(width: 200.0,height: 200.0,
-          child: Image.network('${MyConstant().domain}${userModel?.urlpicture}'),
+          child: Image.network('${MyConstant().domain}${userModel!.urlPicture}'),
         );
   }
 
