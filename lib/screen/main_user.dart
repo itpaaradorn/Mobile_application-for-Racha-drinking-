@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:application_drinking_water_shop/screen/notification.dart';
 import 'package:application_drinking_water_shop/screen/profilepage.dart';
 import 'package:application_drinking_water_shop/screen/show_shop_cart.dart';
 import 'package:application_drinking_water_shop/utility/my_style.dart';
@@ -29,7 +28,7 @@ class _MainUserState extends State<MainUser> {
   final pages = <Widget>[
     ShowListShop(),
     ShowStatusWaterOrder(),
-    NotificationPage(),
+    ShowCart(),
     AccountPage(),
   ];
 
@@ -108,7 +107,6 @@ class _MainUserState extends State<MainUser> {
             onChangedTab: onChangedTab,
           ),
         ),
-        shoppingCartbutton(),
       ],
     );
   }

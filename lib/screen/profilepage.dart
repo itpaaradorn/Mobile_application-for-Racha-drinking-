@@ -65,19 +65,18 @@ class _AccountPageState extends State<AccountPage> {
                 // profile Icons
                 children: [
                   Text(
-                    "Profile & Location",
+                    "Profile",
                     style: TextStyle(fontSize: 28, fontWeight: FontWeight.w500),
                   ),
                   MyStyle().mySixedBox(),
-                  AppIcon(
-                    icon: Icons.person,
-                    backgroundColor: Colors.blueAccent,
-                    iconColor: Colors.white,
-                    iconSize: 80,
-                    size: 150,
-                  ),  
                   SizedBox(
-                    height: 30,
+                  height: 180,
+                  width: 180,
+                  child:
+                      loadstatus ? buildNoneAvatarImage() : buildAvatarImage(),
+                ),
+                  SizedBox(
+                    height: 15,
                   ),
                   Expanded(
                     child: SingleChildScrollView(
@@ -89,7 +88,7 @@ class _AccountPageState extends State<AccountPage> {
                               icon: Icons.person,
                               backgroundColor: Colors.blueAccent,
                               iconColor: Colors.white,
-                              iconSize: 25,
+                              iconSize: 35,
                               size: 50,
                             ),
                             bigText: BigText(
@@ -157,7 +156,6 @@ class _AccountPageState extends State<AccountPage> {
                             ),
                           ),
                           //message
-
                           SizedBox(
                             height: 15,
                           ),
@@ -179,6 +177,18 @@ class _AccountPageState extends State<AccountPage> {
         CircleAvatar(
           backgroundImage:
               NetworkImage('${MyConstant().domain}${userModel?.urlPicture}'),
+        ),
+      ],
+    );
+  }
+
+  Widget buildNoneAvatarImage() {
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+       CircleAvatar(
+          backgroundImage:
+              AssetImage('images/account.png')
         ),
       ],
     );

@@ -31,7 +31,7 @@ class _TabbarMaterialWidgetState extends State<TabbarMaterialWidget> {
           ),
           buildTabItem(
             index: 2,
-            icon: Icon(Icons.chat_bubble_outline),
+            icon: Icon(Icons.shopping_cart),
           ),
           buildTabItem(
             index: 3,

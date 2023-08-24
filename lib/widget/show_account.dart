@@ -5,6 +5,7 @@ import 'package:application_drinking_water_shop/screen/edit_account_emp.dart';
 import 'package:application_drinking_water_shop/utility/my_style.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:toast/toast.dart';
 
 import '../model/user_model.dart';
 
@@ -36,6 +37,7 @@ class _ShowAccountState extends State<ShowAccount> {
 
   @override
   Widget build(BuildContext context) {
+    ToastContext().init(context);
     return Scaffold(
       appBar: AppBar(
         title: Text('จัดการข้อมูลพนักงาน'),
@@ -67,7 +69,10 @@ class _ShowAccountState extends State<ShowAccount> {
               padding: EdgeInsets.all(14.0),
               width: MediaQuery.of(context).size.width * 0.4,
               height: MediaQuery.of(context).size.width * 0.4,
-              child: buildNoneAvatarImage(),
+              child: usermodels[index].urlPicture == null
+                  ? buildNoneAvatarImage()
+                  : Image.network(
+                      '${MyConstant().domain}${usermodels[index].urlPicture}'),
             ),
             Container(
               padding: EdgeInsets.all(15.0),
@@ -183,6 +188,8 @@ class _ShowAccountState extends State<ShowAccount> {
                   await Dio().get(url).then(
                         (value) => readAccount(),
                       );
+                  Toast.show("ลบข้อมูลสมาชิกสำเร็จ",
+                      duration: Toast.lengthLong, gravity: Toast.bottom);
                 },
                 child: Text('ยืนยัน',
                     style: TextStyle(
@@ -217,7 +224,7 @@ class _ShowAccountState extends State<ShowAccount> {
             Container(
               margin: EdgeInsets.only(right: 16.0, bottom: 16.0),
               child: FloatingActionButton(
-                child: Icon(Icons.edit),
+                child: Icon(Icons.add,size: 40.0,),
                 onPressed: () {
                   print('you click floating');
                   routeToAddAccount();

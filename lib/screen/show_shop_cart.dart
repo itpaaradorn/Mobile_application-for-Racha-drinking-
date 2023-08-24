@@ -26,7 +26,7 @@ class _ShowCartState extends State<ShowCart> {
   List<CartModel> cartModels = [];
 
   WaterModel? waterModel;
-  String? water_id ,amount, quantity;
+  String? water_id, amount, quantity;
   int total = 0;
   bool ststus = true;
 
@@ -61,16 +61,11 @@ class _ShowCartState extends State<ShowCart> {
   @override
   Widget build(BuildContext context) {
     ToastContext().init(context);
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('รายการในตะกร้า'),
-      ),
-      body: ststus
-          ? Center(
-              child: Text('ตะกร้าว่างเปล่า'),
-            )
-          : buildContent(),
-    );
+    return ststus
+        ? Center(
+            child: Text('ตะกร้าว่างเปล่า'),
+          )
+        : buildContent();
   }
 
   Widget buildContent() {
@@ -422,8 +417,6 @@ class _ShowCartState extends State<ShowCart> {
       }
     });
   }
-
-
 
   Future<Null> clearOrderSQLite() async {
     Toast.show("ทำรายการสั่งซื้อ เสร็จสิ้น",

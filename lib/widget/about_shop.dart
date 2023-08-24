@@ -117,7 +117,7 @@ class _AboutShopState extends State<AboutShop> {
       return Marker(
           markerId: MarkerId('userMaker'),
           position: LatLng(lat1!, lng1!),
-          icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueViolet),
+          icon: BitmapDescriptor.defaultMarkerWithHue(60.0),
           infoWindow: InfoWindow(
             title: 'คุณอยู่ที่นี้',
           ));
@@ -129,7 +129,7 @@ class _AboutShopState extends State<AboutShop> {
           position: LatLng(lat2!, lng2!),
           icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
           infoWindow: InfoWindow(
-            title: 'ร้าน${userModel!.nameShop}',
+            title: 'ร้าน ${userModel!.nameShop}',
           ));
     }
 

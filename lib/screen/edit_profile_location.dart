@@ -1,5 +1,6 @@
 
 import 'dart:io';
+import 'dart:math';
 
 
 import 'package:application_drinking_water_shop/utility/my_style.dart';
@@ -78,7 +79,9 @@ class _EditProfileLocationState extends State<EditProfileLocation> {
                   password!.isEmpty) {
                 normalDialog2(context, 'มีช่องว่าง !', 'กรุณากรอกข้อมูลให้ครบ');
               } else {
-                updateProfileandLocation();
+                updateProfileandLocation().then(
+                (value) => Navigator.pop(context),
+              );
               }
             }),
         ],
@@ -87,7 +90,7 @@ class _EditProfileLocationState extends State<EditProfileLocation> {
         child: Column(
           children: [
             SizedBox(
-              height: 50.0,
+              height: 15.0,
             ),
 
             // AppTextFieldString(text: user!.trim(), hintText: "user", icon: Icons.person),
@@ -95,11 +98,10 @@ class _EditProfileLocationState extends State<EditProfileLocation> {
             // AppTextFieldString(text: name!.trim(), hintText: "name", icon: Icons.person),
             // AppTextFieldString(text: phone!.trim(), hintText: "phone", icon: Icons.person),
             // AppTextFieldString(text: address!.trim(), hintText: "address", icon: Icons.person),
-          //  groupImage(),
+           groupImage(),
             nameUser(),
             userForm(),
             passwordForm(),
-
             phonesUser(),
             addressUser(),
             MyStyle().mySixedBox(),
@@ -214,15 +216,15 @@ class _EditProfileLocationState extends State<EditProfileLocation> {
       );
 
   Future<Null> updateProfileandLocation() async {
-    // Random random = Random();
-    // int i = random.nextInt(100000);
-    // String nameFile = 'editavatar$i.jpg';
-    // Map<String, dynamic> map = Map();
-    // map['file'] = await MultipartFile.fromFile(file!.path, filename: nameFile);
-    // FormData formData = FormData.fromMap(map);
-    // String urlUpload = '${MyConstant().domain}/WaterShop/saveAvatar.php';
-    // await Dio().post(urlUpload, data: formData).then((value) async {
-    //   urlpicture = '/WaterShop/avatar/$nameFile';
+    Random random = Random();
+    int i = random.nextInt(100000);
+    String nameFile = 'editavatar$i.jpg';
+    Map<String, dynamic> map = Map();
+    map['file'] = await MultipartFile.fromFile(file!.path, filename: nameFile);
+    FormData formData = FormData.fromMap(map);
+    String urlUpload = '${MyConstant().domain}/WaterShop/saveAvatar.php';
+    await Dio().post(urlUpload, data: formData).then((value) async {
+      urlpicture = '/WaterShop/avatar/$nameFile';
      
       String url =
           '${MyConstant().domain}/WaterShop/editProfilelocation.php?isAdd=true&id=$user_id&UrlPicture=$urlpicture&Name=$name&User=$user&Password=$password&Phone=$phone&Address=$address&Lat=$lat&Lng=$lng';
@@ -234,7 +236,7 @@ class _EditProfileLocationState extends State<EditProfileLocation> {
               "กรุณาตรวจสอบเพื่อความถูกต้อง");
         },
       );
-    // });
+    });
   }
 
   Widget buildMap() => Container(

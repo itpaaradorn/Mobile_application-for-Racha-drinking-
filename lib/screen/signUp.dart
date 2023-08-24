@@ -54,7 +54,7 @@ class _SignUpState extends State<SignUp> {
     });
   }
 
- Future<Null> checkPermission() async {
+  Future<Null> checkPermission() async {
     bool locationService;
     LocationPermission locationPermission;
 
@@ -94,16 +94,13 @@ class _SignUpState extends State<SignUp> {
             child: Column(
               children: <Widget>[
                 SizedBox(
-                  height: 60,
+                  height: 25,
                 ),
                 showAppname(),
                 MyStyle().mySixedBox(),
-                // MyStyle().showTitleH2('รูปภาพ'),
-                // SizedBox(
-                //   height: 20,
-                // ),
-                // buildAvatar(),
-                
+                MyStyle().showTitleH2('รูปภาพ'),
+                MyStyle().mySixedBox(),
+                buildAvatar(),
                 MyStyle().mySixedBox05(),
                 nameForm(),
                 MyStyle().mySixedBox05(),
@@ -117,11 +114,12 @@ class _SignUpState extends State<SignUp> {
                 MyStyle().mySixedBox05(),
                 addressForm(),
                 MyStyle().mySixedBox05(),
+                MyStyle().mySixedBox05(),
                 buildMap(),
                 MyStyle().mySixedBox(),
                 registerButton(),
                 SizedBox(
-                  height: 30,
+                  height: 10,
                 ),
               ],
             ),
@@ -475,7 +473,10 @@ class _SignUpState extends State<SignUp> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text('สมัครสมาชิก',style: TextStyle(color: Colors.blue.shade800,fontSize: 35.0),)
+        Text(
+          'สมัครสมาชิก',
+          style: TextStyle(color: Colors.blue.shade800, fontSize: 35.0),
+        )
       ],
     );
   }

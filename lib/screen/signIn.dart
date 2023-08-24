@@ -50,7 +50,7 @@ class _LoginPageState extends State<LoginPage> {
                 loginButton(),
                 showTextDonAccount(), showTextSigUp(),
 
-                // RaisedButton(onPressed: (){}, child: Text('data'))
+                // RaisedBu tton(onPressed: (){}, child: Text('data'))
               ],
             ),
           ),

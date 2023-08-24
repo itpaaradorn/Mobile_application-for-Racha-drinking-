@@ -325,10 +325,7 @@ class _OrderConfirmEmpState extends State<OrderConfirmEmp> {
     showDialog(
       context: context,
       builder: (context) => SimpleDialog(
-        title: Text(
-          'คุณต้องการยกเลิกรายการ สั่งซื้อน้ำดื่มที่ ${ordermodels[index].orderId} ใช่ไหม ?',
-          style: MyStyle().mainDackTitle,
-        ),
+        title: MyStyle().showTitleH2('คุณต้องการยกเลิกรายการ สั่งซื้อน้ำดื่ม\nที่ ${ordermodels[index].orderId} ใช่ไหม ?'),
         children: <Widget>[
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -382,7 +379,7 @@ class _OrderConfirmEmpState extends State<OrderConfirmEmp> {
 
     await Dio().get(url).then((value) {
       findOrderShop();
-      normalDialog2(
+      normalDialogChack(
           context, 'ยกเลิกรายการสั่งซื้อสำเร็จ', 'รายการสั่งซื้อที่ $order_id');
     });
   }

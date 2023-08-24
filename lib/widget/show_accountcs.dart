@@ -5,6 +5,7 @@ import 'package:application_drinking_water_shop/screen/edit_account_user.dart';
 import 'package:application_drinking_water_shop/utility/my_constant.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:toast/toast.dart';
 
 import '../model/user_model.dart';
 
@@ -38,6 +39,7 @@ class _ShowAccountCsState extends State<ShowAccountCs> {
 
   @override
   Widget build(BuildContext context) {
+    ToastContext().init(context);
     return Scaffold(
       appBar: AppBar(
         title: Text('จัดการข้อมูลลูกค้า'),
@@ -69,7 +71,10 @@ class _ShowAccountCsState extends State<ShowAccountCs> {
               padding: EdgeInsets.all(14.0),
               width: MediaQuery.of(context).size.width * 0.4,
               height: MediaQuery.of(context).size.width * 0.4,
-              child: buildNoneAvatarImage(),
+              child: usermodels[index].urlPicture == null
+                  ? buildNoneAvatarImage()
+                  : Image.network(
+                      '${MyConstant().domain}${usermodels[index].urlPicture}'),
             ),
             Container(
               padding: EdgeInsets.all(15.0),
@@ -184,6 +189,8 @@ class _ShowAccountCsState extends State<ShowAccountCs> {
                   await Dio().get(url).then(
                         (value) => readAccount(),
                       );
+                  Toast.show("ลบข้อมูลสมาชิกสำเร็จ",
+                      duration: Toast.lengthLong, gravity: Toast.bottom);
                 },
                 child: Text('ยืนยัน',
                     style: TextStyle(
@@ -216,9 +223,9 @@ class _ShowAccountCsState extends State<ShowAccountCs> {
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             Container(
-              margin: EdgeInsets.only(right: 16.0, bottom: 16.0),
+              margin: EdgeInsets.only(right: 16.0, bottom: 20.0),
               child: FloatingActionButton(
-                child: Icon(Icons.edit),
+                child: Icon(Icons.add,size: 40,),
                 onPressed: () {
                   print('you click floating');
                   routeToAddAccount();

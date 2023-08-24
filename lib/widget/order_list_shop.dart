@@ -271,10 +271,7 @@ class _OrderListShopState extends State<OrderListShop> {
     showDialog(
       context: context,
       builder: (context) => SimpleDialog(
-        title: Text(
-          'คุณต้องการยกเลิกรายการ สั่งซื้อน้ำดื่มที่ ${ordermodels[index].orderId} ใช่ไหม ?',
-          style: MyStyle().mainDackTitle,
-        ),
+        title: MyStyle().showTitleH2('คุณต้องการยกเลิกรายการ สั่งซื้อน้ำดื่ม\nที่ ${ordermodels[index].orderId} ใช่ไหม ?'),
         children: <Widget>[
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -286,6 +283,7 @@ class _OrderListShopState extends State<OrderListShop> {
                 ),
                 onPressed: () async {
                   cancleOrderUser(index);
+                  Navigator.pop(context);
                 },
               ),
               TextButton(
@@ -365,7 +363,7 @@ class _OrderListShopState extends State<OrderListShop> {
     await Dio().get(url).then((value) {
       notificationCancleShop(index);
       findOrderShop();
-      normalDialog2(
+      normalDialogChack(
           context, 'ยกเลิกรายการสั่งซื้อสำเร็จ', 'รายการสั่งซื้อที่ $order_id');
     });
   }
@@ -411,7 +409,7 @@ class _OrderListShopState extends State<OrderListShop> {
 
         String urlSendToken =
             '${MyConstant().domain}/waterShop/apiNotification.php?isAdd=true&token=$tokenUser&title=$title&body=$body';
-        // sendNotificationToShop(urlSendToken);
+        sendNotificationToShop(urlSendToken);
       }
     });
   }

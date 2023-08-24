@@ -56,7 +56,6 @@ class _ShowShopWaterMunuState extends State<ShowShopWaterMunu> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        actions: [MyStyle().iconShowCart(context)],
         title: Text('สั่งซื้อน้ำดื่ม ${brandModel!.brandName}'),
       ),
       body: listWidgets[indexPage],
