@@ -39,7 +39,6 @@ class _ListWaterMenuShopState extends State<ListWaterMenuShop> {
         '${MyConstant().domain}/WaterShop/getWaterWheredShop.php?isAdd=true&idShop=$idShop';
     await Dio().get(url).then(
       (value) {
-       
         setState(
           () {
             loadStatus = false;
@@ -71,7 +70,12 @@ class _ListWaterMenuShopState extends State<ListWaterMenuShop> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(appBar: AppBar(title: Text('ข้อมูลน้ำดื่ม'),),
+    return Scaffold(
+      appBar: AppBar(
+         backgroundColor: Colors.white,
+        title: Text('ข้อมูลน้ำดื่ม',
+          style: TextStyle(color: Colors.indigo),),
+      ),
       body: Stack(
         children: <Widget>[
           loadStatus! ? MyStyle().showProgress() : showContent(),
@@ -136,7 +140,9 @@ class _ListWaterMenuShopState extends State<ListWaterMenuShop> {
                           ),
                           onPressed: () {
                             MaterialPageRoute route = MaterialPageRoute(
-                              builder: (context) => EditWaterMenu(waterModel:waterModels![index],),
+                              builder: (context) => EditWaterMenu(
+                                waterModel: waterModels![index],
+                              ),
                             );
                             Navigator.push(context, route).then(
                               (value) => readWaterMenu(),
@@ -181,7 +187,8 @@ class _ListWaterMenuShopState extends State<ListWaterMenuShop> {
                 },
                 child: Text('ยืนยัน',
                     style: TextStyle(
-                      fontWeight: FontWeight.bold,color: Colors.black87,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
                     )),
               ),
               TextButton(
@@ -189,7 +196,8 @@ class _ListWaterMenuShopState extends State<ListWaterMenuShop> {
                 child: Text(
                   'ยกเลิก',
                   style: TextStyle(
-                    fontWeight: FontWeight.bold,color: Colors.black87,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
                   ),
                 ),
               )
@@ -211,7 +219,8 @@ class _ListWaterMenuShopState extends State<ListWaterMenuShop> {
                 child: FloatingActionButton(
                   onPressed: () {
                     MaterialPageRoute route = MaterialPageRoute(
-                      builder: (context) => AddMenuWater(waterModel: WaterModel()),
+                      builder: (context) =>
+                          AddMenuWater(waterModel: WaterModel()),
                     );
                     Navigator.push(context, route)
                         .then((value) => readWaterMenu());

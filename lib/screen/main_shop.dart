@@ -239,6 +239,6 @@ class _MainShopState extends State<MainShop> {
         arrowColor: Colors.blueAccent,
         currentAccountPicture: MyStyle().showLogoAdmin(),
         accountName: Text('Admin Login'),
-        accountEmail: Text('bankch@gamil.com'));
+        accountEmail: Text('@Bank_Ch'));
   }
 }

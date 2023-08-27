@@ -7,6 +7,8 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../configs/api.dart';
 import '../model/order_model.dart';
 import '../model/user_model.dart';
+import '../screen/add_order.dart';
+import '../screen/edit_order.dart';
 import '../screen/employee/follow_map_emp.dart';
 import '../utility/my_constant.dart';
 import '../utility/my_style.dart';
@@ -42,7 +44,7 @@ class _OrderConfirmEmpState extends State<OrderConfirmEmp> {
   Widget build(BuildContext context) {
     return Stack(
       children: <Widget>[
-        loadStatus ? buildNoneOrder() : showContent(),
+        loadStatus ? buildNoneOrder() : showContent(),addMenuButton(),
       ],
     );
   }
@@ -70,6 +72,30 @@ class _OrderConfirmEmpState extends State<OrderConfirmEmp> {
       ),
     );
   }
+
+  Widget addMenuButton() => Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Container(
+                padding: EdgeInsets.only(bottom: 16.0, right: 16.0),
+                child: FloatingActionButton(
+                  onPressed: () {
+                    MaterialPageRoute route = MaterialPageRoute(
+                      builder: (context) => AddOrderEmpAndShop(),
+                    );
+                    Navigator.push(context, route)
+                        .then((value) => findOrderShop());
+                  },
+                  child: Icon(Icons.add),
+                ),
+              ),
+            ],
+          ),
+        ],
+      );
 
   Future<Null> findOrderShop() async {
     if (ordermodels.length != 0) {
@@ -218,14 +244,14 @@ class _OrderConfirmEmpState extends State<OrderConfirmEmp> {
                   children: [
                     ElevatedButton(
                       onPressed: () {
-                        // MaterialPageRoute route = MaterialPageRoute(
-                        //   builder: (context) => EditOrderEmp(
-                        //     orderModel: orderModels[index],
-                        //   ),
-                        // );
-                        // Navigator.push(context, route).then(
-                        //   (value) => findOrderShop(),
-                        // );
+                        MaterialPageRoute route = MaterialPageRoute(
+                          builder: (context) => EditOrderEmp(
+                            orderModel: ordermodels[index],
+                          ),
+                        );
+                        Navigator.push(context, route).then(
+                          (value) => findOrderShop(),
+                        );
                       },
                       child: Text("แก้ไข"),
                     ),
@@ -257,7 +283,8 @@ class _OrderConfirmEmpState extends State<OrderConfirmEmp> {
                       ),
                       onPressed: () {
                         updateStatusConfirmOrder(index).then((value) {
-                          normalDialog2(context, "กำลังจัดส่ง", "อัพเดทสถานะจัดส่ง");
+                          normalDialog2(
+                              context, "กำลังจัดส่ง", "อัพเดทสถานะจัดส่ง");
                           Navigator.pop(context);
                           setState(() {
                             findOrderShop();
@@ -325,7 +352,8 @@ class _OrderConfirmEmpState extends State<OrderConfirmEmp> {
     showDialog(
       context: context,
       builder: (context) => SimpleDialog(
-        title: MyStyle().showTitleH2('คุณต้องการยกเลิกรายการ สั่งซื้อน้ำดื่ม\nที่ ${ordermodels[index].orderId} ใช่ไหม ?'),
+        title: MyStyle().showTitleH2(
+            'คุณต้องการยกเลิกรายการ สั่งซื้อน้ำดื่ม\nที่ ${ordermodels[index].orderId} ใช่ไหม ?'),
         children: <Widget>[
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -396,8 +424,7 @@ class _OrderConfirmEmpState extends State<OrderConfirmEmp> {
         UserModel model = UserModel.fromJson(json);
         String tokenUser = model.token!;
         // print('tokenShop ==>> $tokenUser');
-        String title =
-            'คุณ ${model.name} พนักงงานกำลังจัดส่งสินค้าให้คุณแล้ว';
+        String title = 'คุณ ${model.name} พนักงงานกำลังจัดส่งสินค้าให้คุณแล้ว';
         String body = 'กรุณารอรับสินค้าและตรวจสอบการสั่งซื้อ';
 
         String urlSendToken =

@@ -87,7 +87,7 @@ class _AddAccountUser extends State<AddAccountUser> {
     ToastContext().init(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text('เพิ่มข้อมูลลุกค้า'),
+        title: Text('เพิ่มข้อมูลลูกค้า'),
       ),
       body: GestureDetector(
         onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
@@ -139,7 +139,7 @@ class _AddAccountUser extends State<AddAccountUser> {
             uploadPictureAndInsertData();
           }
         },
-        child: Text('สมัครสมาชิก'),
+        child: Text('เพิ่มข้อมูลลูกค้า'),
       ));
 
   Future<Null> uploadPictureAndInsertData() async {

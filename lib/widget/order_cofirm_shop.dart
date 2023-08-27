@@ -40,7 +40,14 @@ class _OrderConfirmShopState extends State<OrderConfirmShop> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(appBar: AppBar(title: Text('รายการน้ำดื่มที่จัดส่งแล้ว'),),
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        title: Text(
+          'รายการน้ำดื่มที่จัดส่งแล้ว',
+          style: TextStyle(color: Colors.indigo),
+        ),
+      ),
       body: Stack(
         children: <Widget>[
           loadStatus ? buildNoneOrder() : showContent(),
@@ -120,42 +127,55 @@ class _OrderConfirmShopState extends State<OrderConfirmShop> {
     int index,
   ) async {
     PdfDocument document = PdfDocument();
-     var page = document.pages.add();
+    var page = document.pages.add();
 
     drawGrid(
         index, page, listAmounts, listnameWater, listPrices, listSums, totals);
     Imagebill(page, index, ordermodels);
     Detailbill(page, index, ordermodels);
 
-    List<int> bytes = document.save() as List<int>;
+    List<int> bytes = await document.save();
 
-    saveAndLanchFile(bytes, 'BillOrder${ordermodels[index].orderId}.pdf');
+    saveAndLanchFile(bytes, 'Order_${ordermodels[index].orderId}.pdf');
     document.dispose();
   }
 
   static void Imagebill(PdfPage page, int index, List<OrderModel> ordermodels) {
     page.graphics.drawString(
-      'PPS GAS BILL order :${ordermodels[index].orderId}xxxxPPS',
-      PdfStandardFont(PdfFontFamily.helvetica, 25),
+      'Racha Drinking WaterShop ',
+      PdfStandardFont(PdfFontFamily.helvetica, 30, style: PdfFontStyle.bold),
+      bounds: const Rect.fromLTWH(75, 0, 0, 0),
     );
   }
 
   static void Detailbill(
       PdfPage page, int index, List<OrderModel> ordermodels) {
     page.graphics.drawString(
-      'date order : ${ordermodels[index].orderDateTime}',
-      PdfStandardFont(PdfFontFamily.helvetica, 25),
-      bounds: const Rect.fromLTWH(0, 30, 0, 0),
+      'Name: ${ordermodels[index].userName}',
+      PdfStandardFont(PdfFontFamily.helvetica, 23),
+      bounds: const Rect.fromLTWH(0, 45, 0, 0),
     );
     page.graphics.drawString(
-      'delivery distance : ${ordermodels[index].distance}kg.',
-      PdfStandardFont(PdfFontFamily.helvetica, 25),
-      bounds: const Rect.fromLTWH(0, 55, 0, 0),
+      'Order ID: ${ordermodels[index].orderId}',
+      PdfStandardFont(PdfFontFamily.helvetica, 23),
+      bounds: const Rect.fromLTWH(0, 75, 0, 0),
+    );
+
+    page.graphics.drawString(
+      'Order Time: ${ordermodels[index].orderDateTime}',
+      PdfStandardFont(PdfFontFamily.helvetica, 23),
+      bounds: const Rect.fromLTWH(0, 105, 0, 0),
+    );
+
+    page.graphics.drawString(
+      'Delivery Distance: ${ordermodels[index].distance} Km.',
+      PdfStandardFont(PdfFontFamily.helvetica, 23),
+      bounds: const Rect.fromLTWH(0, 135, 0, 0),
     );
     page.graphics.drawString(
-      'shipping cost : ${ordermodels[index].transport}THB.',
-      PdfStandardFont(PdfFontFamily.helvetica, 25),
-      bounds: const Rect.fromLTWH(0, 80, 0, 0),
+      'Shipping cost: ${ordermodels[index].transport} THB.',
+      PdfStandardFont(PdfFontFamily.helvetica, 23),
+      bounds: const Rect.fromLTWH(0, 165, 0, 0),
     );
   }
 
@@ -165,7 +185,7 @@ class _OrderConfirmShopState extends State<OrderConfirmShop> {
     grid.columns.add(count: 4);
 
     final headerRow = grid.headers.add(1)[0];
-    headerRow.style.backgroundBrush = PdfSolidBrush(PdfColor(68, 114, 196));
+    headerRow.style.backgroundBrush = PdfSolidBrush(PdfColor(0, 0, 122));
     headerRow.style.textBrush = PdfBrushes.white;
     headerRow.cells[0].value = 'Amount';
     headerRow.cells[1].value = 'Brand';
@@ -189,7 +209,7 @@ class _OrderConfirmShopState extends State<OrderConfirmShop> {
           PdfPaddings(bottom: 5, left: 5, right: 5, top: 5);
     }
 
-    grid.draw(page: page, bounds: Rect.fromLTWH(0, 110, 0, 0));
+    grid.draw(page: page, bounds: Rect.fromLTWH(0, 205, 0, 0));
   }
 
   Future<void> saveAndLanchFile(List<int> bytes, String filename) async {

@@ -19,14 +19,14 @@ class AppTextField extends StatelessWidget {
       margin: EdgeInsets.only(
           left: 20, right: 20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Color.fromARGB(255, 249, 248, 248),
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
               blurRadius: 10,
               spreadRadius: 7,
               offset: Offset(1, 10),
-              color: Colors.grey.withOpacity(0.2)),
+              color: Color.fromARGB(255, 163, 163, 163).withOpacity(0.2)),
         ],
       ),
       child: TextField(

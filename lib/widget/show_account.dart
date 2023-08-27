@@ -40,7 +40,11 @@ class _ShowAccountState extends State<ShowAccount> {
     ToastContext().init(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text('จัดการข้อมูลพนักงาน'),
+        backgroundColor: Colors.white,
+        title: Text(
+          'จัดการข้อมูลพนักงาน',
+          style: TextStyle(color: Colors.indigo),
+        ),
       ),
       body: Stack(
         children: <Widget>[
@@ -224,7 +228,10 @@ class _ShowAccountState extends State<ShowAccount> {
             Container(
               margin: EdgeInsets.only(right: 16.0, bottom: 16.0),
               child: FloatingActionButton(
-                child: Icon(Icons.add,size: 40.0,),
+                child: Icon(
+                  Icons.add,
+                  size: 40.0,
+                ),
                 onPressed: () {
                   print('you click floating');
                   routeToAddAccount();

@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 
 import '../configs/api.dart';
 import '../model/order_model.dart';
+import '../screen/add_order.dart';
+import '../screen/edit_order.dart';
 import '../utility/my_constant.dart';
 import '../utility/dialog.dart';
 
@@ -79,10 +81,17 @@ class _OrderListShopState extends State<OrderListShop> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(appBar: AppBar(title: Text('รายการน้ำดื่มที่ลูกค้าสั่ง'),),
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        title: Text(
+          'รายการน้ำดื่มที่ลูกค้าสั่ง',
+          style: TextStyle(color: Colors.indigo),
+        ),
+      ),
       body: Stack(
         children: <Widget>[
-          loadStatus ? buildNoneOrder() : showContent(),
+          loadStatus ? buildNoneOrder() : showContent(),addMenuButton()
         ],
       ),
     );
@@ -205,7 +214,9 @@ class _OrderListShopState extends State<OrderListShop> {
                             ordermodels[index].status == 'Cancle'
                                 ? MyStyle().showTitleH3('ยกเลิก')
                                 : Text(
-                                    '${totals[index].toString()} บาท',style: MyStyle().mainhATitle,),
+                                    '${totals[index].toString()} บาท',
+                                    style: MyStyle().mainhATitle,
+                                  ),
                           ],
                         ),
                       ),
@@ -214,7 +225,7 @@ class _OrderListShopState extends State<OrderListShop> {
                 ),
                 MyStyle().mySixedBox(),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     ElevatedButton.icon(
                       style: const ButtonStyle(
@@ -257,6 +268,30 @@ class _OrderListShopState extends State<OrderListShop> {
                         style: TextStyle(color: Colors.white),
                       ),
                     ),
+                    ElevatedButton.icon(
+                      style: const ButtonStyle(
+                        backgroundColor:
+                            MaterialStatePropertyAll<Color>(Colors.blue),
+                      ),
+                      onPressed: () {
+                        MaterialPageRoute route = MaterialPageRoute(
+                          builder: (context) => EditOrderEmp(
+                            orderModel: ordermodels[index],
+                          ),
+                        );
+                        Navigator.push(context, route).then(
+                          (value) => findOrderShop(),
+                        );
+                      },
+                      icon: Icon(
+                        Icons.edit,
+                        color: Colors.white,
+                      ),
+                      label: Text(
+                        'Edit',
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
                   ],
                 ),
               ],
@@ -267,11 +302,36 @@ class _OrderListShopState extends State<OrderListShop> {
     );
   }
 
+  Widget addMenuButton() => Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Container(
+                padding: EdgeInsets.only(bottom: 16.0, right: 16.0),
+                child: FloatingActionButton(
+                  onPressed: () {
+                    MaterialPageRoute route = MaterialPageRoute(
+                      builder: (context) => AddOrderEmpAndShop(),
+                    );
+                    Navigator.push(context, route)
+                        .then((value) => findOrderShop());
+                  },
+                  child: Icon(Icons.add),
+                ),
+              ),
+            ],
+          ),
+        ],
+      );
+
   Future<Null> confirmDeleteCancleOrder(int index) async {
     showDialog(
       context: context,
       builder: (context) => SimpleDialog(
-        title: MyStyle().showTitleH2('คุณต้องการยกเลิกรายการ สั่งซื้อน้ำดื่ม\nที่ ${ordermodels[index].orderId} ใช่ไหม ?'),
+        title: MyStyle().showTitleH2(
+            'คุณต้องการยกเลิกรายการ สั่งซื้อน้ำดื่ม\nที่ ${ordermodels[index].orderId} ใช่ไหม ?'),
         children: <Widget>[
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,

@@ -57,10 +57,17 @@ class _ReceiptShopState extends State<ReceiptShop> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(appBar: AppBar(title: Text('ข้อมูลชำระเงิน'),),
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        title: Text(
+          'ข้อมูลชำระเงิน',
+          style: TextStyle(color: Colors.indigo),
+        ),
+      ),
       body: Stack(
         children: <Widget>[
-          loadStatus ? MyStyle().showProgress() : showContent(),
+          loadStatus ? buildNoneAvatarImage() : showContent(),
         ],
       ),
     );
@@ -86,11 +93,7 @@ class _ReceiptShopState extends State<ReceiptShop> {
   }
 
   Widget showContent() {
-    return status
-        ? showPayment()
-        : Center(
-            child: Text('ยังไม่มีข้อมูลชำระเงิน'),
-          );
+    return status ? showPayment() : buildNoneAvatarImage();
   }
 
   Widget showPayment() {

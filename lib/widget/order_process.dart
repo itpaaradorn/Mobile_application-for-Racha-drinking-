@@ -35,7 +35,14 @@ class _OrderProcessShopState extends State<OrderProcessShop> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(appBar: AppBar(title: Text('รายการน้ำดื่มกำลังดำเนินการ'),),
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        title: Text(
+          'รายการน้ำดื่มกำลังดำเนินการ',
+          style: TextStyle(color: Colors.indigo),
+        ),
+      ),
       body: Stack(
         children: <Widget>[
           loadStatus ? buildNoneOrder() : showContent(),
@@ -67,7 +74,6 @@ class _OrderProcessShopState extends State<OrderProcessShop> {
       ),
     );
   }
-
 
   Future<Null> findOrderShop() async {
     if (ordermodels.length != 0) {
@@ -112,8 +118,7 @@ class _OrderProcessShopState extends State<OrderProcessShop> {
     });
   }
 
-
-    Widget showListOrderWater() {
+  Widget showListOrderWater() {
     return ListView.builder(
       itemCount: ordermodels.length,
       itemBuilder: (context, index) => Card(
@@ -130,8 +135,8 @@ class _OrderProcessShopState extends State<OrderProcessShop> {
                   'เวลาสั่งซื้อ : ${ordermodels[index].orderDateTime}'),
               MyStyle().showTitleH33(
                   'สถานะการชำระเงิน : ${ordermodels[index].pamentStatus}'),
-              MyStyle()
-                  .showTitleH33('รหัสผู้จัดส่ง : ${ordermodels[index].riderId}'),
+              MyStyle().showTitleH33(
+                  'รหัสผู้จัดส่ง : ${ordermodels[index].riderId}'),
               MyStyle().showTitleH33('สถานะการจัดส่ง : กำลังจัดส่ง'),
               MyStyle().mySixedBox05(),
               buildTitle(),
@@ -174,7 +179,8 @@ class _OrderProcessShopState extends State<OrderProcessShop> {
                     ],
                   ),
                 ),
-              ),MyStyle().mySixedBox(),
+              ),
+              MyStyle().mySixedBox(),
               Container(
                 padding: EdgeInsets.all(4.0),
                 child: Row(
@@ -245,10 +251,4 @@ class _OrderProcessShopState extends State<OrderProcessShop> {
       ),
     );
   }
-
-
-
-
-
-
 }

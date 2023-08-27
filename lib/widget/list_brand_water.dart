@@ -67,7 +67,14 @@ class _ListBrandWaterState extends State<ListBrandWater> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(appBar: AppBar(title: Text('ยี่ห้อน้ำดื่ม'),),
+    return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        title: Text(
+          'ยี่ห้อน้ำดื่ม',
+          style: TextStyle(color: Colors.indigo),
+        ),
+      ),
       body: Stack(children: [
         loadStatus! ? MyStyle().showProgress() : showContent(),
         addBrandWater(),
@@ -108,7 +115,8 @@ class _ListBrandWaterState extends State<ListBrandWater> {
                   Text(
                     'ID: ${brandWaterModels[index].brandId!} ',
                     style: MyStyle().mainOrangTitle,
-                  ),MyStyle().mySixedBox05(),
+                  ),
+                  MyStyle().mySixedBox05(),
                   Text(
                     '${brandWaterModels[index].brandName!} ',
                     style: MyStyle().mainhPTitle,
@@ -119,7 +127,8 @@ class _ListBrandWaterState extends State<ListBrandWater> {
                       IconButton(
                         onPressed: () {
                           MaterialPageRoute route = MaterialPageRoute(
-                            builder: (context) => EditBrandWater(brandWaterModel:brandWaterModels[index] ),
+                            builder: (context) => EditBrandWater(
+                                brandWaterModel: brandWaterModels[index]),
                           );
                           Navigator.push(context, route)
                               .then((value) => readBrandWater());
@@ -167,7 +176,8 @@ class _ListBrandWaterState extends State<ListBrandWater> {
                 },
                 child: Text('ยืนยัน',
                     style: TextStyle(
-                      fontWeight: FontWeight.bold,color: Colors.black87,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
                     )),
               ),
               TextButton(
@@ -175,7 +185,8 @@ class _ListBrandWaterState extends State<ListBrandWater> {
                 child: Text(
                   'ยกเลิก',
                   style: TextStyle(
-                    fontWeight: FontWeight.bold,color: Colors.black87,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black87,
                   ),
                 ),
               )

@@ -12,7 +12,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../utility/my_constant.dart';
 
 class Information extends StatefulWidget {
-
   @override
   State<Information> createState() => _InformationState();
 }
@@ -49,7 +48,8 @@ class _InformationState extends State<Information> {
   }
 
   void routeToAddInfo() {
-     Widget widget = userModel!.nameShop!.isEmpty ? AddInfoShop() : EditInfoShop();
+    Widget widget =
+        userModel!.nameShop!.isEmpty ? AddInfoShop() : EditInfoShop();
     MaterialPageRoute materialPageRoute = MaterialPageRoute(
       builder: (context) => widget,
     );
@@ -58,7 +58,12 @@ class _InformationState extends State<Information> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(appBar: AppBar(title: Text('รายละเอียดของร้าน ${userModel?.nameShop}'),),
+    return Scaffold(
+      appBar: AppBar(
+         backgroundColor: Colors.white,
+        title: Text('รายละเอียดของร้าน ${userModel?.nameShop}',
+          style: TextStyle(color: Colors.indigo),),
+      ),
       body: Stack(
         children: <Widget>[
           userModel == null
@@ -85,15 +90,18 @@ class _InformationState extends State<Information> {
             children: [
               Text('${userModel?.address}'),
             ],
-          ),MyStyle().mySixedBox(),
+          ),
+          MyStyle().mySixedBox(),
           showMap()
         ],
       );
 
   Container showImage() {
-    return Container(width: 200.0,height: 200.0,
-          child: Image.network('${MyConstant().domain}${userModel!.urlPicture}'),
-        );
+    return Container(
+      width: 200.0,
+      height: 200.0,
+      child: Image.network('${MyConstant().domain}${userModel!.urlPicture}'),
+    );
   }
 
   Set<Marker> shopMarker() {
@@ -132,7 +140,7 @@ class _InformationState extends State<Information> {
   }
 
   Widget showNodata(BuildContext context) =>
-      MyStyle().titleCenter(context,'ยังไม่มีข้อมูลกรุณาเพิ่มด้วยครับ !!');
+      MyStyle().titleCenter(context, 'ยังไม่มีข้อมูลกรุณาเพิ่มด้วยครับ !!');
 
   Row addAndEditButton() {
     return Row(
