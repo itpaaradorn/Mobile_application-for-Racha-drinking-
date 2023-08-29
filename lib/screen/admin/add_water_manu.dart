@@ -11,6 +11,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:toast/toast.dart';
 
 class AddMenuWater extends StatefulWidget {
   final WaterModel waterModel;
@@ -36,6 +37,7 @@ class _AddMenuWaterState extends State<AddMenuWater> {
 
   @override
   Widget build(BuildContext context) {
+    ToastContext().init(context);
     return Scaffold(
       appBar: AppBar(
         title: Text('เพิ่มรายการน้ำดื่ม'),
@@ -68,7 +70,7 @@ class _AddMenuWaterState extends State<AddMenuWater> {
       child: ElevatedButton.icon(
         onPressed: () {
           if (file == null) {
-            normalDialog(context, 'กรุณาเลือกรูปภาพ !');
+            normalDialog(context, 'ยังไม่ได้เลือกรูปภาพ Camera หรือ Gallery !');
           } else if (
               // idbrand == null ||
               //   idbrand!.isEmpty ||
@@ -115,6 +117,8 @@ class _AddMenuWaterState extends State<AddMenuWater> {
           await Dio()
               .get(urlInsertData)
               .then((value) => Navigator.pop(context));
+          Toast.show("เพิ่มข้อมูลสำเร็จ",
+              duration: Toast.lengthLong, gravity: Toast.bottom);
         },
       );
     } catch (e) {}

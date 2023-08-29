@@ -1,14 +1,14 @@
 import 'dart:convert';
 
 import 'package:application_drinking_water_shop/model/user_model.dart';
-import 'package:application_drinking_water_shop/screen/add_info_Shop.dart';
-import 'package:application_drinking_water_shop/screen/edit_info_shop.dart';
 import 'package:application_drinking_water_shop/utility/my_style.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../screen/admin/add_info_Shop.dart';
+import '../screen/admin/edit_info_shop.dart';
 import '../utility/my_constant.dart';
 
 class Information extends StatefulWidget {

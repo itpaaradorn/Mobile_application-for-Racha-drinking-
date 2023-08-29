@@ -9,9 +9,9 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:toast/toast.dart';
 
-import '../configs/api.dart';
-import '../utility/my_constant.dart';
-import '../utility/dialog.dart';
+import '../../configs/api.dart';
+import '../../utility/my_constant.dart';
+import '../../utility/dialog.dart';
 
 class AddAccountEMP extends StatefulWidget {
   const AddAccountEMP({super.key});
@@ -204,7 +204,7 @@ class _AddAccountEMP extends State<AddAccountEMP> {
     await Dio().get(apiInsertUser).then((value) {
       if (value.toString() == 'true') {
         Navigator.pop(context);
-        Toast.show("เพิ่มข้อมูลูกค้าสำเร็จ",
+        Toast.show("เพิ่มข้อมูลพนักงานสำเร็จ",
             duration: Toast.lengthLong, gravity: Toast.bottom);
       } else {
         normalDialog(context, 'Create New User False !!!');

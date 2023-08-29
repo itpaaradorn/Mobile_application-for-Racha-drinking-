@@ -5,9 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../model/order_model.dart';
-import '../utility/big_text.dart';
-import '../utility/dialog.dart';
+import '../../model/order_model.dart';
+import '../../utility/big_text.dart';
+import '../../utility/dialog.dart';
 
 class EditOrderEmp extends StatefulWidget {
   final OrderModel orderModel;

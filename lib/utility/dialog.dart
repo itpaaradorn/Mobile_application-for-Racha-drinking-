@@ -39,7 +39,7 @@ Future<void> normalDialogNoti(BuildContext context, String message) async {
           mainAxisAlignment: MainAxisAlignment.end,
           children: <Widget>[
             TextButton(
-                onPressed: () {
+                onPressed:() {
                   MaterialPageRoute route = MaterialPageRoute(
                     builder: (context) => MainUser(),
                   );

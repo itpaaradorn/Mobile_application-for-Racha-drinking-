@@ -75,6 +75,10 @@ class _OrderListShopState extends State<OrderListShop> {
             listusers.add(userid);
           });
         }
+      } else {
+        setState(() {
+          status = true;
+        });
       }
     });
   }
@@ -91,7 +95,8 @@ class _OrderListShopState extends State<OrderListShop> {
       ),
       body: Stack(
         children: <Widget>[
-          loadStatus ? buildNoneOrder() : showContent(),addMenuButton()
+          loadStatus ? buildNoneOrder() : showContent(),
+          addMenuButton()
         ],
       ),
     );

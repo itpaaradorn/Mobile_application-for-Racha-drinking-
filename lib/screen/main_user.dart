@@ -4,9 +4,9 @@ import 'package:application_drinking_water_shop/screen/profilepage.dart';
 import 'package:application_drinking_water_shop/screen/show_shop_cart.dart';
 import 'package:application_drinking_water_shop/utility/my_style.dart';
 import 'package:application_drinking_water_shop/utility/singout_process.dart';
+import 'package:application_drinking_water_shop/widget/historypage.dart';
 
 import 'package:application_drinking_water_shop/widget/show_list_shop.dart';
-import 'package:application_drinking_water_shop/widget/show_status_water_order.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
 import 'package:flutter/material.dart';
@@ -27,7 +27,7 @@ class _MainUserState extends State<MainUser> {
   int index = 0;
   final pages = <Widget>[
     ShowListShop(),
-    ShowStatusWaterOrder(),
+    History(),
     ShowCart(),
     AccountPage(),
   ];
@@ -182,7 +182,7 @@ class _MainUserState extends State<MainUser> {
       onTap: () {
         Navigator.pop(context);
         setState(() {
-          currentWidget = ShowStatusWaterOrder();
+          currentWidget = History();
         });
       },
       leading: Icon(Icons.list_alt),

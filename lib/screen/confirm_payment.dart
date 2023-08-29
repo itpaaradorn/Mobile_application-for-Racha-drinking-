@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 
-import 'package:application_drinking_water_shop/screen/show_shop_cart.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
@@ -88,10 +87,10 @@ class _ConfirmPaymentState extends State<ConfirmPayment> {
     return Container(
       decoration: BoxDecoration(
           border: Border.all(
-            
+            color: Colors.red,
           ),
           borderRadius: BorderRadius.all(Radius.circular(30))),
-      padding: EdgeInsets.only(left: 20.0),
+      padding: EdgeInsets.all(15.0),
       width: 300,
       child: Text(
         '*หมายเหตุ  กรุณาตรวจสอบรายการสั่งซื้อในตะกร้าก่อนกดยืนยันการชำระเงิน',
@@ -99,22 +98,18 @@ class _ConfirmPaymentState extends State<ConfirmPayment> {
       ),
     );
   }
+  
 
   Container newButtonConfirm() {
     return Container(
       width: 200,
       child: ElevatedButton(
         onPressed: () {
-          if (file == null) {
-            normalDialog(context, 'กรุณาแนบใบเสร็จชำระเงินก่อนสั่งซื้อ');
-          } else {
-            MaterialPageRoute route = MaterialPageRoute(
-              builder: (context) => ShowCart(),
-            );
-            orderThread().then(
-              (value) => Navigator.push(context, route),
-            );
-          }
+         if(file != null) {
+                   orderThread();
+                 } else {
+                   normalDialog(context, "กรุนาแนบใบเสร็จก่อนสั่งซื้อ");
+                 }
         },
         child: Text('ยืนยันการชำระเงินสั่งซื้อ'),
       ),

@@ -9,11 +9,11 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:toast/toast.dart';
 
-import '../configs/api.dart';
-import '../model/user_model.dart';
-import '../utility/dialog.dart';
-import '../utility/my_constant.dart';
-import '../utility/my_style.dart';
+import '../../configs/api.dart';
+import '../../model/user_model.dart';
+import '../../utility/dialog.dart';
+import '../../utility/my_constant.dart';
+import '../../utility/my_style.dart';
 
 class EditAccountUser extends StatefulWidget {
   final UserModel userModel;

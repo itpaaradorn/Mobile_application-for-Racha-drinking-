@@ -1,13 +1,14 @@
 import 'dart:convert';
 
 import 'package:application_drinking_water_shop/model/water_model.dart';
-import 'package:application_drinking_water_shop/screen/add_water_manu.dart';
-import 'package:application_drinking_water_shop/screen/edit_water.dart';
+import 'package:application_drinking_water_shop/screen/admin/add_water_manu.dart';
+import 'package:application_drinking_water_shop/screen/admin/edit_water.dart';
 import 'package:application_drinking_water_shop/utility/my_constant.dart';
 import 'package:application_drinking_water_shop/utility/my_style.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:toast/toast.dart';
 
 class ListWaterMenuShop extends StatefulWidget {
   @override
@@ -36,7 +37,7 @@ class _ListWaterMenuShopState extends State<ListWaterMenuShop> {
     print('idShop = $idShop');
 
     String? url =
-        '${MyConstant().domain}/WaterShop/getWaterWheredShop.php?isAdd=true&idShop=$idShop';
+        '${MyConstant().domain}/WaterShop/getWater.php';
     await Dio().get(url).then(
       (value) {
         setState(
@@ -70,11 +71,14 @@ class _ListWaterMenuShopState extends State<ListWaterMenuShop> {
 
   @override
   Widget build(BuildContext context) {
+    ToastContext().init(context);
     return Scaffold(
       appBar: AppBar(
-         backgroundColor: Colors.white,
-        title: Text('ข้อมูลน้ำดื่ม',
-          style: TextStyle(color: Colors.indigo),),
+        backgroundColor: Colors.white,
+        title: Text(
+          'ข้อมูลน้ำดื่ม',
+          style: TextStyle(color: Colors.indigo),
+        ),
       ),
       body: Stack(
         children: <Widget>[
@@ -184,6 +188,8 @@ class _ListWaterMenuShopState extends State<ListWaterMenuShop> {
                   await Dio().get(url).then(
                         (value) => readWaterMenu(),
                       );
+                  Toast.show("ลบข้อมูลสำเร็จ",
+                      duration: Toast.lengthLong, gravity: Toast.bottom);
                 },
                 child: Text('ยืนยัน',
                     style: TextStyle(

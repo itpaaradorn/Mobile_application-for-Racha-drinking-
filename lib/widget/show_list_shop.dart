@@ -27,8 +27,9 @@ class _ShowListShopState extends State<ShowListShop> {
   }
 
   Future<Null> readBrand() async {
+    
     String? url =
-        '${MyConstant().domain}/WaterShop/getUserWhereChooseTpy.php?isAdd=true&idShop=46';
+        '${MyConstant().domain}/WaterShop/getWaterbrand.php';
         // print('url === $url');
 
     await Dio().get(url).then(
@@ -38,12 +39,20 @@ class _ShowListShopState extends State<ShowListShop> {
         int index = 0;
         // print('result = $result');
         for (var map in result) {
-          setState(() {
+
+          BrandWaterModel model = BrandWaterModel.fromJson(map);
+
+
+          String? brand_image = model.brandImage;
+          if (brand_image!.isNotEmpty) {
+            setState(() {
             brandWaterModels = BrandWaterModel.fromJson(map);
             // print('nameShop = ${brandWaterModels!.brandName}');
             shopCards!.add(crestCard(brandWaterModels!, index));
             index++;
           });
+          }
+          
         }
       },
     );
@@ -51,7 +60,7 @@ class _ShowListShopState extends State<ShowListShop> {
 
   Future<Null> readShop() async {
     String? url =
-        '${MyConstant().domain}/WaterShop/getUserWhereId.php?isAdd=true&id=46';
+        '${MyConstant().domain}/WaterShop/getWaterbrand.php';
         // print('url === $url');
 
     await Dio().get(url).then(

@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:application_drinking_water_shop/screen/employee/main_emp.dart';
-import 'package:application_drinking_water_shop/screen/main_shop.dart';
+import 'package:application_drinking_water_shop/screen/admin/main_shop.dart';
 import 'package:application_drinking_water_shop/screen/main_user.dart';
 import 'package:application_drinking_water_shop/screen/notification.dart';
 import 'package:application_drinking_water_shop/screen/signIn.dart';
@@ -11,12 +11,11 @@ import 'package:application_drinking_water_shop/utility/my_style.dart';
 import 'package:application_drinking_water_shop/utility/dialog.dart';
 import 'package:application_drinking_water_shop/widget/guest_user/profileguestuser.dart';
 import 'package:application_drinking_water_shop/widget/guest_user/show_list_guest.dart';
+import 'package:application_drinking_water_shop/widget/historypage.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import '../widget/show_status_water_order.dart';
 import '../widget/tab_bar_material.dart';
 
 class Home extends StatefulWidget {
@@ -32,7 +31,7 @@ class _HomeState extends State<Home> {
   bool exitPage = false;
   final pages = <Widget>[
     ShowListGuestUser(),
-    ShowStatusWaterOrder(),
+    History(),
     NotificationPage(),
     ProfileGuestUserPage(),
   ];

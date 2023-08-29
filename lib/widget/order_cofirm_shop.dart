@@ -44,7 +44,7 @@ class _OrderConfirmShopState extends State<OrderConfirmShop> {
       appBar: AppBar(
         backgroundColor: Colors.white,
         title: Text(
-          'รายการน้ำดื่มที่จัดส่งแล้ว',
+          'รายการน้ำดื่มที่จัดส่งเสร็จสิ้น',
           style: TextStyle(color: Colors.indigo),
         ),
       ),
@@ -123,9 +123,7 @@ class _OrderConfirmShopState extends State<OrderConfirmShop> {
     });
   }
 
-  Future<void> _createPDF(
-    int index,
-  ) async {
+  Future<void> _createPDF(int index) async {
     PdfDocument document = PdfDocument();
     var page = document.pages.add();
 
@@ -197,6 +195,7 @@ class _OrderConfirmShopState extends State<OrderConfirmShop> {
     final row = grid.rows.add();
     row.style.font =
         PdfStandardFont(PdfFontFamily.helvetica, 20, style: PdfFontStyle.bold);
+    // ignore: unnecessary_null_comparison
     if (listAmounts != null) {
       row.cells[0].value = '${listAmounts[index]}';
       row.cells[1].value = '${listnameWater[index]}';
@@ -217,6 +216,19 @@ class _OrderConfirmShopState extends State<OrderConfirmShop> {
     final file = File('$path/$filename');
     await file.writeAsBytes(bytes, flush: true);
     OpenFile.open('$path/$filename');
+  }
+
+  List<String> changeArray(String string) {
+    List<String> list = [];
+    String myString = string.substring(1, string.length - 1);
+    print('myString = $myString');
+    list = myString.split(',');
+    int index = 0;
+    for (var string in list) {
+      list[index] = string.trim();
+      index++;
+    }
+    return list;
   }
 
   Widget showListOrderWater() {

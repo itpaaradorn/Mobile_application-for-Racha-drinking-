@@ -14,7 +14,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:location/location.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../configs/api.dart';
+import '../../configs/api.dart';
 
 class EditInfoShop extends StatefulWidget {
   const EditInfoShop({super.key});
@@ -115,9 +115,7 @@ class _EditInfoShopState extends State<EditInfoShop> {
     showDialog(
       context: context,
       builder: (context) => SimpleDialog(
-        title: Text(
-          'คุณแน่ใจว่าจะ ปรับปรุงรายละเอียดร้าน ?',
-        ),
+        title: MyStyle().showTitleH2('คุณแน่ใจว่าจะ ปรับปรุงรายละเอียดร้าน ?'),
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -129,14 +127,14 @@ class _EditInfoShopState extends State<EditInfoShop> {
                 },
                 child: Text(
                   'ตกลง',
-                  style:TextStyle(fontWeight: FontWeight.bold),
+                 style: MyStyle().mainDackTitle,
                 ),
               ),
               TextButton(
                 onPressed: () => Navigator.pop(context),
                 child: Text(
                   'ยกเลิก',
-                  style: TextStyle(fontWeight: FontWeight.bold),
+                  style: MyStyle().mainDackTitle,
                 ),
               )
             ],

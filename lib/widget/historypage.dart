@@ -11,14 +11,14 @@ import 'package:steps_indicator/steps_indicator.dart';
 
 import '../utility/dialog.dart';
 
-class ShowStatusWaterOrder extends StatefulWidget {
-  const ShowStatusWaterOrder({super.key});
+class History extends StatefulWidget {
+  const History({super.key});
 
   @override
-  State<ShowStatusWaterOrder> createState() => _ShowStatusWaterOrderState();
+  State<History> createState() => _HistoryState();
 }
 
-class _ShowStatusWaterOrderState extends State<ShowStatusWaterOrder> {
+class _HistoryState extends State<History> {
   String? user_id;
   bool statusAvatar = true;
   bool statusorder = true;
@@ -42,7 +42,6 @@ class _ShowStatusWaterOrderState extends State<ShowStatusWaterOrder> {
   Widget build(BuildContext context) {
     return statusAvatar ? buildNonOrder() : buildContant();
   }
-
 
   Widget buildContant() {
     return RefreshIndicator(
@@ -134,24 +133,28 @@ class _ShowStatusWaterOrderState extends State<ShowStatusWaterOrder> {
     showDialog(
       context: context,
       builder: (context) => SimpleDialog(
-        title: Text('คุณต้องการจะยกเลิกรายการสั่งซื้อน้ำดื่มใช่ไหม ?'),
+        title: MyStyle()
+            .showTitleH2('คุณต้องการจะยกเลิกรายการสั่งซื้อน้ำดื่มใช่ไหม ?'),
         children: <Widget>[
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
-              ElevatedButton(
-                child: Text('ตกลง'),
+              TextButton(
+                child: Text(
+                  'ตกลง',
+                  style: MyStyle().mainDackTitle,
+                ),
                 onPressed: () {
                   Navigator.pop(context);
                   cancleOrderUser(index);
                 },
               ),
-              ElevatedButton(
-                child: Text('ยกเลิก'),
-                onPressed: () => Navigator.pop(context),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red,
+              TextButton(
+                child: Text(
+                  'ยกเลิก',
+                  style: MyStyle().mainDackTitle,
                 ),
+                onPressed: () => Navigator.pop(context),
               ),
             ],
           )
@@ -388,8 +391,6 @@ class _ShowStatusWaterOrderState extends State<ShowStatusWaterOrder> {
       }
     }
   }
-
-  
 
   List<String> changeAreey(String string) {
     List<String> list = [];

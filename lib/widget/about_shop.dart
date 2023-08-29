@@ -1,12 +1,16 @@
 
+import 'dart:convert';
+
 import 'package:application_drinking_water_shop/configs/api.dart';
 import 'package:application_drinking_water_shop/model/user_model.dart';
 import 'package:application_drinking_water_shop/utility/my_constant.dart';
 import 'package:application_drinking_water_shop/utility/my_style.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:intl/intl.dart';
 import 'package:location/location.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AboutShop extends StatefulWidget {
   final UserModel? userModel;
@@ -26,11 +30,10 @@ class _AboutShopState extends State<AboutShop> {
   @override
   void initState() {
     super.initState();
-    userModel = widget.userModel;
-    findLat1Lng1();
+    readDataShop();
   }
 
-  Future<Null> findLat1Lng1() async {
+  Future<Null> findLatLng() async {
     LocationData locationData = await findLocationData();
     setState(() {
       lat1 = locationData.latitude;
@@ -50,6 +53,24 @@ class _AboutShopState extends State<AboutShop> {
     });
   }
 
+  Future<Null> readDataShop() async {
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    String? id = preferences.getString('id');
+    String url = '${MyConstant().domain}/WaterShop/getdetailShop.php?isAdd=true&id=46';
+    await Dio().get(url).then((value) {
+      // print('value = $value');
+      var result = json.decode(value.data);
+      // print('result = $result');
+      for (var map in result) {
+        setState(() {
+          userModel = UserModel.fromJson(map);
+          findLatLng();
+        });
+        // print('nameShop = ${detailShopModel.nameShop}');
+      }
+    });
+  }
+
   
 
 
@@ -66,41 +87,46 @@ class _AboutShopState extends State<AboutShop> {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                margin: EdgeInsets.all(16.0),
-                width: 180.0,
-                height: 180.0,
-                child: Image.network(
-                  '${MyConstant().domain}${userModel!.urlPicture}',
-                  fit: BoxFit.cover,
-                ),
-              ),
-            ],
-          ),
-          ListTile(
-            leading: Icon(Icons.home),
-            title: Text('${userModel!.address}'),
-          ),
-          ListTile(
-            leading: Icon(Icons.phone),
-            title: Text('${userModel!.phone}'),
-          ),
-          ListTile(
-            leading: Icon(Icons.social_distance),
-            title: Text(distance == null ? '' : '$distanceString กิโลเมตร'),
-          ),
-          ListTile(
-            leading: Icon(Icons.monetization_on),
-            title: Text(transport == null ? '' : '$transport บาท'),
-          ),
-          showMap(),
+      child: Stack(
+        children: <Widget>[
+          userModel == null
+              ? MyStyle().showProgress()
+              : userModel!.nameShop!.isEmpty
+                  ? showNoData(context)
+                  : showList()
         ],
       ),
+    );
+  }
+    Widget showNoData(BuildContext context) =>
+      MyStyle().titleCenter(context, 'ยังไม่มีข้อมูล');
+
+  Widget showList() {
+    return Column(
+      children: [
+        showMap(),
+        ListTile(
+          leading: Icon(Icons.shop),
+          title: Text('ร้าน${userModel!.nameShop}'),
+        ),
+        ListTile(
+          leading: Icon(Icons.home),
+          title: Text('${userModel!.address}'),
+        ),
+        ListTile(
+          leading: Icon(Icons.phone),
+          title: Text('${userModel!.phone}'),
+        ),
+        ListTile(
+          leading: Icon(Icons.social_distance),
+          title: Text(distance == null ? 'กำลังคำนวณระยะทาง...' : '$distanceString กิโลเมตร'),
+        ),
+        ListTile(
+          leading: Icon(Icons.monetization_on),
+          title: Text(transport == null ? 'กำลังคำนวณราคา..' : '$transport บาท'),
+        ),
+        // showMap(),
+      ],
     );
   }
 
@@ -141,9 +167,9 @@ class _AboutShopState extends State<AboutShop> {
     }
 
     return Container(
-      margin: EdgeInsets.only(left: 13, right: 13, top: 13, bottom: 30),
+      margin: EdgeInsets.only(left: 4, right: 4, top:4, bottom: 10),
       // color: Colors.grey,
-      height: 300.0,
+      height: 400.0,
       child: lat1 == null
           ? MyStyle().showProgress()
           : GoogleMap(

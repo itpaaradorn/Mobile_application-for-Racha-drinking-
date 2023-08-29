@@ -1,13 +1,14 @@
 import 'dart:convert';
 
 import 'package:application_drinking_water_shop/model/brand_model.dart';
-import 'package:application_drinking_water_shop/screen/add_brand_water.dart';
-import 'package:application_drinking_water_shop/screen/edit_brand_water.dart';
+import 'package:application_drinking_water_shop/screen/admin/add_brand_water.dart';
+import 'package:application_drinking_water_shop/screen/admin/edit_brand_water.dart';
 import 'package:application_drinking_water_shop/utility/my_constant.dart';
 import 'package:application_drinking_water_shop/utility/my_style.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:toast/toast.dart';
 
 class ListBrandWater extends StatefulWidget {
   const ListBrandWater({super.key});
@@ -37,10 +38,10 @@ class _ListBrandWaterState extends State<ListBrandWater> {
     SharedPreferences preferences = await SharedPreferences.getInstance();
 
     String? idShop = preferences.getString('id');
-    print('idShop =>>> $idShop');
+    // print('idShop =>>> $idShop');
 
     String url =
-        '${MyConstant().domain}/WaterShop/getWaterbrand.php?isAdd=true&idShop=$idShop';
+        '${MyConstant().domain}/WaterShop/getWaterbrand.php';
     await Dio().get(url).then((value) {
       setState(() {
         loadStatus = false;
@@ -67,6 +68,7 @@ class _ListBrandWaterState extends State<ListBrandWater> {
 
   @override
   Widget build(BuildContext context) {
+    ToastContext().init(context);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.white,
@@ -97,7 +99,7 @@ class _ListBrandWaterState extends State<ListBrandWater> {
         itemBuilder: (context, index) => Row(
           children: [
             Container(
-              padding: EdgeInsets.all(11.0),
+              padding: EdgeInsets.all(10.0),
               width: MediaQuery.of(context).size.width * 0.5,
               height: MediaQuery.of(context).size.width * 0.4,
               child: Image.network(
@@ -106,7 +108,7 @@ class _ListBrandWaterState extends State<ListBrandWater> {
               ),
             ),
             Container(
-              padding: EdgeInsets.all(11.0),
+              padding: EdgeInsets.all(10.0),
               width: MediaQuery.of(context).size.width * 0.5,
               height: MediaQuery.of(context).size.width * 0.4,
               child: Column(
@@ -173,6 +175,8 @@ class _ListBrandWaterState extends State<ListBrandWater> {
                   await Dio().get(url).then(
                         (value) => readBrandWater(),
                       );
+                  Toast.show("ลบข้อมูลสำเร็จ",
+                      duration: Toast.lengthLong, gravity: Toast.bottom);
                 },
                 child: Text('ยืนยัน',
                     style: TextStyle(
@@ -204,7 +208,7 @@ class _ListBrandWaterState extends State<ListBrandWater> {
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               Container(
-                padding: EdgeInsets.only(bottom: 16.0, right: 16.0),
+                padding: EdgeInsets.only(bottom: 9.0, right: 10.0),
                 child: FloatingActionButton(
                   onPressed: () {
                     MaterialPageRoute route = MaterialPageRoute(

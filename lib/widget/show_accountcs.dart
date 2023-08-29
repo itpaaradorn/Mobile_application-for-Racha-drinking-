@@ -1,7 +1,7 @@
 import 'dart:convert';
 
-import 'package:application_drinking_water_shop/screen/add_account_user.dart';
-import 'package:application_drinking_water_shop/screen/edit_account_user.dart';
+import 'package:application_drinking_water_shop/screen/admin/add_account_user.dart';
+import 'package:application_drinking_water_shop/screen/admin/edit_account_user.dart';
 import 'package:application_drinking_water_shop/utility/my_constant.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';

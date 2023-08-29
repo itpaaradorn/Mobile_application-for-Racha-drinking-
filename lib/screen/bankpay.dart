@@ -56,7 +56,7 @@ class _BankpaymentState extends State<Bankpayment> {
             'ธนาคารกสิกรไทย',
           ),
           subtitle: MyStyle().showTitleH3(
-              'ชื่อบัญชี นายภราดร ชูเก็น                                                              เลขที่บัญชี 129-8-55756-0'),
+              'ชื่อบัญชี นายภราดร ชูเก็น                                                              เลขที่บัญชี 140-3-34073-8'),
         ),
       ),
     );

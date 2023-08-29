@@ -1,4 +1,3 @@
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
 import 'package:file_utils/file_utils.dart';
@@ -15,13 +14,11 @@ import '../utility/dialog.dart';
 class Prompay extends StatefulWidget {
   const Prompay({Key? key}) : super(key: key);
 
-
   @override
   State<Prompay> createState() => _PrompayState();
 }
 
 class _PrompayState extends State<Prompay> {
-
   String? imageUrl;
 
   @override
@@ -41,7 +38,7 @@ class _PrompayState extends State<Prompay> {
   ElevatedButton buildDowloadQR() {
     return ElevatedButton(
       onPressed: () async {
-        String path = '/sdcard/download';
+        String path = 'Download';
         try {
           await FileUtils.mkdir([path]);
           await Dio()
@@ -61,7 +58,8 @@ class _PrompayState extends State<Prompay> {
     return Container(
       margin: EdgeInsets.symmetric(vertical: 8),
       child: CachedNetworkImage(
-        imageUrl: 'https://promptpay.io/0611675623.png',
+        imageUrl: MyConstant.urlPromptpay,
+        placeholder: (context, url) => MyStyle().showProgress(),
       ),
     );
   }

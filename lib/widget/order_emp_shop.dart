@@ -353,7 +353,7 @@ class _OrderConfirmEmpState extends State<OrderConfirmEmp> {
       context: context,
       builder: (context) => SimpleDialog(
         title: MyStyle().showTitleH2(
-            'คุณต้องการยกเลิกรายการ สั่งซื้อน้ำดื่ม\nที่ ${ordermodels[index].orderId} ใช่ไหม ?'),
+            'คุณต้องการยกเลิกรายการ สั่งซื้อน้ำดื่มที่ ${ordermodels[index].orderId} ใช่ไหม ?'),
         children: <Widget>[
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -407,8 +407,32 @@ class _OrderConfirmEmpState extends State<OrderConfirmEmp> {
 
     await Dio().get(url).then((value) {
       findOrderShop();
+      notificationCancleShop(index);
       normalDialogChack(
           context, 'ยกเลิกรายการสั่งซื้อสำเร็จ', 'รายการสั่งซื้อที่ $order_id');
+    });
+  }
+  
+   Future<Null> notificationCancleShop(int index) async {
+    String id = ordermodels[index].userId!;
+    String urlFindToken =
+        '${MyConstant().domain}WaterShop/getUserWhereId.php?isAdd=true&id=$id';
+
+    await Dio().get(urlFindToken).then((value) {
+      var result = json.decode(value.data);
+      print('result == $result');
+      for (var json in result) {
+        UserModel model = UserModel.fromJson(json);
+        String tokenUser = model.token!;
+        print('tokenShop ==>> $tokenUser');
+        String title = 'คุณ ${model.name} ขออภัยในความไม่สะดวก';
+        String body =
+            'ทางร้านได้ยกเลิกคำสั่งซื้อของคุณกรุณาติดต่อร้าน ขอบคุณค่ะ';
+
+        String urlSendToken =
+            '${MyConstant().domain}/waterShop/apiNotification.php?isAdd=true&token=$tokenUser&title=$title&body=$body';
+        sendNotificationToShop(urlSendToken);
+      }
     });
   }
 

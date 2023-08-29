@@ -1,12 +1,15 @@
 import 'dart:io';
+import 'dart:math';
 
 import 'package:application_drinking_water_shop/model/brand_model.dart';
+import 'package:application_drinking_water_shop/utility/my_style.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:toast/toast.dart';
 
-import '../utility/my_constant.dart';
-import '../utility/dialog.dart';
+import '../../utility/my_constant.dart';
+import '../../utility/dialog.dart';
 
 class EditBrandWater extends StatefulWidget {
   final BrandWaterModel brandWaterModel;
@@ -34,6 +37,7 @@ class _EditBrandWaterState extends State<EditBrandWater> {
 
   @override
   Widget build(BuildContext context) {
+    ToastContext().init(context);
     return Scaffold(
         floatingActionButton: uploadButton(),
         appBar: AppBar(
@@ -66,29 +70,27 @@ class _EditBrandWaterState extends State<EditBrandWater> {
     showDialog(
       context: context,
       builder: (context) => SimpleDialog(
-        title: Text('คุณต้องการจะเปลี่ยนแปลง ?'),
+        title: MyStyle().showTitleH2('คุณต้องการจะเปลี่ยนแปลง ?'),
         children: [
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
-              TextButton.icon(
+              TextButton(
                 onPressed: () {
                   Navigator.pop(context);
                   editvalueOnMySQL();
                 },
-                icon: Icon(
-                  Icons.check,
-                  color: Color.fromARGB(255, 0, 184, 31),
+                child: Text(
+                  ' ตกลง ',
+                  style: MyStyle().mainDackTitle,
                 ),
-                label: Text('ตกลง'),
               ),
-              TextButton.icon(
+              TextButton(
                 onPressed: () => Navigator.pop(context),
-                icon: Icon(
-                  Icons.clear,
-                  color: Colors.red,
+                child: Text(
+                  ' ยกเลิก ',
+                  style: MyStyle().mainDackTitle,
                 ),
-                label: Text('ยกเลิก'),
               )
             ],
           ),
@@ -99,15 +101,35 @@ class _EditBrandWaterState extends State<EditBrandWater> {
 
   Future<Null> editvalueOnMySQL() async {
     // ignore: unused_local_variable
-    String? id = brandModel!.brandId;
-    String? url =
-        '${MyConstant().domain}/WaterShop/editBrand.php?isAdd=true&brand_id=$brand_id&brand_name=$brand_name&brand_image=$brand_image&idShop=$idShop';
-    await Dio().get(url).then((value) => {
-          if (value.toString() == 'true')
-            {Navigator.pop(context)}
-          else
-            {normalDialog(context, 'กรุณาลองใหม่ มีข้อผิดพลาด')}
-        });
+    String? urlUpload = '${MyConstant().domain}/WaterShop/Savebrand.php';
+
+    Random random = Random();
+    int i = random.nextInt(1000000);
+    String? nameFile = 'brand$i.jpg';
+
+    Map<String, dynamic> map = Map();
+    map['file'] = await MultipartFile.fromFile(file!.path, filename: nameFile);
+    FormData formData = FormData.fromMap(map);
+
+    await Dio().post(urlUpload, data: formData).then(
+      (value) async {
+        String? brand_image = '/WaterShop/brand/$nameFile';
+
+        String? id = brandModel!.brandId;
+
+        String? url =
+            '${MyConstant().domain}/WaterShop/editBrand.php?isAdd=true&brand_id=$brand_id&brand_name=$brand_name&brand_image=$brand_image&idShop=$idShop';
+        await Dio().get(url).then((value){
+              if (value.toString() == 'true'){
+                Navigator.pop(context);
+                Toast.show("แก้ไขสำเร็จ",
+                      duration: Toast.lengthLong, gravity: Toast.bottom);
+              }else{
+                normalDialog(context, 'กรุณาลองใหม่ มีข้อผิดพลาด');
+                }
+            });
+      },
+    );
   }
 
   Widget groupImage() => Row(
