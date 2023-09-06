@@ -37,7 +37,7 @@ class _EditWaterMenuState extends State<EditWaterMenu> {
     super.initState();
     readBrandWaterShop();
     waterModel = widget.waterModel;
-    brandname = waterModel?.brandname;
+    brandname = waterModel?.brandName;
     price = waterModel?.price;
     size = waterModel?.size;
     pathImage = waterModel?.pathImage;
@@ -50,7 +50,7 @@ class _EditWaterMenuState extends State<EditWaterMenu> {
     return Scaffold(
       floatingActionButton: uploadButton(),
       appBar: AppBar(
-        title: Text('แก้ไขน้ำดื่ม ${waterModel!.brandname} '),
+        title: Text('แก้ไขน้ำดื่ม ${waterModel!.brandName} '),
       ),
       body: SingleChildScrollView(
         child: Column(

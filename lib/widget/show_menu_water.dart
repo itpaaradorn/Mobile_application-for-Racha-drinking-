@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import 'package:location/location.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toast/toast.dart';
 
 import '../configs/api.dart';
@@ -281,6 +282,9 @@ class _ShowMenuWaterState extends State<ShowMenuWater> {
 
     int transport = MyAPI().calculateTransport(distance);
 
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    String? user_id = preferences.getString('id');
+
     print(
         'water_id == $water_id,brand_id == $brand_id, brand_name == $brand_name, price == $price, size == $size, amount == $amount, sum == $sumInt, distance == $distanceString, transport == $transport  ');
     Map<String, dynamic> map = Map();
@@ -298,29 +302,44 @@ class _ShowMenuWaterState extends State<ShowMenuWater> {
 
     CartModel? cartModel = CartModel.fromJson(map);
 
-    var object = await SQLiteHelper().readAllDataFormSQLite();
+    // var object = await SQLiteHelper().readAllDataFormSQLite();
     // print('object leht == ${object.length}');
 
-     if (object.length == 0) {
-      await SQLiteHelper().insertDataToSQLite(cartModel).then((value)  {
-        print('insert Sucess');
-        Toast.show("เพิ่มใส่ตะกร้าเรียบร้อยแล้ว", duration: Toast.lengthLong, gravity:  Toast.bottom);
+    // if (object.length == 0) {
+      // await SQLiteHelper().insertDataToSQLite(cartModel).then((value)  {
+      //   print('insert Sucess');
+      //   Toast.show("เพิ่มตะกร้าเรียบร้อยแล้ว", duration: Toast.lengthLong, gravity:  Toast.bottom);
+      // });
+
+      var formData = FormData.fromMap({
+        'water_id': water_id,
+        'amount': amount,
+        'sum': sumInt,
+        'distance': distanceString,
+        'transport': transport,
+        'create_by': user_id,
       });
-    } else {
-      String id_brandSQLite = object[0].brandId!;
-      // print('brandSQLite ==>> $id_brandSQLite');
-      if (brand_id != id_brandSQLite.isNotEmpty) {
-        await SQLiteHelper().insertDataToSQLite(cartModel).then((value)  {
-          print('insert Sucess');
-          Toast.show("เพิ่มใส่ตะกร้าเรียบร้อยแล้ว", duration: Toast.lengthLong, gravity:  Toast.bottom);
-          
 
-        });
-      } else {
-        normalDialog(context, 'รายการสั่งซื้อผิดพลาด !');
-      }
+
+
+
+
+      String? url = '${MyConstant().domain}/WaterShop/addOrderDetail.php';
+      Response response = await Dio().post(url, data: formData);
+      print(response.statusCode);
+      Toast.show("เพิ่มตะกร้าเรียบร้อยแล้ว", duration: Toast.lengthLong, gravity:  Toast.bottom);
+    // } else {
+    //   String id_brandSQLite = object[0].brandId!;
+    //   // print('brandSQLite ==>> $id_brandSQLite');
+    //   if (brand_id != id_brandSQLite.isNotEmpty) {
+    //     await SQLiteHelper().insertDataToSQLite(cartModel).then((value) {
+    //       print('insert Sucess');
+    //       Toast.show("เพิ่มตะกร้าเรียบร้อยแล้ว",
+    //           duration: Toast.lengthLong, gravity: Toast.bottom);
+    //     });
+    //   } else {
+    //     normalDialog(context, 'รายการสั่งซื้อผิดพลาด !');
+    //   }
+    // }
   }
-}
-
-
 }

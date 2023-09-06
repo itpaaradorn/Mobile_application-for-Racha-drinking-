@@ -7,6 +7,7 @@ import 'package:application_drinking_water_shop/screen/main_user.dart';
 import 'package:application_drinking_water_shop/screen/signUp.dart';
 import 'package:application_drinking_water_shop/utility/my_constant.dart';
 import 'package:application_drinking_water_shop/utility/my_style.dart';
+import 'package:awesome_dialog/awesome_dialog.dart';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -125,7 +126,21 @@ class _LoginPageState extends State<LoginPage> {
             normalDialog(context, 'Error!');
           }
         } else {
-          normalDialog(context, 'Password ผิด กรุณาลองใหม่');
+          AwesomeDialog(
+                context: context,
+                animType: AnimType.bottomSlide,
+                dialogType: DialogType.error,
+                body: Center(
+                  child: Text(
+                  'Password ผิด กรุณาลองใหม่',
+                    style: TextStyle(fontStyle: FontStyle.normal),
+                  ),
+                ),
+                title: 'This is Ignored',
+                desc: 'This is also Ignored',
+                btnOkOnPress: () {},
+              )..show();
+          
         }
       }
     } catch (e) {

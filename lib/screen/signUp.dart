@@ -4,7 +4,9 @@ import 'dart:math';
 import 'package:application_drinking_water_shop/utility/my_constant.dart';
 import 'package:application_drinking_water_shop/utility/my_style.dart';
 import 'package:application_drinking_water_shop/utility/dialog.dart';
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:dio/dio.dart';
+import 'package:email_validator/email_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -31,6 +33,7 @@ class _SignUpState extends State<SignUp> {
   TextEditingController phoneController = TextEditingController();
   TextEditingController userController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
+  TextEditingController confirmPasswordController = TextEditingController();
 
   bool passwordVisible = true;
   bool confirmPassVissible = true;
@@ -109,6 +112,8 @@ class _SignUpState extends State<SignUp> {
                 passwordForm(),
                 // MyStyle().mySixedBox(),
                 // MyStyle().showTitleH2('ข้อมูลติดต่อ | ที่อยู่:'),
+                MyStyle().mySixedBox05(),
+                passwordForm2(),
                 MyStyle().mySixedBox05(),
                 phoneForm(),
                 MyStyle().mySixedBox05(),
@@ -342,8 +347,24 @@ class _SignUpState extends State<SignUp> {
           keyboardType: TextInputType.emailAddress,
           // ignore: body_might_complete_normally_nullable
           validator: (value) {
-            if (value.toString().isEmpty) {
+            if (value == null || value.isEmpty) {
               return 'กรุณากรอก email ด้วย ค่ะ';
+            } else if (!EmailValidator.validate(value ?? '')) {
+              AwesomeDialog(
+                context: context,
+                animType: AnimType.bottomSlide,
+                dialogType: DialogType.info,
+                body: Center(
+                  child: Text(
+                  'กรุณากรอก email ให้ถูกต้อง @xxxx.com ค่ะ',
+                    style: TextStyle(fontStyle: FontStyle.normal),
+                  ),
+                ),
+                title: 'This is Ignored',
+                desc: 'This is also Ignored',
+                btnOkOnPress: () {},
+              ).show();
+              return 'email ไม่ถูกต้อง';
             } else {}
           },
           decoration: InputDecoration(
@@ -401,6 +422,59 @@ class _SignUpState extends State<SignUp> {
       );
 
   void togglePasswordVisibility() => setState(() => isHidden = !isHidden);
+
+  Widget passwordForm2() => Container(
+        margin: EdgeInsets.only(top: 10),
+        width: 270.0,
+        child: TextFormField(
+          obscureText: isHidden,
+          controller: confirmPasswordController,
+          validator: (value) {
+            if (value.toString().isEmpty) {
+              return 'กรุณากรอก password ด้วย ค่ะ';
+            } else if (passwordController.text !=
+                confirmPasswordController.text) {
+              AwesomeDialog(
+                context: context,
+                animType: AnimType.scale,
+                dialogType: DialogType.info,
+                body: Center(
+                  child: Text(
+                  'กรุณากรอก password ให้ตรงกันด้วย ค่ะ',
+                    style: TextStyle(fontStyle: FontStyle.normal),
+                  ),
+                ),
+                title: 'This is Ignored',
+                desc: 'This is also Ignored',
+                btnOkOnPress: () {},
+              )..show();
+
+              return "password ไม่ตรงกัน";
+            }
+          },
+          decoration: InputDecoration(
+            prefixIcon: Icon(
+              Icons.lock,
+              color: Colors.blueAccent,
+            ),
+            labelStyle: TextStyle(
+              color: Colors.blue,
+            ),
+            suffixIcon: IconButton(
+                icon: isHidden
+                    ? Icon(Icons.visibility_off)
+                    : Icon(Icons.visibility),
+                onPressed: togglePasswordVisibility),
+            labelText: 'Confirm Password :',
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.blueAccent),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.blue),
+            ),
+          ),
+        ),
+      );
 
   Widget phoneForm() => Container(
         margin: EdgeInsets.only(top: 10),

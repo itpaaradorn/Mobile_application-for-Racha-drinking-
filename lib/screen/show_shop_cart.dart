@@ -1,19 +1,21 @@
 import 'dart:convert';
 
-import 'package:application_drinking_water_shop/model/cart_model.dart';
 import 'package:application_drinking_water_shop/model/water_model.dart';
 import 'package:application_drinking_water_shop/screen/payment.dart';
 import 'package:application_drinking_water_shop/utility/my_constant.dart';
 import 'package:application_drinking_water_shop/utility/my_style.dart';
 import 'package:application_drinking_water_shop/utility/dialog.dart';
 import 'package:application_drinking_water_shop/utility/sqlite_helper.dart';
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toast/toast.dart';
 
+import '../model/order_detail.dart';
 import '../model/user_model.dart';
+import 'main_user.dart';
 
 class ShowCart extends StatefulWidget {
   const ShowCart({super.key});
@@ -23,45 +25,88 @@ class ShowCart extends StatefulWidget {
 }
 
 class _ShowCartState extends State<ShowCart> {
-  List<CartModel> cartModels = [];
+  List<OrderDetail> orderDetails = [];
 
   WaterModel? waterModel;
-  String? water_id, amount, quantity;
+  String? water_id, user_id, amount, quantity;
   int total = 0;
-  bool ststus = true;
+  bool status = true;
+  bool? loadStatus = true;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    readSQLite();
+    // readSQLite();
+    readOrderFormIdUser();
   }
 
-  Future<Null> readSQLite() async {
-    var object = await SQLiteHelper().readAllDataFormSQLite();
-    print('object length == ${object.length}');
+  // Future<Null> readSQLite() async {
+  //   var object = await SQLiteHelper().readAllDataFormSQLite();
+  //   print('object length == ${object.length}');
 
-    if (object.length != 0) {
-      for (var model in object) {
-        String sumString = model.sum!;
-        int sumInt = int.parse(sumString);
+  //   if (object.length != 0) {
+  //     for (var model in object) {
+  //       String sumString = model.sum!;
+  //       int sumInt = int.parse(sumString);
+  //       setState(() {
+  //         ststus = false;
+  //         cartModels = object;
+  //         total = total + sumInt;
+  //       });
+  //     }
+  //   } else {
+  //     setState(() {
+  //       ststus = true;
+  //     });
+  //   }
+  // }
+
+  Future<Null> readOrderFormIdUser() async {
+    if (orderDetails.length != 0) {
+      orderDetails.clear();
+    }
+
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+
+    String? create_by = preferences.getString('id');
+    // print('idShop =>>> $idShop');
+
+    String url =
+        '${MyConstant().domain}/WaterShop/getOrderDetail_WhereIdUser.php?create_by=$create_by';
+    await Dio().get(url).then((value) {
+      setState(() {
+        status = false;
+      });
+
+      if (value.toString() != 'null') {
+        // print('value =>> $value');
+        var result = json.decode(value.data);
+        print('result ==>> $result');
+
+        for (var map in result) {
+          OrderDetail orderdetail = OrderDetail.fromJson(map);
+          String sumString = orderdetail.sum!;
+
+          int sumInt = int.parse(sumString);
+
+          setState(() {
+            orderDetails.add(orderdetail);
+            total = total + sumInt;
+          });
+        }
+      } else {
         setState(() {
-          ststus = false;
-          cartModels = object;
-          total = total + sumInt;
+          status = true;
         });
       }
-    } else {
-      setState(() {
-        ststus = true;
-      });
-    }
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     ToastContext().init(context);
-    return ststus
+    return status
         ? Center(
             child: Text('ตะกร้าว่างเปล่า'),
           )
@@ -103,7 +148,7 @@ class _ShowCartState extends State<ShowCart> {
       children: [
         TextButton(
             onPressed: () {
-              confirmDeleteData();
+              // confirmDeleteData();
             },
             child: Text(
               'ลบรายการทั้งหมด',
@@ -121,7 +166,7 @@ class _ShowCartState extends State<ShowCart> {
           width: 110,
           child: ElevatedButton.icon(
             onPressed: () {
-              orderThread();
+              // orderThread();
             },
             icon: Icon(Icons.add_shopping_cart_sharp),
             label: Text('สั่งซื้อ'),
@@ -218,10 +263,10 @@ class _ShowCartState extends State<ShowCart> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
+              MyStyle().showTitleH44(
+                  'ระยะทาง : ${orderDetails[0].distance} กิโลเมตร'),
               MyStyle()
-                  .showTitleH44('ระยะทาง : ${cartModels[0].distance} กิโลเมตร'),
-              MyStyle()
-                  .showTitleH3('ค่าจัดส่ง : ${cartModels[0].transport} บาท'),
+                  .showTitleH3('ค่าจัดส่ง : ${orderDetails[0].transport} บาท'),
             ],
           ),
         ],
@@ -259,7 +304,7 @@ class _ShowCartState extends State<ShowCart> {
   Widget buildListWater() => ListView.builder(
         shrinkWrap: true,
         physics: ScrollPhysics(),
-        itemCount: cartModels.length,
+        itemCount: orderDetails.length,
         itemBuilder: (context, index) {
           return Container(
             width: double.infinity,
@@ -274,28 +319,28 @@ class _ShowCartState extends State<ShowCart> {
                 Expanded(
                   flex: 2,
                   child: Text(
-                    '${cartModels[index].amount}x',
+                    '${orderDetails[index].amount}x',
                     style: MyStyle().mainhATitle,
                   ),
                 ),
                 Expanded(
                   flex: 2,
                   child: Text(
-                    cartModels[index].brandName!,
+                    orderDetails[index].brandName!,
                     style: MyStyle().mainh23Title,
                   ),
                 ),
                 Expanded(
                   flex: 2,
                   child: Text(
-                    '${cartModels[index].size}ฺ ml.',
+                    '${orderDetails[index].size}ฺ ml.',
                     style: MyStyle().mainh23Title,
                   ),
                 ),
                 Expanded(
                   flex: 1,
                   child: Text(
-                    ' ${cartModels[index].sum}ฺ THB',
+                    ' ${orderDetails[index].sum}ฺ THB',
                     style: MyStyle().mainh23Title,
                   ),
                 ),
@@ -304,16 +349,7 @@ class _ShowCartState extends State<ShowCart> {
                   child: IconButton(
                     color: Colors.red,
                     icon: Icon(Icons.delete_forever),
-                    onPressed: () async {
-                      int id = cartModels[index].id!;
-                      print('You Click delete id = $id');
-                      await SQLiteHelper().deleteDataWhereId(id).then(
-                        (value) {
-                          print('delete Success id =$id');
-                          readSQLite();
-                        },
-                      );
-                    },
+                    onPressed: () => deleteOrderCart(orderDetails[index]),
                   ),
                 )
               ],
@@ -322,107 +358,100 @@ class _ShowCartState extends State<ShowCart> {
         },
       );
 
-  Future<Null> confirmDeleteData() async {
-    showDialog(
-      context: context,
-      builder: (context) => SimpleDialog(
-        title: Text(
-          'คุณต้องการจะลบรายการน้ำดื่มทั้งหมดใช่ไหม ?',
-        ),
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              Container(
-                width: 90,
-                child: ElevatedButton(
-                    child: Text('ตกลง'),
-                    onPressed: () async {
-                      Navigator.pop(context);
-                      await SQLiteHelper().deleteAllData().then((value) {
-                        readSQLite();
-                      });
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.blue.shade500,
-                    )),
-              ),
-              Container(
-                width: 90,
-                child: ElevatedButton(
-                    child: Text('ยกเลิก'),
-                    onPressed: () => Navigator.pop(context),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.red.shade500,
-                    )),
-              )
-            ],
-          )
-        ],
-      ),
-    );
+  Future<Null> deleteOrderCart(OrderDetail orderdetail) async {
+    // String? url =
+    //     'http://192.168.1.99/WaterShop/deleteOrderDetail.php?id=${orderdetail.id}';
+
+    String url = 'http://192.168.1.99/WaterShop/deleteOrderDetail.php';
+
+    Response resp = await Dio().delete(url, data: {'id': orderdetail.id});
+
+    print(resp.statusCode);
+    print(resp.statusMessage);
+
+    if (resp.statusCode == 200) {
+      readOrderFormIdUser();
+    }
   }
 
   Future<Null> orderThread() async {
-    DateTime dateTime = DateTime.now();
-    // print(dateTime.toString());
+    // DateTime dateTime = DateTime.now();
+    // // print(dateTime.toString());
 
-    String orderDateTime = DateFormat('yyyy-MM-dd HH:mm').format(dateTime);
+    // String orderDateTime = DateFormat('yyyy-MM-dd HH:mm').format(dateTime);
 
-    String distance = cartModels[0].distance!;
-    String transport = cartModels[0].transport!;
+    // String distance = orderDetails[0].distance!;
+    // String transport = orderDetails[0].transport!;
 
-    List<String> water_ids = [];
-    List<String> water_brand_ids = [];
-    List<String> sizes = [];
-    List<String> water_brand_names = [];
-    List<String> prices = [];
-    List<String> amounts = [];
-    List<String> sums = [];
+    // List<String> water_ids = [];
+    // List<String> water_brand_ids = [];
+    // List<String> sizes = [];
+    // List<String> water_brand_names = [];
+    // List<String> prices = [];
+    // List<String> amounts = [];
+    // List<String> sums = [];
 
-    for (var model in cartModels) {
-      water_ids.add(model.waterId!);
-      water_brand_ids.add(model.brandId!);
-      sizes.add(model.size!);
-      water_brand_names.add(model.brandName!);
-      prices.add(model.price!);
-      amounts.add(model.amount!);
-      sums.add(model.sum!);
-    }
-    String water_id = water_ids.toString();
-    String water_brand_id = water_brand_ids.toString();
-    String size = sizes.toString();
-    String water_brand_name = water_brand_names.toString();
-    String price = prices.toString();
-    String amount = amounts.toString();
-    String sum = sums.toString();
+    // for (var model in orderDetails) {
+    //   water_ids.add(model.waterId!);
+    //   water_brand_ids.add(model.idbrand!);
+    //   sizes.add(model.size!);
+    //   water_brand_names.add(model.brandName!);
+    //   prices.add(model.price!);
+    //   amounts.add(model.amount!);
+    //   sums.add(model.sum!);
+    // }
+    // String water_id = water_ids.toString();
+    // String water_brand_id = water_brand_ids.toString();
+    // String size = sizes.toString();
+    // String water_brand_name = water_brand_names.toString();
+    // String price = prices.toString();
+    // String amount = amounts.toString();
+    // String sum = sums.toString();
     SharedPreferences preferences = await SharedPreferences.getInstance();
     String? user_id = preferences.getString('id');
     String? user_name = preferences.getString('Name');
 
-    print(
-        'orderDateTime == $orderDateTime, distance == $distance, transport == $transport');
-    print(
-        'water_id == $water_id, water_brand_id == $water_brand_id, size == $size, water_brand_name == $water_brand_name, price == $price, amount == $amount, sum == $sum ');
+    //   print(
+    //       'orderDateTime == $orderDateTime, distance == $distance, transport == $transport');
+    //   print(
+    //       'water_id == $water_id, water_brand_id == $water_brand_id, size == $size, water_brand_name == $water_brand_name, price == $price, amount == $amount, sum == $sum ');
 
-    String? url =
-        '${MyConstant().domain}/WaterShop/addOrder.php?isAdd=true&orderDateTime=$orderDateTime&user_id=$user_id&user_name=$user_name&water_id=$water_id&water_brand_id=$water_brand_id&size=$size&distance=$distance&transport=$transport&water_brand_name=$water_brand_name&price=$price&amount=$amount&sum=$sum&riderId=none&pamentStatus=payondelivery&status=userorder';
+    String? url = 'http://192.168.1.99/WaterShop/addOrderWater.php';
 
-    await Dio().get(url).then((value) {
-      if (value.toString() == 'true') {
-        clearOrderSQLite();
-        notificationToShop(user_name!);
-      } else {
-        normalDialog(context, 'ไม่สามารถ สั่งซื้อได้ กรุณาลองใหม่');
-      }
+    for (var i = 0; i < orderDetails.length; i++) {
+      Map<String, String> _map = {
+        "create_by": user_id.toString(),
+        "emp_id": "none",
+        "payment_status": "เก็บเงินปลายทาง",
+        "order_detail_id": orderDetails[i].id.toString(),
+      };
+
+      Response response = await Dio().post(url, data: _map);
+      print('response = ${response.statusCode}');
+      print('response = ${response.data}');
+    }
+    notificationToShop(user_name!);
+
+    setState(() {
+      status = true;
+      orderDetails = [];
     });
+
+    // await Dio().get(url).then((value) {
+    //   if (value.toString() == 'true') {
+    //     clearOrderSQLite();
+    //     notificationToShop(user_name!);
+    //   } else {
+    //     normalDialog(context, 'ไม่สามารถ สั่งซื้อได้ กรุณาลองใหม่');
+    //   }
+    // });
   }
 
   Future<Null> clearOrderSQLite() async {
     Toast.show("ทำรายการสั่งซื้อ เสร็จสิ้น",
         duration: Toast.lengthLong, gravity: Toast.bottom);
     await SQLiteHelper().deleteAllData().then((value) {
-      readSQLite();
+      // readSQLite();
     });
   }
 
@@ -447,8 +476,26 @@ class _ShowCartState extends State<ShowCart> {
     });
   }
 
+ 
   Future<Null> sendNotificationToShop(String urlSendToken) async {
-    await Dio().get(urlSendToken).then((value) => normalDialogNoti(
-        context, 'การสั่งซื้อส่งไปที่ร้านแล้ว กรุณารอร้านจัดส่งค่ะ '));
+    await Dio().get(urlSendToken).then((value) =>AwesomeDialog(
+          context: context,
+          animType: AnimType.bottomSlide,
+          dialogType: DialogType.success,
+          body: Center(
+            child: Text(
+              'การสั่งซื้อส่งไปที่ร้านแล้ว กรุณารอร้านจัดส่งค่ะ ',
+              style: TextStyle(fontStyle: FontStyle.normal),
+            ),
+          ),
+          title: 'This is Ignored',
+          desc: 'This is also Ignored',
+          btnOkOnPress: () {
+            MaterialPageRoute route = MaterialPageRoute(
+              builder: (context) => MainUser(),
+            );
+            Navigator.push(context, route);
+          },
+        ).show());
   }
 }

@@ -84,6 +84,7 @@ class _MainUserState extends State<MainUser> {
       children: [
         Scaffold(
           appBar: AppBar(
+            automaticallyImplyLeading: false,
             title: Text(
               nameUser == null ? 'Main User' : 'สวัสดี $nameUser',
               style: TextStyle(color: Colors.white),
