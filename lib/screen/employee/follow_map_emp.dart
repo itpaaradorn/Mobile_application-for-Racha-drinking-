@@ -35,7 +35,7 @@ class _FollowMapCustomerState extends State<FollowMapCustomer> {
   @override
   void initState() {
     orderModel = widget.orderModel;
-    id = orderModel.userId;
+    id = orderModel.empId;
     FindUserWhererider();
     findlatlng();
     super.initState();
@@ -71,7 +71,7 @@ class _FollowMapCustomerState extends State<FollowMapCustomer> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "รายการสั่งซื้อที่ ${orderModel!.orderId}",
+          "รายการสั่งซื้อที่ ${orderModel!.id}",
         ),
       ),
       body:

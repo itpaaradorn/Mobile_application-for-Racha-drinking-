@@ -29,10 +29,10 @@ class _SaveBillOrderEmpState extends State<SaveBillOrderEmp> {
     // TODO: implement initState
     super.initState();
     orderModel = widget.orderModel;
-    user_id = orderModel!.userId;
-    user_name = orderModel!.userName;
-    order_id = orderModel!.orderId;
-    slipDateTime = orderModel!.orderDateTime;
+    user_id = orderModel!.createBy;
+    user_name = orderModel!.createBy;
+    order_id = orderModel!.id;
+    slipDateTime = orderModel!.createAt;
   }
 
   @override

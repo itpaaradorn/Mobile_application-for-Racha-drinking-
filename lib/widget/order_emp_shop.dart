@@ -114,11 +114,11 @@ class _OrderConfirmEmpState extends State<OrderConfirmEmp> {
           // print('OrderdateTime ==> ${model.orderDateTime}');
 
           List<String> nameWater =
-              MyAPI().createStringArray(model.waterBrandName!);
+              MyAPI().createStringArray(model.brandName!);
           List<String> amountgas = MyAPI().createStringArray(model.amount!);
           List<String> pricewater = MyAPI().createStringArray(model.price!);
           List<String> pricesums = MyAPI().createStringArray(model.sum!);
-          List<String> userid = MyAPI().createStringArray(model.userId!);
+          List<String> userid = MyAPI().createStringArray(model.createBy!);
 
           int total = 0;
           for (var item in pricesums) {
@@ -162,13 +162,13 @@ class _OrderConfirmEmpState extends State<OrderConfirmEmp> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                MyStyle().showTitleH2('คุณ ${ordermodels[index].userName}'),
+                MyStyle().showTitleH2('คุณ ${ordermodels[index].createBy}'),
                 MyStyle()
-                    .showTitleH33('คำสั่งซื้อ : ${ordermodels[index].orderId}'),
+                    .showTitleH33('คำสั่งซื้อ : ${ordermodels[index].id}'),
                 MyStyle().showTitleH33(
-                    'เวลาสั่งซื้อ : ${ordermodels[index].orderDateTime}'),
+                    'เวลาสั่งซื้อ : ${ordermodels[index].createAt}'),
                 MyStyle().showTitleH33(
-                    'สถานะการชำระเงิน : ${ordermodels[index].pamentStatus}'),
+                    'สถานะการชำระเงิน : ${ordermodels[index].paymentStatus}'),
                 MyStyle().showTitleH33('สถานะ : รอพนักงานจัดส่ง'),
                 MyStyle().mySixedBox(),
                 buildTitle(),
@@ -353,7 +353,7 @@ class _OrderConfirmEmpState extends State<OrderConfirmEmp> {
       context: context,
       builder: (context) => SimpleDialog(
         title: MyStyle().showTitleH2(
-            'คุณต้องการยกเลิกรายการ สั่งซื้อน้ำดื่มที่ ${ordermodels[index].orderId} ใช่ไหม ?'),
+            'คุณต้องการยกเลิกรายการ สั่งซื้อน้ำดื่มที่ ${ordermodels[index].id} ใช่ไหม ?'),
         children: <Widget>[
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -384,7 +384,7 @@ class _OrderConfirmEmpState extends State<OrderConfirmEmp> {
   }
 
   Future<Null> updateStatusConfirmOrder(int index) async {
-    String? orderId = ordermodels[index].orderId;
+    String? orderId = ordermodels[index].id;
     SharedPreferences preferences = await SharedPreferences.getInstance();
     String? emp_id = preferences.getString('id');
 
@@ -401,7 +401,7 @@ class _OrderConfirmEmpState extends State<OrderConfirmEmp> {
   }
 
   Future<Null> cancleOrderUser(int index) async {
-    String? order_id = ordermodels[index].orderId;
+    String? order_id = ordermodels[index].id;
     String url =
         '${MyConstant().domain}/WaterShop/cancleOrderWhereorderId.php?isAdd=true&status=Cancle&orderId=$order_id';
 
@@ -414,7 +414,7 @@ class _OrderConfirmEmpState extends State<OrderConfirmEmp> {
   }
   
    Future<Null> notificationCancleShop(int index) async {
-    String id = ordermodels[index].userId!;
+    String id = ordermodels[index].id!;
     String urlFindToken =
         '${MyConstant().domain}WaterShop/getUserWhereId.php?isAdd=true&id=$id';
 
@@ -437,7 +437,7 @@ class _OrderConfirmEmpState extends State<OrderConfirmEmp> {
   }
 
   Future<Null> notificationtoShop(int index) async {
-    String id = ordermodels[index].userId!;
+    String id = ordermodels[index].createBy!;
     String urlFindToken =
         '${MyConstant().domain}WaterShop/getUserWhereId.php?isAdd=true&id=$id';
 

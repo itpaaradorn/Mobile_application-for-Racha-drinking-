@@ -37,9 +37,9 @@ class _FollowTrackingDeliveryState extends State<FollowTrackingDelivery> {
   void initState() {
     super.initState();
     orderModel = widget.orderModel;
-    rider_id = orderModel!.riderId;
-    order_id = orderModel!.orderId;
-    date_time = orderModel!.orderDateTime;
+    rider_id = orderModel!.empId;
+    order_id = orderModel!.id;
+    date_time = orderModel!.createAt;
     FindUserWhererider();
 
     getPolyPoints();

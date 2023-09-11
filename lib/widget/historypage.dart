@@ -77,7 +77,7 @@ class _HistoryState extends State<History> {
                 TextButton(
                   onPressed: () async {
                     if (orderModels[index].status != 'Finish') {
-                      if (orderModels[index].riderId != 'none') {
+                      if (orderModels[index].empId != 'none') {
                         MaterialPageRoute route = MaterialPageRoute(
                           builder: (context) => FollowTrackingDelivery(
                             orderModel: orderModels[index],
@@ -164,7 +164,7 @@ class _HistoryState extends State<History> {
   }
 
   Future<Null> cancleOrderUser(int index) async {
-    String order_id = orderModels[index].orderId!;
+    String order_id = orderModels[index].id!;
     String url =
         '${MyConstant().domain}/WaterShop/cancleOrderWhereorderId.php?isAdd=true&status=Cancle&orderId=$order_id';
 
@@ -308,7 +308,7 @@ class _HistoryState extends State<History> {
     return Row(
       children: [
         MyStyle().showTitleH44(
-            'วันเวลาที่สั่งซื้อ ${orderModels[index].orderDateTime}'),
+            'วันเวลาที่สั่งซื้อ ${orderModels[index].createAt}'),
       ],
     );
   }
@@ -347,7 +347,7 @@ class _HistoryState extends State<History> {
         var result = json.decode(response.data);
         for (var map in result) {
           OrderModel model = OrderModel.fromJson(map);
-          List<String> menuWaters = changeAreey(model.waterBrandName!);
+          List<String> menuWaters = changeAreey(model.brandName!);
           List<String> prices = changeAreey(model.price!);
           List<String> amounts = changeAreey(model.amount!);
           List<String> sums = changeAreey(model.sum!);
@@ -408,7 +408,7 @@ class _HistoryState extends State<History> {
   Future<Null> updateorderId() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     String? user_id = preferences.getString(MyConstant().keyId);
-    String order_id = orderModels[0].orderId!;
+    String order_id = orderModels[0].id!;
     if (user_id != null && user_id.isNotEmpty) {
       String url =
           '${MyConstant().domain}/gas/updateorderIdfrompayment.php?isAdd=true&order_id=$order_id&user_id=$user_id';

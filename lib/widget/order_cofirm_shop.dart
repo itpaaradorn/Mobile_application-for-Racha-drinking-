@@ -97,11 +97,11 @@ class _OrderConfirmShopState extends State<OrderConfirmShop> {
           // print('OrderdateTime ==> ${model.orderDateTime}');
 
           List<String> nameWater =
-              MyAPI().createStringArray(model.waterBrandName!);
+              MyAPI().createStringArray(model.brandName!);
           List<String> amountgas = MyAPI().createStringArray(model.amount!);
           List<String> pricewater = MyAPI().createStringArray(model.price!);
           List<String> pricesums = MyAPI().createStringArray(model.sum!);
-          List<String> userid = MyAPI().createStringArray(model.userId!);
+          List<String> userid = MyAPI().createStringArray(model.createBy!);
 
           int total = 0;
           for (var item in pricesums) {
@@ -134,7 +134,7 @@ class _OrderConfirmShopState extends State<OrderConfirmShop> {
 
     List<int> bytes = await document.save();
 
-    saveAndLanchFile(bytes, 'Order_${ordermodels[index].orderId}.pdf');
+    saveAndLanchFile(bytes, 'Order_${ordermodels[index].id}.pdf');
     document.dispose();
   }
 
@@ -149,18 +149,18 @@ class _OrderConfirmShopState extends State<OrderConfirmShop> {
   static void Detailbill(
       PdfPage page, int index, List<OrderModel> ordermodels) {
     page.graphics.drawString(
-      'Name: ${ordermodels[index].userName}',
+      'Name: ${ordermodels[index].id}',
       PdfStandardFont(PdfFontFamily.helvetica, 23),
       bounds: const Rect.fromLTWH(0, 45, 0, 0),
     );
     page.graphics.drawString(
-      'Order ID: ${ordermodels[index].orderId}',
+      'Order ID: ${ordermodels[index].id}',
       PdfStandardFont(PdfFontFamily.helvetica, 23),
       bounds: const Rect.fromLTWH(0, 75, 0, 0),
     );
 
     page.graphics.drawString(
-      'Order Time: ${ordermodels[index].orderDateTime}',
+      'Order Time: ${ordermodels[index].createAt}',
       PdfStandardFont(PdfFontFamily.helvetica, 23),
       bounds: const Rect.fromLTWH(0, 105, 0, 0),
     );
@@ -244,7 +244,7 @@ class _OrderConfirmShopState extends State<OrderConfirmShop> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  MyStyle().showTitleH2('${ordermodels[index].userName}'),
+                  MyStyle().showTitleH2('${ordermodels[index].id}'),
                   IconButton(
                     onPressed: () async {
                       _createPDF(index);
@@ -256,10 +256,10 @@ class _OrderConfirmShopState extends State<OrderConfirmShop> {
                   ),
                 ],
               ),
-              MyStyle().showTitleH33('${ordermodels[index].orderDateTime}'),
+              MyStyle().showTitleH33('${ordermodels[index].id}'),
               MyStyle().showTitleH33('สถานะการจัดส่ง : สำเร็จ'),
               MyStyle().showTitleH33(
-                  'สถานะการชำระเงิน : ${ordermodels[index].pamentStatus}'),
+                  'สถานะการชำระเงิน : ${ordermodels[index].paymentStatus}'),
               MyStyle().mySixedBox05(),
               buildTitle(),
               ListView.builder(

@@ -1,76 +1,72 @@
 class OrderModel {
-  String? orderId;
-  String? orderDateTime;
-  String? userId;
-  String? userName;
+  String? id;
+  String? createAt;
+  String? createBy;
+  String? empId;
+  String? paymentStatus;
+  String? status;
   String? waterId;
-  String? waterBrandId;
-  String? size;
-  String? distance;
-  String? transport;
-  String? waterBrandName;
-  String? price;
   String? amount;
   String? sum;
-  String? riderId;
-  String? pamentStatus;
-  String? status;
+  String? distance;
+  String? transport;
+  String? price;
+  String? size;
+  String? idbrand;
+  String? brandName;
 
   OrderModel(
-      {this.orderId,
-      this.orderDateTime,
-      this.userId,
-      this.userName,
+      {this.id,
+      this.createAt,
+      this.createBy,
+      this.empId,
+      this.paymentStatus,
+      this.status,
       this.waterId,
-      this.waterBrandId,
-      this.size,
-      this.distance,
-      this.transport,
-      this.waterBrandName,
-      this.price,
       this.amount,
       this.sum,
-      this.riderId,
-      this.pamentStatus,
-      this.status});
+      this.distance,
+      this.transport,
+      this.price,
+      this.size,
+      this.idbrand,
+      this.brandName});
 
   OrderModel.fromJson(Map<String, dynamic> json) {
-    orderId = json['orderId'];
-    orderDateTime = json['orderDateTime'];
-    userId = json['user_id'];
-    userName = json['user_name'];
+    id = json['id'];
+    createAt = json['create_at'];
+    createBy = json['create_by'];
+    empId = json['emp_id'];
+    paymentStatus = json['payment_status'];
+    status = json['status'];
     waterId = json['water_id'];
-    waterBrandId = json['water_brand_id'];
-    size = json['size'];
-    distance = json['distance'];
-    transport = json['transport'];
-    waterBrandName = json['water_brand_name'];
-    price = json['price'];
     amount = json['amount'];
     sum = json['sum'];
-    riderId = json['riderId'];
-    pamentStatus = json['pamentStatus'];
-    status = json['status'];
+    distance = json['distance'];
+    transport = json['transport'];
+    price = json['Price'];
+    size = json['Size'];
+    idbrand = json['idbrand'];
+    brandName = json['brand_name'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['orderId'] = this.orderId;
-    data['orderDateTime'] = this.orderDateTime;
-    data['user_id'] = this.userId;
-    data['user_name'] = this.userName;
+    data['id'] = this.id;
+    data['create_at'] = this.createAt;
+    data['create_by'] = this.createBy;
+    data['emp_id'] = this.empId;
+    data['payment_status'] = this.paymentStatus;
+    data['status'] = this.status;
     data['water_id'] = this.waterId;
-    data['water_brand_id'] = this.waterBrandId;
-    data['size'] = this.size;
-    data['distance'] = this.distance;
-    data['transport'] = this.transport;
-    data['water_brand_name'] = this.waterBrandName;
-    data['price'] = this.price;
     data['amount'] = this.amount;
     data['sum'] = this.sum;
-    data['riderId'] = this.riderId;
-    data['pamentStatus'] = this.pamentStatus;
-    data['status'] = this.status;
+    data['distance'] = this.distance;
+    data['transport'] = this.transport;
+    data['Price'] = this.price;
+    data['Size'] = this.size;
+    data['idbrand'] = this.idbrand;
+    data['brand_name'] = this.brandName;
     return data;
   }
 }

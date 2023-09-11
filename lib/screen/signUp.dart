@@ -240,7 +240,22 @@ class _SignUpState extends State<SignUp> {
         '${MyConstant().domain}/WaterShop/addUser.php?isAdd=true&Name=$name&User=$user&Password=$password&ChooseType=Customer&Address=$address&Phone=$phone&Urlpicture=$avatar&Lat=$lat&Lng=$lng';
     await Dio().get(apiInsertUser).then((value) {
       if (value.toString() == 'true') {
-        Navigator.pop(context);
+         AwesomeDialog(
+            context: context,
+            animType: AnimType.bottomSlide,
+            dialogType: DialogType.success,
+            body: Center(
+              child: Text(
+                "สมัครสมาชิกสำเร็จ",
+                style: TextStyle(fontStyle: FontStyle.normal),
+              ),
+            ),
+            title: 'This is Ignored',
+            desc: 'This is also Ignored',
+            btnOkOnPress: () {
+              Navigator.pop(context);
+            },
+          ).show();
       } else {
         normalDialog(context, 'Create New User False !!!');
       }

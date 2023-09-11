@@ -92,11 +92,11 @@ class _OrderProcessEmpState extends State<OrderProcessEmp> {
           // print('OrderdateTime ==> ${model.orderDateTime}');
 
           List<String> nameWater =
-              MyAPI().createStringArray(model.waterBrandName!);
+              MyAPI().createStringArray(model.brandName!);
           List<String> amountgas = MyAPI().createStringArray(model.amount!);
           List<String> pricewater = MyAPI().createStringArray(model.price!);
           List<String> pricesums = MyAPI().createStringArray(model.sum!);
-          List<String> userid = MyAPI().createStringArray(model.userId!);
+          List<String> userid = MyAPI().createStringArray(model.createBy!);
 
           int total = 0;
           for (var item in pricesums) {
@@ -133,18 +133,18 @@ class _OrderProcessEmpState extends State<OrderProcessEmp> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              MyStyle().showTitleH2('คุณ ${ordermodels[index].userName}'),
+              MyStyle().showTitleH2('คุณ ${ordermodels[index].id}'),
               MyStyle()
-                  .showTitleH33('คำสั่งซื้อ : ${ordermodels[index].orderId}'),
+                  .showTitleH33('คำสั่งซื้อ : ${ordermodels[index].id}'),
               MyStyle().showTitleH33(
-                  'เวลาสั่งซื้อ : ${ordermodels[index].orderDateTime}'),
+                  'เวลาสั่งซื้อ : ${ordermodels[index].createAt}'),
               MyStyle().showTitleH33('สถานะ : รอพนักงานจัดส่ง'),
               MyStyle().showTitleH33(
-                  'สถานะการชำระเงิน : ${ordermodels[index].pamentStatus}'),
+                  'สถานะการชำระเงิน : ${ordermodels[index].paymentStatus}'),
               MyStyle().showTitleH33(
                   'ค่าจัดส่งที่ต้องเก็บ : ${ordermodels[index].transport} THB'),
               MyStyle()
-                  .showTitleH33('ผู้จัดส่ง : ${ordermodels[index].riderId} '),
+                  .showTitleH33('ผู้จัดส่ง : ${ordermodels[index].empId} '),
               MyStyle().mySixedBox(),
               buildTitle(),
               ListView.builder(
@@ -238,7 +238,7 @@ class _OrderProcessEmpState extends State<OrderProcessEmp> {
                           MaterialStatePropertyAll<Color>(Colors.blue),
                     ),
                     onPressed: () {
-                      if (ordermodels[index].pamentStatus.toString() ==
+                      if (ordermodels[index].paymentStatus.toString() ==
                           'payondelivery') {
                         MaterialPageRoute route = MaterialPageRoute(
                           builder: (context) => SaveBillOrderEmp(
@@ -315,7 +315,7 @@ class _OrderProcessEmpState extends State<OrderProcessEmp> {
   }
 
   Future<Null> updateStatusConfirmOrder(int index) async {
-    String? orderId = ordermodels[index].orderId;
+    String? orderId = ordermodels[index].id;
     SharedPreferences preferences = await SharedPreferences.getInstance();
     String? emp_id = preferences.getString('id');
 
@@ -332,7 +332,7 @@ class _OrderProcessEmpState extends State<OrderProcessEmp> {
   }
 
   Future<Null> notificationtoShop(int index) async {
-    String id = ordermodels[index].userId!;
+    String id = ordermodels[index].createBy!;
     String urlFindToken =
         '${MyConstant().domain}WaterShop/getUserWhereId.php?isAdd=true&id=$id';
 

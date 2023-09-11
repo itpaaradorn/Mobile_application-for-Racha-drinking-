@@ -1,9 +1,8 @@
-
 import 'dart:io';
 import 'dart:math';
 
-
 import 'package:application_drinking_water_shop/utility/my_style.dart';
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
@@ -17,7 +16,8 @@ import '../utility/dialog.dart';
 
 class EditProfileLocation extends StatefulWidget {
   final UserModel userModel;
-  const EditProfileLocation({Key? key, required this.userModel}) : super(key: key);
+  const EditProfileLocation({Key? key, required this.userModel})
+      : super(key: key);
 
   @override
   State<EditProfileLocation> createState() => _EditProfileLocationState();
@@ -64,26 +64,38 @@ class _EditProfileLocationState extends State<EditProfileLocation> {
         title: Text("แก้ไขข้อมูลสมาชิก"),
         actions: [
           IconButton(
-            icon: Icon(Icons.save ),
-            onPressed: () {
-              if (
-              name == null ||
-                  name!.isEmpty ||
-                  phone == null ||
-                  phone!.isEmpty ||
-                  address == null ||
-                  address!.isEmpty ||
-                  user == null ||
-                  user!.isEmpty ||
-                  password == null ||
-                  password!.isEmpty) {
-                normalDialog2(context, 'มีช่องว่าง !', 'กรุณากรอกข้อมูลให้ครบ');
-              } else {
-                updateProfileandLocation().then(
-                (value) => Navigator.pop(context),
-              );
-              }
-            }),
+              icon: Icon(Icons.save),
+              onPressed: () {
+                if (name == null ||
+                    name!.isEmpty ||
+                    phone == null ||
+                    phone!.isEmpty ||
+                    address == null ||
+                    address!.isEmpty ||
+                    user == null ||
+                    user!.isEmpty ||
+                    password == null ||
+                    password!.isEmpty) {
+                  AwesomeDialog(
+                    context: context,
+                    animType: AnimType.bottomSlide,
+                    dialogType: DialogType.info,
+                    body: Center(
+                      child: Text(
+                        'กรุณากรอกข้อมูลให้ครบด้วยค่ะ ',
+                        style: TextStyle(fontStyle: FontStyle.normal),
+                      ),
+                    ),
+                    title: 'This is Ignored',
+                    desc: 'This is also Ignored',
+                    btnOkOnPress: () {},
+                  ).show();
+                } else {
+                  updateProfileandLocation().then(
+                    (value) => Navigator.pop(context),
+                  );
+                }
+              }),
         ],
       ),
       body: SingleChildScrollView(
@@ -98,7 +110,7 @@ class _EditProfileLocationState extends State<EditProfileLocation> {
             // AppTextFieldString(text: name!.trim(), hintText: "name", icon: Icons.person),
             // AppTextFieldString(text: phone!.trim(), hintText: "phone", icon: Icons.person),
             // AppTextFieldString(text: address!.trim(), hintText: "address", icon: Icons.person),
-           groupImage(),
+            groupImage(),
             nameUser(),
             userForm(),
             passwordForm(),
@@ -225,17 +237,23 @@ class _EditProfileLocationState extends State<EditProfileLocation> {
     String urlUpload = '${MyConstant().domain}/WaterShop/saveAvatar.php';
     await Dio().post(urlUpload, data: formData).then((value) async {
       urlpicture = '/WaterShop/avatar/$nameFile';
-     
+
       String url =
           '${MyConstant().domain}/WaterShop/editProfilelocation.php?isAdd=true&id=$user_id&UrlPicture=$urlpicture&Name=$name&User=$user&Password=$password&Phone=$phone&Address=$address&Lat=$lat&Lng=$lng';
-
-      await Dio().put(url).then(
-        (value) {
-          Navigator.pop(context);
-          normalDialogChack(context, "แก้ไขข้อมูลสมาชิกสำเร็จ",
-              "กรุณาตรวจสอบเพื่อความถูกต้อง");
-        },
-      );
+      await Dio().get(url).then((value) => AwesomeDialog(
+            context: context,
+            animType: AnimType.bottomSlide,
+            dialogType: DialogType.success,
+            body: Center(
+              child: Text(
+                "แก้ไขข้อมูลสมาชิกสำเร็จ",
+                style: TextStyle(fontStyle: FontStyle.normal),
+              ),
+            ),
+            title: 'This is Ignored',
+            desc: 'This is also Ignored',
+            btnOkOnPress: () {},
+          ).show());
     });
   }
 
@@ -263,8 +281,6 @@ class _EditProfileLocationState extends State<EditProfileLocation> {
               title: 'คุณอยู่ที่นี่ ', snippet: 'lat = $lat, lng = $lng'),
         ),
       ].toSet();
-
-
 
   Row groupImage() => Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -307,10 +323,4 @@ class _EditProfileLocationState extends State<EditProfileLocation> {
       });
     } catch (e) {}
   }
-
-
-
-
-
-
 }

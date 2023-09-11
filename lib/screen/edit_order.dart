@@ -38,26 +38,26 @@ class _EditOrderEmpState extends State<EditOrderEmp> {
   void initState() {
     super.initState();
     orderModel = widget.orderModel;
-    waterBrandName = orderModel.waterBrandName;
+    waterBrandName = orderModel.brandName;
     size = orderModel.size;
     price = orderModel.price;
     amount = orderModel.amount;
     transport = orderModel.transport;
     distance = orderModel.distance;
     waterId = orderModel.waterId;
-    order_id = orderModel.orderId;
+    order_id = orderModel.id;
     status = orderModel.status;
-    user_name = orderModel.userName;
-    pamentStatus = orderModel.pamentStatus;
+    user_name = orderModel.id;
+    pamentStatus = orderModel.paymentStatus;
     sum = orderModel.sum;
-    waterBrandId = orderModel.waterBrandId;
+    waterBrandId = orderModel.idbrand;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Edit Order_id: ${orderModel.orderId}'),
+        title: Text('Edit Order_id: ${orderModel.id}'),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -184,7 +184,7 @@ class _EditOrderEmpState extends State<EditOrderEmp> {
     showDialog(
       context: context,
       builder: (context) => SimpleDialog(
-        title: MyStyle().showTitleH2('คุณต้องการเปลี่ยนแปลงรายการ\nสั่งซื้อที่ ${orderModel.orderId} ใช่ไหม ?'),
+        title: MyStyle().showTitleH2('คุณต้องการเปลี่ยนแปลงรายการ\nสั่งซื้อที่ ${orderModel.id} ใช่ไหม ?'),
         children: <Widget>[
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,

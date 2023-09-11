@@ -92,11 +92,11 @@ class _OrderProcessShopState extends State<OrderProcessShop> {
           // print('OrderdateTime ==> ${model.orderDateTime}');
 
           List<String> nameWater =
-              MyAPI().createStringArray(model.waterBrandName!);
+              MyAPI().createStringArray(model.brandName!);
           List<String> amountgas = MyAPI().createStringArray(model.amount!);
           List<String> pricewater = MyAPI().createStringArray(model.price!);
           List<String> pricesums = MyAPI().createStringArray(model.sum!);
-          List<String> userid = MyAPI().createStringArray(model.userId!);
+          List<String> userid = MyAPI().createStringArray(model.createBy!);
 
           int total = 0;
           for (var item in pricesums) {
@@ -128,15 +128,15 @@ class _OrderProcessShopState extends State<OrderProcessShop> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              MyStyle().showTitleH2('คุณ ${ordermodels[index].userName}'),
+              MyStyle().showTitleH2('คุณ ${ordermodels[index].createBy}'),
               MyStyle()
-                  .showTitleH33('คำสั่งซื้อ : ${ordermodels[index].orderId}'),
+                  .showTitleH33('คำสั่งซื้อ : ${ordermodels[index].id}'),
               MyStyle().showTitleH33(
-                  'เวลาสั่งซื้อ : ${ordermodels[index].orderDateTime}'),
+                  'เวลาสั่งซื้อ : ${ordermodels[index].createAt}'),
               MyStyle().showTitleH33(
-                  'สถานะการชำระเงิน : ${ordermodels[index].pamentStatus}'),
+                  'สถานะการชำระเงิน : ${ordermodels[index].paymentStatus}'),
               MyStyle().showTitleH33(
-                  'รหัสผู้จัดส่ง : ${ordermodels[index].riderId}'),
+                  'รหัสผู้จัดส่ง : ${ordermodels[index].empId}'),
               MyStyle().showTitleH33('สถานะการจัดส่ง : กำลังจัดส่ง'),
               MyStyle().mySixedBox05(),
               buildTitle(),

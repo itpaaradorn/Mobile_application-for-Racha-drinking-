@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
@@ -11,12 +12,13 @@ import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toast/toast.dart';
 
-import '../model/cart_model.dart';
+import '../model/order_detail.dart';
 import '../model/user_model.dart';
 import '../utility/my_constant.dart';
 import '../utility/my_style.dart';
 import '../utility/dialog.dart';
 import '../utility/sqlite_helper.dart';
+import 'main_user.dart';
 
 class ConfirmPayment extends StatefulWidget {
   @override
@@ -24,9 +26,10 @@ class ConfirmPayment extends StatefulWidget {
 }
 
 class _ConfirmPaymentState extends State<ConfirmPayment> {
-  List<CartModel> cartModels = [];
+  List<OrderDetail> orderDetails = [];
   String? dateTimeString;
   File? file;
+  bool status = true;
   int total = 0;
 
   @override
@@ -34,7 +37,7 @@ class _ConfirmPaymentState extends State<ConfirmPayment> {
     // TODO: implement initState
     super.initState();
     findCurrentTime();
-    readSQLite();
+    readOrderFormIdUser();
   }
 
   void findCurrentTime() {
@@ -46,19 +49,45 @@ class _ConfirmPaymentState extends State<ConfirmPayment> {
     // print('datetime ==> $dateTime');
   }
 
-  Future<Null> readSQLite() async {
-    var object = await SQLiteHelper().readAllDataFormSQLite();
-    print('object length ==> ${object.length}');
-    if (object.length != 0) {
-      for (var model in object) {
-        String? sumString = model.sum;
-        int sumInt = int.parse(sumString!);
+  Future<Null> readOrderFormIdUser() async {
+    if (orderDetails.length != 0) {
+      orderDetails.clear();
+    }
+
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+
+    String? create_by = preferences.getString('id');
+    // print('idShop =>>> $idShop');
+
+    String url =
+        '${MyConstant().domain}/WaterShop/getOrderDetail_WhereIdUser.php?create_by=$create_by';
+    await Dio().get(url).then((value) {
+      setState(() {
+        status = false;
+      });
+
+      if (value.toString() != 'null') {
+        // print('value =>> $value');
+        var result = json.decode(value.data);
+        print('result ==>> $result');
+
+        for (var map in result) {
+          OrderDetail orderdetail = OrderDetail.fromJson(map);
+          String sumString = orderdetail.sum!;
+
+          int sumInt = int.parse(sumString);
+
+          setState(() {
+            orderDetails.add(orderdetail);
+            total = total + sumInt;
+          });
+        }
+      } else {
         setState(() {
-          cartModels = object;
-          total = total + sumInt;
+          status = true;
         });
       }
-    } else {}
+    });
   }
 
   @override
@@ -198,59 +227,52 @@ class _ConfirmPaymentState extends State<ConfirmPayment> {
   Future<Null> AddPayment() async {}
 
   Future<Null> orderThread() async {
-     DateTime dateTime = DateTime.now();
-    // print(dateTime.toString());
+     
 
-    String orderDateTime = DateFormat('yyyy-MM-dd HH:mm').format(dateTime);
-
-    String distance = cartModels[0].distance!;
-    String transport = cartModels[0].transport!;
-
-    List<String> water_ids = [];
-    List<String> water_brand_ids = [];
-    List<String> sizes = [];
-    List<String> water_brand_names = [];
-    List<String> prices = [];
-    List<String> amounts = [];
-    List<String> sums = [];
-
-    for (var model in cartModels) {
-      water_ids.add(model.waterId!);
-      water_brand_ids.add(model.brandId!);
-      sizes.add(model.size!);
-      water_brand_names.add(model.brandName!);
-      prices.add(model.price!);
-      amounts.add(model.amount!);
-      sums.add(model.sum!);
-    }
-    String water_id = water_ids.toString();
-    String water_brand_id = water_brand_ids.toString();
-    String size = sizes.toString();
-    String water_brand_name = water_brand_names.toString();
-    String price = prices.toString();
-    String amount = amounts.toString();
-    String sum = sums.toString();
     SharedPreferences preferences = await SharedPreferences.getInstance();
     String? user_id = preferences.getString('id');
     String? user_name = preferences.getString('Name');
 
-    print(
-        'orderDateTime == $orderDateTime, distance == $distance, transport == $transport');
-    print(
-        'water_id == $water_id, water_brand_id == $water_brand_id, size == $size, water_brand_name == $water_brand_name, price == $price, amount == $amount, sum == $sum ');
 
-    String? url =
-        '${MyConstant().domain}/WaterShop/addOrder.php?isAdd=true&orderDateTime=$orderDateTime&user_id=$user_id&user_name=$user_name&water_id=$water_id&water_brand_id=$water_brand_id&size=$size&distance=$distance&transport=$transport&water_brand_name=$water_brand_name&price=$price&amount=$amount&sum=$sum&riderId=none&pamentStatus=confirmpayment&status=userorder';
+     String? url = 'http://192.168.1.99/WaterShop/addOrderWater.php';
 
-    await Dio().get(url).then((value) {
-      if (value.toString() == 'true') {
-        clearOrderSQLite();
-        notificationTosShop(user_name!);
-        processUploadInsertData();
-      } else {
-        normalDialog(context, 'ไม่สามารถสั่งซื้อได้กรุณาลองใหม่');
-      }
+    for (var i = 0; i < orderDetails.length; i++) {
+      Map<String, String> _map = {
+        "create_by": user_id.toString(),
+        "emp_id": "none",
+        "payment_status": "ชำระเงินล่วงหน้าแล้ว",
+        "order_detail_id": orderDetails[i].id.toString(),
+      };
+
+      Response response = await Dio().post(url, data: _map);
+      print('response = ${response.statusCode}');
+      print('response = ${response.data}');
+    }
+    
+    notificationTosShop(user_name!);
+
+    setState(() {
+      status = true;
+      orderDetails = [];
     });
+
+
+
+
+
+
+
+
+
+    // await Dio().get(url).then((value) {
+    //   if (value.toString() == 'true') {
+    //     clearOrderSQLite();
+    //     notificationTosShop(user_name!);
+    //     processUploadInsertData();
+    //   } else {
+    //     normalDialog(context, 'ไม่สามารถสั่งซื้อได้กรุณาลองใหม่');
+    //   }
+    // });
   }
 
   Future<Null> clearOrderSQLite() async {
@@ -258,7 +280,7 @@ class _ConfirmPaymentState extends State<ConfirmPayment> {
       (value) {
          Toast.show("ทำรายการสั่งซื้อ เสร็จสิ้น",
         duration: Toast.lengthLong, gravity: Toast.bottom);
-        readSQLite();
+        readOrderFormIdUser();
       },
     );
   }
@@ -285,7 +307,24 @@ class _ConfirmPaymentState extends State<ConfirmPayment> {
   }
 
   Future<Null> sendNotificationToShop(String urlSendToken) async {
-    await Dio().get(urlSendToken).then((value) => normalDialogNoti(
-        context, 'การสั่งซื้อส่งไปที่ร้านแล้ว กรุณารอร้านจัดส่งค่ะ '));
+    await Dio().get(urlSendToken).then((value) => AwesomeDialog(
+          context: context,
+          animType: AnimType.bottomSlide,
+          dialogType: DialogType.success,
+          body: Center(
+            child: Text(
+              'การสั่งซื้อส่งไปที่ร้านแล้ว กรุณารอร้านจัดส่งค่ะ ',
+              style: TextStyle(fontStyle: FontStyle.normal),
+            ),
+          ),
+          title: 'This is Ignored',
+          desc: 'This is also Ignored',
+          btnOkOnPress: () {
+            MaterialPageRoute route = MaterialPageRoute(
+              builder: (context) => MainUser(),
+            );
+            Navigator.push(context, route);
+          },
+        ).show());
   }
 }
