@@ -92,12 +92,14 @@ class _ConfirmPaymentState extends State<ConfirmPayment> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(appBar: AppBar(
+    return Scaffold(
+      appBar: AppBar(
         title: Text('Confirm Payment'),
       ),
       body: Column(
         children: [
-          MyStyle().mySixedBoxxxxxxx(),MyStyle().mySixedBoxxxxxxx(),
+          MyStyle().mySixedBoxxxxxxx(),
+          MyStyle().mySixedBoxxxxxxx(),
           headTitle(),
           timeDateTitle(),
           Spacer(),
@@ -127,18 +129,17 @@ class _ConfirmPaymentState extends State<ConfirmPayment> {
       ),
     );
   }
-  
 
   Container newButtonConfirm() {
     return Container(
       width: 200,
       child: ElevatedButton(
         onPressed: () {
-         if(file != null) {
-                   orderThread();
-                 } else {
-                   normalDialog(context, "กรุนาแนบใบเสร็จก่อนสั่งซื้อ");
-                 }
+          if (file != null) {
+            orderThread();
+          } else {
+            normalDialog(context, "กรุนาแนบใบเสร็จก่อนสั่งซื้อ");
+          }
         },
         child: Text('ยืนยันการชำระเงินสั่งซื้อ'),
       ),
@@ -151,7 +152,8 @@ class _ConfirmPaymentState extends State<ConfirmPayment> {
 
     try {
       Map<String, dynamic> map = {};
-      map['file'] = await MultipartFile.fromFile(file!.path, filename: nameSlip);
+      map['file'] =
+          await MultipartFile.fromFile(file!.path, filename: nameSlip);
       FormData data = FormData.fromMap(map);
       await Dio().post(apisaveSlip, data: data).then((value) async {
         String imageSlip = '/WaterShop/Slip/$nameSlip';
@@ -226,15 +228,20 @@ class _ConfirmPaymentState extends State<ConfirmPayment> {
 
   Future<Null> AddPayment() async {}
 
-  Future<Null> orderThread() async {
-     
+  String prepareDigit(int number) {
+    return number.toString().length > 1 ? "$number" : "0$number";
+  }
 
+  Future<Null> orderThread() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     String? user_id = preferences.getString('id');
     String? user_name = preferences.getString('Name');
 
+    String? url = '${MyConstant().domain}/WaterShop/addOrderWater.php';
 
-     String? url = 'http://192.168.1.99/WaterShop/addOrderWater.php';
+    DateTime now = DateTime.now();
+    String orderNumber =
+        "$user_id#${now.year}${prepareDigit(now.month)}${prepareDigit(now.day)}${prepareDigit(now.hour)}${prepareDigit(now.minute)}${prepareDigit(now.second)}";
 
     for (var i = 0; i < orderDetails.length; i++) {
       Map<String, String> _map = {
@@ -242,27 +249,20 @@ class _ConfirmPaymentState extends State<ConfirmPayment> {
         "emp_id": "none",
         "payment_status": "ชำระเงินล่วงหน้าแล้ว",
         "order_detail_id": orderDetails[i].id.toString(),
+        "order_number": orderNumber,
       };
 
       Response response = await Dio().post(url, data: _map);
       print('response = ${response.statusCode}');
       print('response = ${response.data}');
     }
-    
+
     notificationTosShop(user_name!);
 
     setState(() {
       status = true;
       orderDetails = [];
     });
-
-
-
-
-
-
-
-
 
     // await Dio().get(url).then((value) {
     //   if (value.toString() == 'true') {
@@ -278,17 +278,17 @@ class _ConfirmPaymentState extends State<ConfirmPayment> {
   Future<Null> clearOrderSQLite() async {
     await SQLiteHelper().deleteAllData().then(
       (value) {
-         Toast.show("ทำรายการสั่งซื้อ เสร็จสิ้น",
-        duration: Toast.lengthLong, gravity: Toast.bottom);
+        Toast.show("ทำรายการสั่งซื้อ เสร็จสิ้น",
+            duration: Toast.lengthLong, gravity: Toast.bottom);
         readOrderFormIdUser();
       },
     );
   }
 
- Future<Null> notificationTosShop(String user_name) async {
+  Future<Null> notificationTosShop(String user_name) async {
     String? urlFindToken =
         '${MyConstant().domain}/WaterShop/getUserWhereId.php?isAdd=true&id=46';
-    
+
     await Dio().get(urlFindToken).then((value) {
       var result = json.decode(value.data);
       print('result ==>> $result');

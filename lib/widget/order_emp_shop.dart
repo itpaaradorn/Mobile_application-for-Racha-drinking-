@@ -14,6 +14,13 @@ import '../utility/my_constant.dart';
 import '../utility/my_style.dart';
 import '../utility/dialog.dart';
 
+class ListOrder {
+  String orderName;
+  List<OrderModel> items;
+
+  ListOrder({required this.orderName, required this.items});
+}
+
 class OrderConfirmEmp extends StatefulWidget {
   const OrderConfirmEmp({super.key});
 
@@ -26,6 +33,7 @@ class _OrderConfirmEmpState extends State<OrderConfirmEmp> {
   bool status = true;
   final number = "0611675623";
   List<OrderModel> ordermodels = [];
+  List<ListOrder> listOrder = [];
   List<List<String>> listnameWater = [];
   List<List<String>> listAmounts = [];
   List<List<String>> listPrices = [];
@@ -44,14 +52,15 @@ class _OrderConfirmEmpState extends State<OrderConfirmEmp> {
   Widget build(BuildContext context) {
     return Stack(
       children: <Widget>[
-        loadStatus ? buildNoneOrder() : showContent(),addMenuButton(),
+        status ? showListOrderWater() : buildNoneOrder(),
+        addMenuButton(),
       ],
     );
   }
 
-  Widget showContent() {
-    return status ? showListOrderWater() : buildNoneOrder();
-  }
+  // Widget showContent() {
+  //   return status ? showListOrderWater() : buildNoneOrder();
+  // }
 
   Center buildNoneOrder() {
     return Center(
@@ -98,44 +107,45 @@ class _OrderConfirmEmpState extends State<OrderConfirmEmp> {
       );
 
   Future<Null> findOrderShop() async {
-    if (ordermodels.length != 0) {
-      ordermodels.clear();
+    if (listOrder.length != 0) {
+      listOrder.clear();
     }
 
     String path =
-        '${MyConstant().domain}/WaterShop/getOrderwherestatus_Shopprocess.php?isAdd=true';
+        '${MyConstant().domain}/WaterShop/getOrderWhereIdShop.php?status=shopprocess';
     await Dio().get(path).then((value) {
       // print('value ==> $value');
       var result = jsonDecode(value.data);
       // print('result ==> $result');
+
       if (result != null) {
-        for (var item in result) {
-          OrderModel model = OrderModel.fromJson(item);
-          // print('OrderdateTime ==> ${model.orderDateTime}');
+        result?.forEach((elem) => ordermodels.add(OrderModel.fromJson(elem)));
 
-          List<String> nameWater =
-              MyAPI().createStringArray(model.brandName!);
-          List<String> amountgas = MyAPI().createStringArray(model.amount!);
-          List<String> pricewater = MyAPI().createStringArray(model.price!);
-          List<String> pricesums = MyAPI().createStringArray(model.sum!);
-          List<String> userid = MyAPI().createStringArray(model.createBy!);
+        /*
+         listOrder = [
+          {
+            "orderName": "12345678",
+            "items": [model1, model2],
+         }
+         ];
+        */
 
-          int total = 0;
-          for (var item in pricesums) {
-            total = total + int.parse(item);
+        Map<String, List<OrderModel>> items = {};
+
+        ordermodels.forEach((elem) {
+          if (items[elem.orderNumber] == null) {
+            items[elem.orderNumber as String] = [];
           }
 
-          setState(() {
-            loadStatus = false;
-            ordermodels.add(model);
-            listnameWater.add(nameWater);
-            listAmounts.add(amountgas);
-            listPrices.add(pricewater);
-            listSums.add(pricesums);
-            totals.add(total);
-            listusers.add(userid);
-          });
-        }
+          items[elem.orderNumber as String]?.add(elem);
+        });
+
+        items.forEach((key, value) =>
+            listOrder.add(ListOrder(orderName: key, items: value)));
+
+        print('\nlistOrder: $listOrder\n\n');
+
+        setState(() {});
       } else {
         setState(() {
           status = true;
@@ -145,168 +155,173 @@ class _OrderConfirmEmpState extends State<OrderConfirmEmp> {
   }
 
   Future refresh() async {
-    setState(() {
-      findOrderShop();
-    });
+    // Future.delayed(const Duration(seconds: 1), () => findOrderShop());
   }
 
   Widget showListOrderWater() {
     return RefreshIndicator(
       onRefresh: refresh,
       child: ListView.builder(
-        itemCount: ordermodels.length,
-        itemBuilder: (context, index) => Card(
-          color: index % 2 == 0 ? Colors.grey.shade100 : Colors.grey.shade100,
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                MyStyle().showTitleH2('คุณ ${ordermodels[index].createBy}'),
-                MyStyle()
-                    .showTitleH33('คำสั่งซื้อ : ${ordermodels[index].id}'),
-                MyStyle().showTitleH33(
-                    'เวลาสั่งซื้อ : ${ordermodels[index].createAt}'),
-                MyStyle().showTitleH33(
-                    'สถานะการชำระเงิน : ${ordermodels[index].paymentStatus}'),
-                MyStyle().showTitleH33('สถานะ : รอพนักงานจัดส่ง'),
-                MyStyle().mySixedBox(),
-                buildTitle(),
-                ListView.builder(
-                  itemCount: listnameWater[index].length,
-                  shrinkWrap: true,
-                  physics: ScrollPhysics(),
-                  itemBuilder: (context, index2) => Container(
-                    padding: EdgeInsets.all(5.0),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          flex: 2,
-                          child: Text(
-                            '${listAmounts[index][index2]}x',
-                            style: MyStyle().mainh3Title,
-                          ),
-                        ),
-                        Expanded(
-                          flex: 1,
-                          child: Text(
-                            listnameWater[index][index2],
-                            style: MyStyle().mainh3Title,
-                          ),
-                        ),
-                        Expanded(
-                          flex: 1,
-                          child: Text(
-                            listPrices[index][index2],
-                            style: MyStyle().mainh3Title,
-                          ),
-                        ),
-                        Expanded(
-                          flex: 1,
-                          child: Text(
-                            listSums[index][index2],
-                            style: MyStyle().mainh3Title,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                Container(
-                  padding: EdgeInsets.all(4.0),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        flex: 6,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Text(
-                              'รวมทั้งหมด : ',
-                              style: MyStyle().mainh1Title,
-                            ),
-                          ],
-                        ),
-                      ),
-                      Expanded(
-                        flex: 2,
-                        child: Text(
-                          '${totals[index].toString()} บาท',
-                          style: MyStyle().mainhATitle,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                MyStyle().mySixedBox(),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          shrinkWrap: true,
+          itemCount: listOrder.length,
+          itemBuilder: (context, i) {
+            return Card(
+              color: i % 2 == 0 ? Colors.grey.shade100 : Colors.grey.shade100,
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    ElevatedButton(
-                      onPressed: () {
-                        MaterialPageRoute route = MaterialPageRoute(
-                          builder: (context) => EditOrderEmp(
-                            orderModel: ordermodels[index],
+                    MyStyle().showTitleH2('คุณ ${listOrder[i].items[0].name}'),
+                    MyStyle().showTitleH33(
+                        'คำสั่งซื้อ : ${listOrder[i].items[0].orderNumber}'),
+                    MyStyle().showTitleH33(
+                        'เวลาสั่งซื้อ : ${listOrder[i].items[0].createAt}'),
+                    MyStyle().showTitleH33(
+                        'สถานะการชำระเงิน : ${listOrder[i].items[0].paymentStatus}'),
+                    MyStyle().showTitleH33('สถานะการจัดส่ง : รอพนักงานจัดส่ง'),
+                    MyStyle().mySixedBox(),
+                    buildTitle(),
+                    ListView.builder(
+                        itemCount: listOrder[i].items.length,
+                        shrinkWrap: true,
+                        physics: ScrollPhysics(),
+                        itemBuilder: (context, j) {
+                          List<OrderModel> items = listOrder[i].items;
+
+                          return Container(
+                            padding: EdgeInsets.all(5.0),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  flex: 2,
+                                  child: Text(
+                                    '${items[j].amount}x',
+                                    style: MyStyle().mainh3Title,
+                                  ),
+                                ),
+                                Expanded(
+                                  flex: 1,
+                                  child: Text(
+                                    items[j].brandName ?? '',
+                                    style: MyStyle().mainh3Title,
+                                  ),
+                                ),
+                                Expanded(
+                                  flex: 1,
+                                  child: Text(
+                                    items[j].price ?? '',
+                                    style: MyStyle().mainh3Title,
+                                  ),
+                                ),
+                                Expanded(
+                                  flex: 1,
+                                  child: Text(
+                                    items[j].sum ?? '',
+                                    style: MyStyle().mainh3Title,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          );
+                        }),
+                    Container(
+                      padding: EdgeInsets.all(4.0),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            flex: 6,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                Text(
+                                  'รวมทั้งหมด :',
+                                  style: MyStyle().mainh1Title,
+                                ),
+                              ],
+                            ),
                           ),
-                        );
-                        Navigator.push(context, route).then(
-                          (value) => findOrderShop(),
-                        );
-                      },
-                      child: Text("แก้ไข"),
-                    ),
-                    ElevatedButton(
-                      onPressed: () {
-                        confirmDeleteCancleOrder(index);
-                      },
-                      child: Text("ลบ"),
-                    ),
-                    ElevatedButton(
-                      style: ButtonStyle(
-                        backgroundColor:
-                            MaterialStateProperty.all<Color>(Colors.green),
-                      ),
-                      onPressed: () {
-                        MaterialPageRoute route = MaterialPageRoute(
-                          builder: (context) => FollowMapCustomer(
-                            orderModel: ordermodels[index],
+                          Expanded(
+                            flex: 2,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                listOrder[i].items[0].status == 'Cancel'
+                                    ? MyStyle().showTitleH3('ยกเลิก')
+                                    : Text(
+                                        '${listOrder[i].items.fold(0, (previous, current) => previous + int.parse(current.sum ?? '0'))} บาท',
+                                        style: MyStyle().mainhATitle,
+                                      ),
+                              ],
+                            ),
                           ),
-                        );
-                        Navigator.push(context, route);
-                      },
-                      child: Icon(Icons.navigation),
+                        ],
+                      ),
                     ),
-                    ElevatedButton.icon(
-                      style: const ButtonStyle(
-                        backgroundColor:
-                            MaterialStatePropertyAll<Color>(Colors.green),
-                      ),
-                      onPressed: () {
-                        updateStatusConfirmOrder(index).then((value) {
-                          normalDialog2(
-                              context, "กำลังจัดส่ง", "อัพเดทสถานะจัดส่ง");
-                          Navigator.pop(context);
-                          setState(() {
-                            findOrderShop();
-                          });
-                        });
-                      },
-                      icon: Icon(
-                        Icons.notification_add,
-                        color: Color.fromARGB(255, 255, 255, 255),
-                      ),
-                      label: Text(
-                        'กำลังจัดส่ง',
-                        style: TextStyle(color: Colors.white),
-                      ),
+                    MyStyle().mySixedBox(),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        if (listOrder[i].items[0].status != 'Cancel') ...[
+                          ElevatedButton(
+                            onPressed: () {
+                              // MaterialPageRoute route = MaterialPageRoute(
+                              //   builder: (context) => EditOrderEmp(
+                              //     orderModel: ordermodels[i],
+                              //   ),
+                              // );
+                              // Navigator.push(context, route).then(
+                              //   (value) => findOrderShop(),
+                              // );
+                            },
+                            child: Text("แก้ไข"),
+                          ),
+                          ElevatedButton(
+                            onPressed: () {
+                              confirmDeleteCancleOrder(i);
+                            },
+                            child: Text("ลบ"),
+                          ),
+                          ElevatedButton(
+                            style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all<Color>(
+                                  Colors.green),
+                            ),
+                            onPressed: () {
+                              MaterialPageRoute route = MaterialPageRoute(
+                                builder: (context) => FollowMapCustomer(
+                                  orderModel: ordermodels[i],
+                                ),
+                              );
+                              Navigator.push(context, route);
+                            },
+                            child: Icon(Icons.navigation),
+                          ),
+                          ElevatedButton.icon(
+                            style: const ButtonStyle(
+                              backgroundColor:
+                                  MaterialStatePropertyAll<Color>(Colors.green),
+                            ),
+                            onPressed: () {
+                              updateStatusConfirmOrder(i);
+                            },
+                            icon: Icon(
+                              Icons.notification_add,
+                              color: Color.fromARGB(255, 255, 255, 255),
+                            ),
+                            label: Text(
+                              'กำลังจัดส่ง',
+                              style: TextStyle(color: Colors.white),
+                            ),
+                          )
+                        ],
+                      ],
                     ),
                   ],
                 ),
-              ],
-            ),
-          ),
-        ),
-      ),
+              ),
+            );
+          }),
     );
   }
 
@@ -353,7 +368,7 @@ class _OrderConfirmEmpState extends State<OrderConfirmEmp> {
       context: context,
       builder: (context) => SimpleDialog(
         title: MyStyle().showTitleH2(
-            'คุณต้องการยกเลิกรายการ สั่งซื้อน้ำดื่มที่ ${ordermodels[index].id} ใช่ไหม ?'),
+            'คุณต้องการยกเลิกรายการ สั่งซื้อน้ำดื่มที่ ${ordermodels[index].orderNumber} ใช่ไหม ?'),
         children: <Widget>[
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -383,38 +398,62 @@ class _OrderConfirmEmpState extends State<OrderConfirmEmp> {
     );
   }
 
+  // Future<Null> updateStatusConfirmOrder(int index) async {
+  //   String? orderNumber = ordermodels[index].orderNumber;
+  //   SharedPreferences preferences = await SharedPreferences.getInstance();
+  //   String? emp_id = preferences.getString('id');
+
+  //   String path =
+  //       '${MyConstant().domain}/WaterShop/editStatusWhereuser_id_RiderHandle.php?isAdd=true&status=RiderHandle&emp_id=$emp_id&order_number=$orderNumber';
+
+  //   await Dio().get(path).then(
+  //     (value) {
+  //       if (value.toString() == 'true') {
+  //         notificationtoShop(index);
+  //       }
+  //     },
+  //   );
+  // }
+
+
+  
   Future<Null> updateStatusConfirmOrder(int index) async {
-    String? orderId = ordermodels[index].id;
     SharedPreferences preferences = await SharedPreferences.getInstance();
     String? emp_id = preferences.getString('id');
+    String orderNumber = '${listOrder[index].items[0].orderNumber}';
+    String path = '${MyConstant().domain}/WaterShop/editStatusWhereuser_id_RiderHandle.php?';
+    print(path);
 
-    String path =
-        '${MyConstant().domain}/WaterShop/editStatusWhereuser_id_RiderHandle.php?isAdd=true&status=RiderHandle&riderId=$emp_id&orderId=$orderId';
-
-    await Dio().get(path).then(
+    await Dio().put(path,
+        data: {'status': 'RiderHandle','emp_id': '$emp_id', 'order_number': orderNumber}).then(
       (value) {
         if (value.toString() == 'true') {
           notificationtoShop(index);
+
+          refresh();
+
+          normalDialog(context, 'ส่งรายการน้ำดื่มไปยังพนักงานแล้วครับ');
         }
       },
     );
   }
 
+
   Future<Null> cancleOrderUser(int index) async {
-    String? order_id = ordermodels[index].id;
+    String? orderNumber = ordermodels[index].orderNumber;
     String url =
-        '${MyConstant().domain}/WaterShop/cancleOrderWhereorderId.php?isAdd=true&status=Cancle&orderId=$order_id';
+        '${MyConstant().domain}/WaterShop/cancleOrderWhereorderId.php?isAdd=true&status=Cancle&order_number=$orderNumber';
 
     await Dio().get(url).then((value) {
       findOrderShop();
       notificationCancleShop(index);
-      normalDialogChack(
-          context, 'ยกเลิกรายการสั่งซื้อสำเร็จ', 'รายการสั่งซื้อที่ $order_id');
+      normalDialogChack(context, 'ยกเลิกรายการสั่งซื้อสำเร็จ',
+          'รายการสั่งซื้อที่ $orderNumber');
     });
   }
-  
-   Future<Null> notificationCancleShop(int index) async {
-    String id = ordermodels[index].id!;
+
+  Future<Null> notificationCancleShop(int index) async {
+    String id = ordermodels[index].userId!;
     String urlFindToken =
         '${MyConstant().domain}WaterShop/getUserWhereId.php?isAdd=true&id=$id';
 
@@ -437,7 +476,7 @@ class _OrderConfirmEmpState extends State<OrderConfirmEmp> {
   }
 
   Future<Null> notificationtoShop(int index) async {
-    String id = ordermodels[index].createBy!;
+    String id = ordermodels[index].userId!;
     String urlFindToken =
         '${MyConstant().domain}WaterShop/getUserWhereId.php?isAdd=true&id=$id';
 

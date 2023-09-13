@@ -1,4 +1,3 @@
-
 import 'package:application_drinking_water_shop/screen/signIn.dart';
 import 'package:dio/dio.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -11,7 +10,6 @@ import 'employee/main_emp.dart';
 import 'admin/main_shop.dart';
 import 'main_user.dart';
 
-
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
@@ -23,20 +21,19 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
-    checkPreferance();
     getToken();
-    Future.delayed(Duration(seconds: 3), () {
-      Navigator.of(context).pop();
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => LoginPage(),
-        ),
-      );
-//        }
-//      });
-    });
-    
+
+//     Future.delayed(const Duration(seconds: 3), () {
+//       Navigator.of(context).pop();
+//       // Navigator.push(
+//       //   context,
+//       //   MaterialPageRoute(
+//       //     builder: (context) => LoginPage(),
+//       //   ),
+//       // );
+// //        }
+// //      });
+//     });
   }
 
   @override
@@ -85,6 +82,22 @@ class _SplashScreenState extends State<SplashScreen> {
     );
     print('token ==> $token');
     print('idLogin ==> $idLogin');
+
+    if (idLogin == null || idLogin == "") {
+      //  Login
+      Future.delayed(const Duration(seconds: 3), () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => LoginPage(),
+          ),
+        );
+      });
+    } else {
+      // homne
+      Future.delayed(const Duration(seconds: 3), () => checkPreferance());
+    }
+
     if (idLogin != null && idLogin.isNotEmpty) {
       String url =
           '${MyConstant().domain}/WaterShop/editTokenWhereId.php?isAdd=true&id=$idLogin&Token=$token';
@@ -93,8 +106,6 @@ class _SplashScreenState extends State<SplashScreen> {
           );
     }
   }
-
-
 
   Future<Null> checkPreferance() async {
     try {
@@ -114,6 +125,7 @@ class _SplashScreenState extends State<SplashScreen> {
       }
     } catch (e) {}
   }
+
   void routeToService(Widget myWidget) {
     MaterialPageRoute route = MaterialPageRoute(
       builder: (context) => myWidget,

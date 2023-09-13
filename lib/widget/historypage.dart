@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:application_drinking_water_shop/model/hsitory_model.dart';
 import 'package:application_drinking_water_shop/model/order_model.dart';
 import 'package:application_drinking_water_shop/screen/follow_delivery_map.dart';
 import 'package:application_drinking_water_shop/utility/my_constant.dart';
@@ -11,6 +12,13 @@ import 'package:steps_indicator/steps_indicator.dart';
 
 import '../utility/dialog.dart';
 
+class ListOrder {
+  String orderName;
+  List<HistoryModel> items;
+
+  ListOrder({required this.orderName, required this.items});
+}
+
 class History extends StatefulWidget {
   const History({super.key});
 
@@ -19,10 +27,9 @@ class History extends StatefulWidget {
 }
 
 class _HistoryState extends State<History> {
-  String? user_id;
+  String? create_by;
   bool statusAvatar = true;
   bool statusorder = true;
-  List<OrderModel> orderModels = [];
   List<List<String>> listMenuWaters = [];
   List<List<String>> listSizes = [];
   List<List<String>> listPrices = [];
@@ -30,6 +37,9 @@ class _HistoryState extends State<History> {
   List<List<String>> listSums = [];
   List<int> totalInts = [];
   List<int> statusInts = [];
+
+  List<ListOrder> listOrder = [];
+  List<HistoryModel> ordermodels = [];
 
   @override
   void initState() {
@@ -48,85 +58,113 @@ class _HistoryState extends State<History> {
       onRefresh: refresh,
       child: ListView.builder(
         padding: EdgeInsets.all(20),
-        itemCount: orderModels.length,
-        itemBuilder: (context, index) => Column(
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                TextButton(
-                  onPressed: () async {
-                    if (orderModels[index].status == 'shopprocess') {
-                      normalDialog2(context, 'ไม่สามารถยกเลิกการสั่งซื้อ',
-                          'เนื่องจากร้านได้ยืนยันการสั่งซื้อของคุณแล้ว กรุณาติดต่อทางร้านค่ะ!');
-                    } else if (orderModels[index].status == 'RiderHandle') {
-                      normalDialog2(context, 'ไม่สามารถยกเลิกการสั่งซื้อ',
-                          'เนื่องจากกำลังจัดสั่งรายน้ำดื่มให้คุณ กรุณาติดต่อทางร้านค่ะ!');
-                    } else if (orderModels[index].status == 'Finish') {
-                      normalDialog2(context, 'รายการสั่งซื้อของท่านสำเร็จแล้ว!',
-                          'กรุณาติดต่อทางร้านค่ะ');
-                    } else if (orderModels[index].status == 'userorder') {
-                      confirmDeleteCancleOrder(index);
-                    }
-                  },
-                  child: Text(
-                    'ยกเลิกการสั่งซื้อ',
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ),
-                TextButton(
-                  onPressed: () async {
-                    if (orderModels[index].status != 'Finish') {
-                      if (orderModels[index].empId != 'none') {
-                        MaterialPageRoute route = MaterialPageRoute(
-                          builder: (context) => FollowTrackingDelivery(
-                            orderModel: orderModels[index],
-                          ),
-                        );
-                        Navigator.push(context, route).then((value) async {});
-                      } else {
-                        normalDialog3(
-                            context,
-                            'รายการของท่านยังไม่ได้ทำการจัดส่ง',
-                            'กรุณารอพนักงานจัดส่งท่านสามารถดูรายการต่อไปนี้ได้');
-                      }
-                    } else {
-                      normalDialog3(context, 'ไม่สามารถเปิดพิกัดได้ค่ะ',
-                          'เนื่องจากรายการของท่านสำเร็จแล้ว ค่ะ');
-                    }
-                    // print("${orderModels[index].riderId}");
-                  },
-                  child: Text(
-                    'ติดตามการจัดส่ง',
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                ),
-              ],
-            ),
-            buildStepIndicator(statusInts[index]),
-            MyStyle().mySixedBox(),
+        itemCount: listOrder.length,
+        itemBuilder: (context, index) {
+          var items = listOrder[index].items;
 
-            buildDatatimeOrder(index),
-            buildDistance(index),
-            buildTransport(index),
-            buildHead(),
-            buildLisviewMenuWater(index),
-            MyStyle().mySixedBox(),
-            buildTotal(index),
-            SizedBox(
-              height: 30,
-            )
-            // buildBrandWater(index),
-          ],
-        ),
+          return Column(
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(
+                    onPressed: () async {
+                      if (items[0].status == 'shopprocess') {
+                        normalDialog2(context, 'ไม่สามารถยกเลิกการสั่งซื้อ',
+                            'เนื่องจากร้านได้ยืนยันการสั่งซื้อของคุณแล้ว กรุณาติดต่อทางร้านค่ะ!');
+                      } else if (items[0].status == 'RiderHandle') {
+                        normalDialog2(context, 'ไม่สามารถยกเลิกการสั่งซื้อ',
+                            'เนื่องจากกำลังจัดสั่งรายน้ำดื่มให้คุณ กรุณาติดต่อทางร้านค่ะ!');
+                      } else if (items[0].status == 'Finish') {
+                        normalDialog2(
+                            context,
+                            'รายการสั่งซื้อของท่านสำเร็จแล้ว!',
+                            'กรุณาติดต่อทางร้านค่ะ');
+                      } else if (items[0].status == 'userorder') {
+                        confirmDeleteCancleOrder(index);
+                      }
+                    },
+                    child: Text(
+                      'ยกเลิกการสั่งซื้อ',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  TextButton(
+                    onPressed: () async {
+                      switch (items[0].status) {
+                        case 'userorder':
+                          normalDialog3(context, 'ไม่สามารถเปิดพิกัดได้ค่ะ',
+                              'เนื่องจากรายการของท่านสำเร็จแล้ว ค่ะ');
+                          break;
+                        case 'shopprocess':
+                          normalDialog3(
+                              context,
+                              'รายการของท่านยังไม่ได้ทำการจัดส่ง',
+                              'กรุณารอพนักงานจัดส่งท่านสามารถดูรายการต่อไปนี้ได้');
+                          break;
+                        case 'RiderHandle':
+                          MaterialPageRoute route = MaterialPageRoute(
+                            builder: (context) => FollowTrackingDelivery(
+                              orderModel: items[0],
+                            ),
+                          );
+                          Navigator.push(context, route).then((value) async {});
+                          break;
+                        case 'Finish':
+                          normalDialog2(
+                            context,
+                            'รายการสั่งซื้อของท่านสำเร็จแล้ว!',
+                            'กรุณาติดต่อทางร้านค่ะ');
+                          break;
+                        case 'Cancel':
+                          normalDialog2(
+                            context,
+                            'รายการสั่งซื้อของท่านยกเลิกแล้ว!',
+                            'กรุณาติดต่อทางร้านค่ะ');
+                          break;
+                      }
+
+                      // if (items[0].status != 'Finish') {
+                      //   if (items[0].status != 'RiderHandle') {
+
+                      //   } else {
+
+                      //   }
+                      // } else {
+
+                      // }
+                      // print("${orderModels[index].riderId}");
+                    },
+                    child: Text(
+                      'ติดตามการจัดส่ง',
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ],
+              ),
+              buildStepIndicator(items[0].status),
+              MyStyle().mySixedBox(),
+
+              buildDatatimeOrder(index),
+              buildDistance(index),
+              buildTransport(index),
+              buildHead(),
+              buildLisviewMenuWater(index),
+              MyStyle().mySixedBox(),
+              buildTotal(index),
+              SizedBox(
+                height: 30,
+              )
+              // buildBrandWater(index),
+            ],
+          );
+        },
       ),
     );
   }
 
   Future refresh() async {
-    setState(() {
-      readOrderFormIdUser();
-    });
+    readOrderFormIdUser();
   }
 
   Future<Null> confirmDeleteCancleOrder(int index) async {
@@ -164,35 +202,54 @@ class _HistoryState extends State<History> {
   }
 
   Future<Null> cancleOrderUser(int index) async {
-    String order_id = orderModels[index].id!;
+    String orderNumber = listOrder[index].items[0].orderNumber!;
     String url =
-        '${MyConstant().domain}/WaterShop/cancleOrderWhereorderId.php?isAdd=true&status=Cancle&orderId=$order_id';
+        '${MyConstant().domain}/WaterShop/cancleOrderWhereorderId.php?isAdd=true&status=Cancle&order_number=$orderNumber';
 
     await Dio().get(url).then((value) {
       readOrderFormIdUser();
-      normalDialogChack(
-          context, 'ยกเลิกรายการสั่งซื้อสำเร็จ', 'รายการสั่งซื้อที่ $order_id');
+      normalDialogChack(context, 'ยกเลิกรายการสั่งซื้อสำเร็จ',
+          'รายการสั่งซื้อที่ $orderNumber');
     });
   }
 
-  Widget buildStepIndicator(int index) => Column(
-        children: [
-          StepsIndicator(
-            lineLength: 80,
-            selectedStep: index,
-            nbSteps: 4,
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              Text('สั่งซื้อ'),
-              Text('กำลังเตรียมน้ำดื่ม'),
-              Text('กำลังจัดส่ง'),
-              Text('รายการสำเร็จ'),
-            ],
-          ),
-        ],
-      );
+  Widget buildStepIndicator(String? status) {
+    int index = 0;
+    switch (status) {
+      case 'userorder':
+        index = 0;
+        break;
+      case 'shopprocess':
+        index = 1;
+        break;
+      case 'RiderHandle':
+        index = 2;
+        break;
+      case 'Finish':
+        index = 3;
+        break;
+      default:
+    }
+
+    return Column(
+      children: [
+        StepsIndicator(
+          lineLength: 80,
+          selectedStep: index,
+          nbSteps: 4,
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            Text('สั่งซื้อ'),
+            Text('กำลังเตรียมน้ำดื่ม'),
+            Text('กำลังจัดส่ง'),
+            Text('รายการสำเร็จ'),
+          ],
+        ),
+      ],
+    );
+  }
 
   Widget buildTotal(int index) => Row(
         children: [
@@ -209,9 +266,10 @@ class _HistoryState extends State<History> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                orderModels[index].status == 'Cancle'
+                listOrder[index].items[0].status == 'Cancel'
                     ? MyStyle().showTitleH3('ยกเลิก')
-                    : MyStyle().showTitle('${totalInts[index].toString()} THB'),
+                    : MyStyle().showTitle(
+                        '${listOrder[index].items.fold(0, (previous, current) => previous + int.parse(current.sum ?? '0'))} THB'),
               ],
             ),
           ),
@@ -219,21 +277,24 @@ class _HistoryState extends State<History> {
       );
 
   ListView buildLisviewMenuWater(int index) => ListView.builder(
-        shrinkWrap: true,
-        physics: ScrollPhysics(),
-        itemCount: listMenuWaters[index].length,
-        itemBuilder: (context, index2) => Row(
+      shrinkWrap: true,
+      physics: ScrollPhysics(),
+      itemCount: listOrder[index].items.length,
+      itemBuilder: (context, index2) {
+        HistoryModel items = listOrder[index].items[index2];
+
+        return Row(
           children: [
             Expanded(
               flex: 3,
-              child: Text(listMenuWaters[index][index2]),
+              child: Text(items.brandName ?? ''),
             ),
             Expanded(
               flex: 1,
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(listPrices[index][index2]),
+                  Text(items.price ?? ''),
                 ],
               ),
             ),
@@ -242,7 +303,7 @@ class _HistoryState extends State<History> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(listAmounts[index][index2]),
+                  Text(items.amount ?? ''),
                 ],
               ),
             ),
@@ -250,13 +311,13 @@ class _HistoryState extends State<History> {
               flex: 1,
               child: Row(
                 children: [
-                  Text(listSums[index][index2]),
+                  Text(items.sum ?? ''),
                 ],
               ),
             ),
           ],
-        ),
-      );
+        );
+      });
 
   Container buildHead() {
     return Container(
@@ -289,8 +350,8 @@ class _HistoryState extends State<History> {
   Row buildTransport(int index) {
     return Row(
       children: [
-        MyStyle()
-            .showTitleH44color('ค่าจัดส่ง ${orderModels[index].transport} บาท'),
+        MyStyle().showTitleH44color(
+            'ค่าจัดส่ง ${listOrder[index].items[0].transport} บาท'),
       ],
     );
   }
@@ -298,8 +359,8 @@ class _HistoryState extends State<History> {
   Row buildDistance(int index) {
     return Row(
       children: [
-        MyStyle()
-            .showTitleH3('ระยะทาง ${orderModels[index].distance} กิโลเมตร'),
+        MyStyle().showTitleH3(
+            'ระยะทาง ${listOrder[index].items[0].distance} กิโลเมตร'),
       ],
     );
   }
@@ -308,7 +369,7 @@ class _HistoryState extends State<History> {
     return Row(
       children: [
         MyStyle().showTitleH44(
-            'วันเวลาที่สั่งซื้อ ${orderModels[index].createAt}'),
+            'วันเวลาที่สั่งซื้อ ${listOrder[index].items[0].createAt}'),
       ],
     );
   }
@@ -327,26 +388,36 @@ class _HistoryState extends State<History> {
 
   Future<Null> findUser() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
-    user_id = preferences.getString('id');
-    print('user_id == $user_id');
+    create_by = preferences.getString('id');
+    // print('user_id == $create_by');
     readOrderFormIdUser();
   }
 
   Future<Null> readOrderFormIdUser() async {
-    if (orderModels.length != 0) {
-      orderModels.clear();
+    print('readOrderFormIdUser');
+
+    if (ordermodels.isNotEmpty) {
+      ordermodels.clear();
     }
 
-    if (user_id != null) {
+    if (create_by != null) {
       String url =
-          '${MyConstant().domain}/WaterShop/getOrderWhereIdUser.php?isAdd=true&user_id=$user_id';
+          '${MyConstant().domain}/WaterShop/getOrderWhereIdUser.php?user_id=$create_by';
+
+      print(url);
 
       Response response = await Dio().get(url);
       // print('response == $response');
       if (response.toString() != 'null') {
         var result = json.decode(response.data);
+
+        prepareListOrder(result);
+        statusAvatar = false;
+        setState(() {});
+        return;
+
         for (var map in result) {
-          OrderModel model = OrderModel.fromJson(map);
+          HistoryModel model = HistoryModel.fromJson(map);
           List<String> menuWaters = changeAreey(model.brandName!);
           List<String> prices = changeAreey(model.price!);
           List<String> amounts = changeAreey(model.amount!);
@@ -378,7 +449,7 @@ class _HistoryState extends State<History> {
 
           setState(() {
             statusAvatar = false;
-            orderModels.add(model);
+            // orderModels.add(model);
             listMenuWaters.add(menuWaters);
             listPrices.add(prices);
             listAmounts.add(amounts);
@@ -389,6 +460,74 @@ class _HistoryState extends State<History> {
           });
         }
       }
+    }
+  }
+
+  void prepareListOrder(result) {
+    ordermodels.clear();
+
+    if (result != null) {
+      result?.forEach((elem) => ordermodels.add(HistoryModel.fromJson(elem)));
+
+      /*
+         listOrder = [
+          {
+            "orderName": "12345678",
+            "items": [model1, model2],
+         }
+         ];
+        */
+
+      Map<String, List<HistoryModel>> items = {};
+
+      ordermodels.forEach((elem) {
+        if (items[elem.orderNumber] == null) {
+          items[elem.orderNumber as String] = [];
+        }
+
+        items[elem.orderNumber as String]?.add(elem);
+      });
+
+      listOrder.clear();
+
+      items.forEach((key, value) =>
+          listOrder.add(ListOrder(orderName: key, items: value)));
+
+      setState(() {});
+
+      print('listOrder -> ${listOrder.length}');
+
+      // for (var item in result) {
+      // OrderModel model = OrderModel.fromJson(item);
+      // print('OrderdateTime ==> ${model.orderDateTime}');
+
+      // List<String> nameWater =
+      //     MyAPI().createStringArray(model.brandName!);
+      // List<String> amountgas = MyAPI().createStringArray(model.amount!);
+      // List<String> pricewater = MyAPI().createStringArray(model.price!);
+      // List<String> pricesums = MyAPI().createStringArray(model.sum!);
+      // List<String> userid = MyAPI().createStringArray(model.createBy!);
+
+      // int total = 0;
+      // for (var item in pricesums) {
+      //   total = total + int.parse(item);
+      // }
+
+      // setState(() {
+      //   loadStatus = false;
+      //   ordermodels.add(model);
+      //   listnameWater.add(nameWater);
+      //   listAmounts.add(amountgas);
+      //   listPrices.add(pricewater);
+      //   listSums.add(pricesums);
+      //   totals.add(total);
+      //   listusers.add(userid);
+      // });
+      // }
+    } else {
+      setState(() {
+        listOrder.clear();
+      });
     }
   }
 
@@ -408,7 +547,7 @@ class _HistoryState extends State<History> {
   Future<Null> updateorderId() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     String? user_id = preferences.getString(MyConstant().keyId);
-    String order_id = orderModels[0].id!;
+    String order_id = listOrder[0].items[0].orderNumber!;
     if (user_id != null && user_id.isNotEmpty) {
       String url =
           '${MyConstant().domain}/gas/updateorderIdfrompayment.php?isAdd=true&order_id=$order_id&user_id=$user_id';

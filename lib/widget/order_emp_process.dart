@@ -73,54 +73,54 @@ class _OrderProcessEmpState extends State<OrderProcessEmp> {
   }
 
   Future<Null> findOrderShop() async {
-    if (ordermodels.length != 0) {
-      ordermodels.clear();
-    }
+    // if (ordermodels.length != 0) {
+    //   ordermodels.clear();
+    // }
 
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    String? riderId = preferences.getString(MyConstant().keyId);
+    // SharedPreferences preferences = await SharedPreferences.getInstance();
+    // String? riderId = preferences.getString(MyConstant().keyId);
 
-    String path =
-        '${MyConstant().domain}/WaterShop/getOrderRiderHandle.php?isAdd=true&riderId=$riderId';
-    await Dio().get(path).then((value) {
-      // print('value ==> $value');
-      var result = jsonDecode(value.data);
-      // print('result ==> $result');
-      if (result != null) {
-        for (var item in result) {
-          OrderModel model = OrderModel.fromJson(item);
-          // print('OrderdateTime ==> ${model.orderDateTime}');
+    // String path =
+    //     '${MyConstant().domain}/WaterShop/getOrderRiderHandle.php?isAdd=true&riderId=$riderId';
+    // await Dio().get(path).then((value) {
+    //   // print('value ==> $value');
+    //   var result = jsonDecode(value.data);
+    //   // print('result ==> $result');
+    //   if (result != null) {
+    //     for (var item in result) {
+    //       OrderModel model = OrderModel.fromJson(item);
+    //       // print('OrderdateTime ==> ${model.orderDateTime}');
 
-          List<String> nameWater =
-              MyAPI().createStringArray(model.brandName!);
-          List<String> amountgas = MyAPI().createStringArray(model.amount!);
-          List<String> pricewater = MyAPI().createStringArray(model.price!);
-          List<String> pricesums = MyAPI().createStringArray(model.sum!);
-          List<String> userid = MyAPI().createStringArray(model.createBy!);
+    //       // List<String> nameWater =
+    //       //     MyAPI().createStringArray(model.brandName!);
+    //       // List<String> amountgas = MyAPI().createStringArray(model.amount!);
+    //       // List<String> pricewater = MyAPI().createStringArray(model.price!);
+    //       // List<String> pricesums = MyAPI().createStringArray(model.sum!);
+    //       // List<String> userid = MyAPI().createStringArray(model.userId!);
 
-          int total = 0;
-          for (var item in pricesums) {
-            total = total + int.parse(item);
-          }
+    //       int total = 0;
+    //       for (var item in pricesums) {
+    //         total = total + int.parse(item);
+    //       }
 
-          setState(() {
-            loadStatus = false;
-            ordermodels.add(model);
-            listnameWater.add(nameWater);
-            listAmounts.add(amountgas);
-            listPrices.add(pricewater);
-            listSums.add(pricesums);
-            totals.add(total);
-            listusers.add(userid);
-            loadStatus = false;
-          });
-        }
-      } else {
-        setState(() {
-          status = true;
-        });
-      }
-    });
+    //       setState(() {
+    //         loadStatus = false;
+    //         ordermodels.add(model);
+    //         listnameWater.add(nameWater);
+    //         listAmounts.add(amountgas);
+    //         listPrices.add(pricewater);
+    //         listSums.add(pricesums);
+    //         totals.add(total);
+    //         listusers.add(userid);
+    //         loadStatus = false;
+    //       });
+    //     }
+    //   } else {
+    //     setState(() {
+    //       status = true;
+    //     });
+    //   }
+    // });
   }
 
   Widget showListOrderWater() {
@@ -133,9 +133,9 @@ class _OrderProcessEmpState extends State<OrderProcessEmp> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              MyStyle().showTitleH2('คุณ ${ordermodels[index].id}'),
+              MyStyle().showTitleH2('คุณ ${ordermodels[index].name}'),
               MyStyle()
-                  .showTitleH33('คำสั่งซื้อ : ${ordermodels[index].id}'),
+                  .showTitleH33('คำสั่งซื้อ : ${ordermodels[index].orderNumber}'),
               MyStyle().showTitleH33(
                   'เวลาสั่งซื้อ : ${ordermodels[index].createAt}'),
               MyStyle().showTitleH33('สถานะ : รอพนักงานจัดส่ง'),
@@ -144,7 +144,7 @@ class _OrderProcessEmpState extends State<OrderProcessEmp> {
               MyStyle().showTitleH33(
                   'ค่าจัดส่งที่ต้องเก็บ : ${ordermodels[index].transport} THB'),
               MyStyle()
-                  .showTitleH33('ผู้จัดส่ง : ${ordermodels[index].empId} '),
+                  .showTitleH33('ผู้จัดส่ง : ${ordermodels[index].riderName} '),
               MyStyle().mySixedBox(),
               buildTitle(),
               ListView.builder(
@@ -315,12 +315,12 @@ class _OrderProcessEmpState extends State<OrderProcessEmp> {
   }
 
   Future<Null> updateStatusConfirmOrder(int index) async {
-    String? orderId = ordermodels[index].id;
+    String? orderNumber = ordermodels[index].orderNumber;
     SharedPreferences preferences = await SharedPreferences.getInstance();
     String? emp_id = preferences.getString('id');
 
     String path =
-        '${MyConstant().domain}/WaterShop/editStatusWhereuser_id_Finish.php?isAdd=true&status=Finish&riderId=$emp_id&orderId=$orderId';
+        '${MyConstant().domain}/WaterShop/editStatusWhereuser_id_Finish.php?isAdd=true&status=Finish&emp_id=$emp_id&order_namber=$orderNumber';
 
     await Dio().get(path).then(
       (value) {
@@ -332,7 +332,7 @@ class _OrderProcessEmpState extends State<OrderProcessEmp> {
   }
 
   Future<Null> notificationtoShop(int index) async {
-    String id = ordermodels[index].createBy!;
+    String id = ordermodels[index].userId!;
     String urlFindToken =
         '${MyConstant().domain}WaterShop/getUserWhereId.php?isAdd=true&id=$id';
 

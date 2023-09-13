@@ -374,6 +374,10 @@ class _ShowCartState extends State<ShowCart> {
     }
   }
 
+  String prepareDigit(int number) {
+    return number.toString().length > 1 ? "$number" : "0$number";
+  }
+
   Future<Null> orderThread() async {
     // DateTime dateTime = DateTime.now();
     // // print(dateTime.toString());
@@ -416,6 +420,10 @@ class _ShowCartState extends State<ShowCart> {
     //   print(
     //       'water_id == $water_id, water_brand_id == $water_brand_id, size == $size, water_brand_name == $water_brand_name, price == $price, amount == $amount, sum == $sum ');
 
+    DateTime now = DateTime.now();
+
+    String orderNumber = "$user_id#${now.year}${prepareDigit(now.month)}${prepareDigit(now.day)}${prepareDigit(now.hour)}${prepareDigit(now.minute)}${prepareDigit(now.second)}";
+
     String? url = 'http://192.168.1.99/WaterShop/addOrderWater.php';
 
     for (var i = 0; i < orderDetails.length; i++) {
@@ -424,6 +432,7 @@ class _ShowCartState extends State<ShowCart> {
         "emp_id": "none",
         "payment_status": "เก็บเงินปลายทาง",
         "order_detail_id": orderDetails[i].id.toString(),
+        "order_number": orderNumber,
       };
 
       Response response = await Dio().post(url, data: _map);

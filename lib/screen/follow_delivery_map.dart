@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'dart:convert';
 
+import 'package:application_drinking_water_shop/model/hsitory_model.dart';
 import 'package:application_drinking_water_shop/model/order_model.dart';
 import 'package:application_drinking_water_shop/utility/my_constant.dart';
 import 'package:application_drinking_water_shop/utility/my_style.dart';
@@ -13,15 +15,15 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import '../model/user_model.dart';
 
 class FollowTrackingDelivery extends StatefulWidget {
-  final OrderModel orderModel;
-  const FollowTrackingDelivery({super.key,required this.orderModel});
+  final HistoryModel orderModel;
+  const FollowTrackingDelivery({super.key, required this.orderModel});
 
   @override
   State<FollowTrackingDelivery> createState() => _FollowTrackingDeliveryState();
 }
 
 class _FollowTrackingDeliveryState extends State<FollowTrackingDelivery> {
- OrderModel? orderModel;
+  HistoryModel? orderModel;
   UserModel? userModel;
   String? order_id, date_time, rider_id;
   double? lat1, lng1, lat2, lng2;
@@ -37,24 +39,36 @@ class _FollowTrackingDeliveryState extends State<FollowTrackingDelivery> {
   void initState() {
     super.initState();
     orderModel = widget.orderModel;
-    rider_id = orderModel!.empId;
-    order_id = orderModel!.id;
+    rider_id = orderModel!.riderId;
+    order_id = orderModel!.orderNumber;
     date_time = orderModel!.createAt;
     FindUserWhererider();
 
     getPolyPoints();
   }
 
+  StreamSubscription<Position>? positionStream;
+
   Future<Null> findLatLng() async {
-    Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-    setState(() {
-      lat1 = position.latitude;
-      lng1 = position.longitude;
-      lat2 = double.parse(userModel!.lat.toString());
-      lng2 = double.parse(userModel!.lng.toString());
+    final LocationSettings locationSettings = LocationSettings(
+      accuracy: LocationAccuracy.high,
+      distanceFilter: 100,
+    );
+    positionStream =
+        Geolocator.getPositionStream(locationSettings: locationSettings)
+            .listen((Position? position) {
+      print(position);
+      if (position != null) {
+        lat1 = position.latitude;
+        lng1 = position.longitude;
+
+        setState(() {});
+      }
+      // print(position == null
+      //     ? 'Unknown'
+      //     : '${position.latitude.toString()}, ${position.longitude.toString()}');
     });
   }
-
 
   Future<Null> FindUserWhererider() async {
     if (userModels.length != 0) {
@@ -63,17 +77,24 @@ class _FollowTrackingDeliveryState extends State<FollowTrackingDelivery> {
     String url =
         '${MyConstant().domain}/WaterShop/getUserriderWhereId.php?isAdd=true&id=$rider_id';
 
+    print(url);
+
     await Dio().get(url).then((value) {
       var result = json.decode(value.data);
       for (var item in result) {
         userModel = UserModel.fromJson(item);
+
+        lat2 = double.parse(userModel?.lat ?? '0');
+        lng2 = double.parse(userModel?.lng ?? '0');
+        setState(() {});
       }
       findLatLng();
     });
   }
 
-  Widget showNoData(BuildContext context) =>
-      const Center(child: Text("ยังไม่มีข้อมูล"),);
+  Widget showNoData(BuildContext context) => const Center(
+        child: Text("ยังไม่มีข้อมูล"),
+      );
 
   @override
   Widget build(BuildContext context) {
@@ -102,7 +123,8 @@ class _FollowTrackingDeliveryState extends State<FollowTrackingDelivery> {
                     width: 50,
                     height: 50,
                     child: CachedNetworkImage(
-                        imageUrl: '${MyConstant().domain}${userModel!.urlPicture}')),
+                        imageUrl:
+                            '${MyConstant().domain}${userModel!.urlPicture}')),
             title: Text('ผู้จัดส่ง : ${userModel!.name}'),
           ),
           ListTile(
@@ -115,7 +137,7 @@ class _FollowTrackingDeliveryState extends State<FollowTrackingDelivery> {
   void getPolyPoints() async {
     PolylinePoints polylinePoints = PolylinePoints();
     PolylineResult result = await polylinePoints.getRouteBetweenCoordinates(
-      MyConstant().google_api_key, 
+      MyConstant().google_api_key,
       PointLatLng(lat1!, lng1!),
       PointLatLng(lat2!, lng2!),
     );
@@ -159,7 +181,8 @@ class _FollowTrackingDeliveryState extends State<FollowTrackingDelivery> {
       position: LatLng(lat2!, lng2!),
       icon: BitmapDescriptor.defaultMarkerWithHue(150.0),
       infoWindow: InfoWindow(
-          title: 'พนักงานอยู่ที่นี่ ', snippet: 'ชื่อพนักงาน${userModel!.name}'),
+          title: 'พนักงานอยู่ที่นี่ ',
+          snippet: 'ชื่อพนักงาน${userModel!.name}'),
     );
   }
 
@@ -176,5 +199,12 @@ class _FollowTrackingDeliveryState extends State<FollowTrackingDelivery> {
 
   Set<Marker> mySet() {
     return <Marker>[userMarker(), riderMarker()].toSet();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+
+    positionStream?.cancel();
   }
 }

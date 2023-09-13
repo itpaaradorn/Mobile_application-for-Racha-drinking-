@@ -56,7 +56,7 @@ class _MyAppState extends State<MyApp> {
         '/': (context) => SplashScreen(),
         // When navigating to the "/second" route, build the SecondScreen widget.
         // '/home': (context) => Hometab(),
-        'home_tab': (context) => Home(),
+        // 'home_tab': (context) => Home(),
       },
     );
   }

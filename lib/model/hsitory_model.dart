@@ -1,4 +1,4 @@
-class OrderModel {
+class HistoryModel {
   String? orderTableId;
   String? paymentStatus;
   String? orderNumber;
@@ -18,7 +18,7 @@ class OrderModel {
   String? waterId;
   String? riderId;
 
-  OrderModel(
+  HistoryModel(
       {this.orderTableId,
       this.paymentStatus,
       this.orderNumber,
@@ -38,7 +38,7 @@ class OrderModel {
       this.waterId,
       this.riderId});
 
-  OrderModel.fromJson(Map<String, dynamic> json) {
+  HistoryModel.fromJson(Map<String, dynamic> json) {
     orderTableId = json['order_table_id'];
     paymentStatus = json['payment_status'];
     orderNumber = json['order_number'];
