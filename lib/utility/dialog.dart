@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 
@@ -39,7 +40,7 @@ Future<void> normalDialogNoti(BuildContext context, String message) async {
           mainAxisAlignment: MainAxisAlignment.end,
           children: <Widget>[
             TextButton(
-                onPressed:() {
+                onPressed: () {
                   MaterialPageRoute route = MaterialPageRoute(
                     builder: (context) => MainUser(),
                   );
@@ -73,6 +74,24 @@ Future<void> normalDialog3(
   );
 }
 
+Future<void> AwesomeDialogq(
+    BuildContext context, String title, String message) async {
+  AwesomeDialog(
+    context: context,
+    animType: AnimType.bottomSlide,
+    dialogType: DialogType.noHeader,
+    body: Center(
+      child: Text(
+        '',
+        style: TextStyle(fontWeight: FontWeight.bold),
+      ),
+    ),
+    title: 'This is Ignored',
+    desc: 'This is also Ignored',
+    btnOkOnPress: () {},
+  ).show();
+}
+
 Future<void> normalDialog2(
     BuildContext context, String title, String message) async {
   showDialog(
@@ -95,16 +114,14 @@ Future<void> normalDialog2(
           children: <Widget>[
             TextButton(
                 onPressed: () => Navigator.pop(context),
-                child: Text(
-                  'OK',
-                  style: TextStyle(color: Colors.blue)
-                )),
+                child: Text('OK', style: TextStyle(color: Colors.blue))),
           ],
         )
       ],
     ),
   );
 }
+
 Future<void> normalDialogChack(
     BuildContext context, String title, String message) async {
   showDialog(

@@ -1,14 +1,12 @@
 import 'dart:convert';
 
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import '../configs/api.dart';
 import '../model/order_model.dart';
 import '../model/user_model.dart';
 import '../screen/add_order.dart';
-import '../screen/edit_order.dart';
 import '../screen/employee/follow_map_emp.dart';
 import '../utility/my_constant.dart';
 import '../utility/my_style.dart';
@@ -52,7 +50,7 @@ class _OrderConfirmEmpState extends State<OrderConfirmEmp> {
   Widget build(BuildContext context) {
     return Stack(
       children: <Widget>[
-        status ? showListOrderWater() : buildNoneOrder(),
+        listOrder.isNotEmpty ? showListOrderWater() : buildNoneOrder(),
         addMenuButton(),
       ],
     );
@@ -106,22 +104,84 @@ class _OrderConfirmEmpState extends State<OrderConfirmEmp> {
         ],
       );
 
+  // Future<Null> findOrderShop() async {
+  //   if (listOrder.length != 0) {
+  //     listOrder.clear();
+  //   }
+
+  //   String path =
+  //       '${MyConstant().domain}/WaterShop/getOrderWhereIdShop.php?status=shopprocess';
+  //   await Dio().get(path).then((value) {
+  //     // print('value ==> $value');
+  //     var result = jsonDecode(value.data);
+  //     // print('result ==> $result');
+
+  //     if (result != null) {
+  //       result?.forEach((elem) => ordermodels.add(OrderModel.fromJson(elem)));
+
+  //       /*
+  //        listOrder = [
+  //         {
+  //           "orderName": "12345678",
+  //           "items": [model1, model2],
+  //        }
+  //        ];
+  //       */
+
+  //       Map<String, List<OrderModel>> items = {};
+
+  //       ordermodels.forEach((elem) {
+  //         if (items[elem.orderNumber] == null) {
+  //           items[elem.orderNumber as String] = [];
+  //         }
+
+  //         items[elem.orderNumber as String]?.add(elem);
+  //       });
+
+  //       items.forEach((key, value) =>
+  //           listOrder.add(ListOrder(orderName: key, items: value)));
+
+  //       print('\nlistOrder: $listOrder\n\n');
+
+  //       setState(() {});
+  //     } else {
+  //       setState(() {
+  //         status = true;
+  //       });
+  //     }
+  //   });
+  // }
+
   Future<Null> findOrderShop() async {
-    if (listOrder.length != 0) {
-      listOrder.clear();
-    }
-
-    String path =
+    String userOrderPath =
         '${MyConstant().domain}/WaterShop/getOrderWhereIdShop.php?status=shopprocess';
-    await Dio().get(path).then((value) {
-      // print('value ==> $value');
-      var result = jsonDecode(value.data);
-      // print('result ==> $result');
+    var userOrder = await Dio().get(userOrderPath);
+    var userOrderResult = jsonDecode(userOrder.data);
 
-      if (result != null) {
-        result?.forEach((elem) => ordermodels.add(OrderModel.fromJson(elem)));
+    String cancelPath =
+        '${MyConstant().domain}/WaterShop/getOrderWhereIdShop.php?status=';
+    var cancel = await Dio().get(cancelPath);
+    var cancelResult = jsonDecode(cancel.data);
 
-        /*
+    print('userOrderResult -> ${userOrderResult?.length}');
+    print('cancelResult -> ${cancelResult?.length}\n\n');
+
+    if (userOrderResult == null) {
+      prepareListOrder(cancelResult);
+    } else if (cancelResult == null) {
+      prepareListOrder(userOrderResult);
+    } else {
+      prepareListOrder([...userOrderResult, ...cancelResult]);
+    }
+  }
+
+  void prepareListOrder(result) {
+    ordermodels.clear();
+
+    if (result != null) {
+      result?.forEach((elem) => ordermodels.add(OrderModel.fromJson(elem)));
+
+      /*
          listOrder = [
           {
             "orderName": "12345678",
@@ -130,32 +190,32 @@ class _OrderConfirmEmpState extends State<OrderConfirmEmp> {
          ];
         */
 
-        Map<String, List<OrderModel>> items = {};
+      Map<String, List<OrderModel>> items = {};
 
-        ordermodels.forEach((elem) {
-          if (items[elem.orderNumber] == null) {
-            items[elem.orderNumber as String] = [];
-          }
+      ordermodels.forEach((elem) {
+        if (items[elem.orderNumber] == null) {
+          items[elem.orderNumber as String] = [];
+        }
 
-          items[elem.orderNumber as String]?.add(elem);
-        });
+        items[elem.orderNumber as String]?.add(elem);
+      });
 
-        items.forEach((key, value) =>
-            listOrder.add(ListOrder(orderName: key, items: value)));
+      listOrder.clear();
 
-        print('\nlistOrder: $listOrder\n\n');
+      items.forEach((key, value) =>
+          listOrder.add(ListOrder(orderName: key, items: value)));
 
-        setState(() {});
-      } else {
-        setState(() {
-          status = true;
-        });
-      }
-    });
+      setState(() {});
+    } else {
+      setState(() {
+        listOrder.clear();
+        status = true;
+      });
+    }
   }
 
   Future refresh() async {
-    // Future.delayed(const Duration(seconds: 1), () => findOrderShop());
+    Future.delayed(const Duration(seconds: 1), () => findOrderShop());
   }
 
   Widget showListOrderWater() {
@@ -260,7 +320,7 @@ class _OrderConfirmEmpState extends State<OrderConfirmEmp> {
                     ),
                     MyStyle().mySixedBox(),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
                         if (listOrder[i].items[0].status != 'Cancel') ...[
                           ElevatedButton(
@@ -282,21 +342,21 @@ class _OrderConfirmEmpState extends State<OrderConfirmEmp> {
                             },
                             child: Text("ลบ"),
                           ),
-                          ElevatedButton(
-                            style: ButtonStyle(
-                              backgroundColor: MaterialStateProperty.all<Color>(
-                                  Colors.green),
-                            ),
-                            onPressed: () {
-                              MaterialPageRoute route = MaterialPageRoute(
-                                builder: (context) => FollowMapCustomer(
-                                  orderModel: ordermodels[i],
-                                ),
-                              );
-                              Navigator.push(context, route);
-                            },
-                            child: Icon(Icons.navigation),
-                          ),
+                          // ElevatedButton(
+                          //   style: ButtonStyle(
+                          //     backgroundColor: MaterialStateProperty.all<Color>(
+                          //         Colors.green),
+                          //   ),
+                          //   onPressed: () {
+                          //     MaterialPageRoute route = MaterialPageRoute(
+                          //       builder: (context) => FollowMapCustomer(
+                          //         orderModel: ordermodels[i],
+                          //       ),
+                          //     );
+                          //     Navigator.push(context, route);
+                          //   },
+                          //   child: Icon(Icons.navigation),
+                          // ),
                           ElevatedButton.icon(
                             style: const ButtonStyle(
                               backgroundColor:
@@ -380,6 +440,7 @@ class _OrderConfirmEmpState extends State<OrderConfirmEmp> {
                 ),
                 onPressed: () async {
                   cancleOrderUser(index);
+                  Navigator.pop(context);
                 },
               ),
               TextButton(
@@ -415,62 +476,94 @@ class _OrderConfirmEmpState extends State<OrderConfirmEmp> {
   //   );
   // }
 
-
-  
   Future<Null> updateStatusConfirmOrder(int index) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     String? emp_id = preferences.getString('id');
     String orderNumber = '${listOrder[index].items[0].orderNumber}';
-    String path = '${MyConstant().domain}/WaterShop/editStatusWhereuser_id_RiderHandle.php?';
+    String path =
+        '${MyConstant().domain}/WaterShop/editStatusWhereuser_id_RiderHandle.php?';
     print(path);
 
-    await Dio().put(path,
-        data: {'status': 'RiderHandle','emp_id': '$emp_id', 'order_number': orderNumber}).then(
+    await Dio().put(path, data: {
+      'status': 'RiderHandle',
+      'emp_id': '$emp_id',
+      'order_number': orderNumber
+    }).then(
       (value) {
         if (value.toString() == 'true') {
           notificationtoShop(index);
-
           refresh();
-
-          normalDialog(context, 'ส่งรายการน้ำดื่มไปยังพนักงานแล้วครับ');
         }
       },
     );
   }
 
+  // Future<Null> cancleOrderUser(int index) async {
+  //   String? orderNumber = ordermodels[index].orderNumber;
+  //   String url =
+  //       '${MyConstant().domain}/WaterShop/cancleOrderWhereorderId.php?isAdd=true&status=Cancle&order_number=$orderNumber';
+
+  //   await Dio().get(url).then((value) {
+  //     findOrderShop();
+  //     notificationCancleShop(index);
+  //     normalDialogChack(context, 'ยกเลิกรายการสั่งซื้อสำเร็จ',
+  //         'รายการสั่งซื้อที่ $orderNumber');
+  //   });
+  // }
 
   Future<Null> cancleOrderUser(int index) async {
-    String? orderNumber = ordermodels[index].orderNumber;
-    String url =
-        '${MyConstant().domain}/WaterShop/cancleOrderWhereorderId.php?isAdd=true&status=Cancle&order_number=$orderNumber';
+    String orderNumber = '${listOrder[index].items[0].orderNumber}';
+    String path = '${MyConstant().domain}WaterShop/editStatusWhereuser_id.php';
+    print(orderNumber);
+    print(path);
 
-    await Dio().get(url).then((value) {
-      findOrderShop();
-      notificationCancleShop(index);
-      normalDialogChack(context, 'ยกเลิกรายการสั่งซื้อสำเร็จ',
-          'รายการสั่งซื้อที่ $orderNumber');
-    });
+    await Dio().put(path,
+        data: {'status': 'Cancel', 'order_number': orderNumber}).then(
+      (value) {
+        if (value.toString() == 'true') {
+          notificationCancleShop(index);
+          refresh();
+          // normalDialogChack(context, 'ยกเลิกรายการสั่งซื้อสำเร็จ',
+          //     'รายการสั่งซื้อที่ $orderNumber');
+
+          AwesomeDialog(
+            context: context,
+            animType: AnimType.bottomSlide,
+            dialogType: DialogType.noHeader,
+            body: Center(
+              child: Text(
+                'ยกเลิกรายการสั่งซื้อสำเร็จ',
+                 style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ),
+            title: 'This is Ignored',
+            desc: 'This is also Ignored',
+            btnOkOnPress: () {},
+          ).show();
+        }
+      },
+    );
   }
 
   Future<Null> notificationCancleShop(int index) async {
-    String id = ordermodels[index].userId!;
+    String id = listOrder[index].items[0].userId!;
     String urlFindToken =
         '${MyConstant().domain}WaterShop/getUserWhereId.php?isAdd=true&id=$id';
 
     await Dio().get(urlFindToken).then((value) {
       var result = json.decode(value.data);
-      print('result == $result');
+      // print('result == $result');
       for (var json in result) {
         UserModel model = UserModel.fromJson(json);
         String tokenUser = model.token!;
-        print('tokenShop ==>> $tokenUser');
+        // print('tokenShop ==>> $tokenUser');
         String title = 'คุณ ${model.name} ขออภัยในความไม่สะดวก';
         String body =
             'ทางร้านได้ยกเลิกคำสั่งซื้อของคุณกรุณาติดต่อร้าน ขอบคุณค่ะ';
 
         String urlSendToken =
             '${MyConstant().domain}/waterShop/apiNotification.php?isAdd=true&token=$tokenUser&title=$title&body=$body';
-        sendNotificationToShop(urlSendToken);
+        // sendNotificationToShop(urlSendToken);
       }
     });
   }
@@ -487,7 +580,7 @@ class _OrderConfirmEmpState extends State<OrderConfirmEmp> {
         UserModel model = UserModel.fromJson(json);
         String tokenUser = model.token!;
         // print('tokenShop ==>> $tokenUser');
-        String title = 'คุณ ${model.name} พนักงงานกำลังจัดส่งสินค้าให้คุณแล้ว';
+        String title = 'คุณ ${model.name} พนักงานกำลังจัดส่งสินค้าให้คุณแล้ว';
         String body = 'กรุณารอรับสินค้าและตรวจสอบการสั่งซื้อ';
 
         String urlSendToken =
@@ -500,7 +593,22 @@ class _OrderConfirmEmpState extends State<OrderConfirmEmp> {
   Future<Null> sendNotificationToShop(String urlSendToken) async {
     await Dio().get(urlSendToken).then(
           (value) =>
-              normalDialog(context, 'ส่งข้อความแจ้งเตือนไปยังลูกค้าแล้วค่ะ'),
+              // normalDialog(context, 'ส่งข้อความแจ้งเตือนไปยังลูกค้าแล้วค่ะ'),
+
+              AwesomeDialog(
+            context: context,
+            animType: AnimType.bottomSlide,
+            dialogType: DialogType.success,
+            body: Center(
+              child: Text(
+                'ส่งข้อความแจ้งเตือนไปยังลูกค้าแล้วค่ะ',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ),
+            title: 'This is Ignored',
+            desc: 'This is also Ignored',
+            btnOkOnPress: () {},
+          )..show(),
         );
   }
 }

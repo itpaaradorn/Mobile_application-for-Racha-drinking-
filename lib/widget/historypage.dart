@@ -5,6 +5,7 @@ import 'package:application_drinking_water_shop/model/order_model.dart';
 import 'package:application_drinking_water_shop/screen/follow_delivery_map.dart';
 import 'package:application_drinking_water_shop/utility/my_constant.dart';
 import 'package:application_drinking_water_shop/utility/my_style.dart';
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -57,7 +58,7 @@ class _HistoryState extends State<History> {
     return RefreshIndicator(
       onRefresh: refresh,
       child: ListView.builder(
-        padding: EdgeInsets.all(20),
+        padding: const EdgeInsets.all(20),
         itemCount: listOrder.length,
         itemBuilder: (context, index) {
           var items = listOrder[index].items;
@@ -70,21 +71,109 @@ class _HistoryState extends State<History> {
                   TextButton(
                     onPressed: () async {
                       if (items[0].status == 'shopprocess') {
-                        normalDialog2(context, 'ไม่สามารถยกเลิกการสั่งซื้อ',
-                            'เนื่องจากร้านได้ยืนยันการสั่งซื้อของคุณแล้ว กรุณาติดต่อทางร้านค่ะ!');
+                        // normalDialog2(context, 'ไม่สามารถยกเลิกการสั่งซื้อ',
+                        //     'เนื่องจากร้านได้ยืนยันการสั่งซื้อของคุณแล้ว กรุณาติดต่อทางร้านค่ะ!');
+
+                        AwesomeDialog(
+                          context: context,
+                          animType: AnimType.bottomSlide,
+                          dialogType: DialogType.warning,
+                          body: const Center(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                Text(
+                                  '                    ไม่สามารถยกเลิกการสั่งซื้อ\nเนื่องจากร้านได้ยืนยันการสั่งซื้อของคุณแล้ว!',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 15),
+                                ),
+                              ],
+                            ),
+                          ),
+                          title: 'This is Ignored',
+                          desc: 'This is also Ignored',
+                          btnOkOnPress: () {},
+                        ).show();
                       } else if (items[0].status == 'RiderHandle') {
-                        normalDialog2(context, 'ไม่สามารถยกเลิกการสั่งซื้อ',
-                            'เนื่องจากกำลังจัดสั่งรายน้ำดื่มให้คุณ กรุณาติดต่อทางร้านค่ะ!');
+                        // normalDialog2(context, 'ไม่สามารถยกเลิกการสั่งซื้อ',
+                        //     'เนื่องจากกำลังจัดสั่งรายน้ำดื่มให้คุณ กรุณาติดต่อทางร้านค่ะ!');
+
+                        AwesomeDialog(
+                          context: context,
+                          animType: AnimType.bottomSlide,
+                          dialogType: DialogType.warning,
+                          body: const Center(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: [
+                                Text(
+                                  '          ไม่สามารถยกเลิกการสั่งซื้อ\nเนื่องจากกำลังจัดสั่งรายน้ำดื่มให้คุณ!',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 15),
+                                ),
+                              ],
+                            ),
+                          ),
+                          title: 'This is Ignored',
+                          desc: 'This is also Ignored',
+                          btnOkOnPress: () {},
+                        ).show();
                       } else if (items[0].status == 'Finish') {
-                        normalDialog2(
-                            context,
-                            'รายการสั่งซื้อของท่านสำเร็จแล้ว!',
-                            'กรุณาติดต่อทางร้านค่ะ');
+                        // normalDialog2(
+                        //     context,
+                        //     'รายการสั่งซื้อของท่านสำเร็จแล้ว!',
+                        //     'กรุณาติดต่อทางร้านค่ะ');
+
+                        AwesomeDialog(
+                          context: context,
+                          animType: AnimType.bottomSlide,
+                          dialogType: DialogType.info,
+                          body: const Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Center(
+                                child: Text(
+                                  'รายการสั่งซื้อของท่านสำเร็จแล้ว',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 15),
+                                ),
+                              ),
+                            ],
+                          ),
+                          title: 'This is Ignored',
+                          desc: 'This is also Ignored',
+                          btnOkOnPress: () {},
+                        ).show();
                       } else if (items[0].status == 'userorder') {
                         confirmDeleteCancleOrder(index);
+                      } else if (items[0].status == 'Cancel') {
+                        AwesomeDialog(
+                          context: context,
+                          animType: AnimType.bottomSlide,
+                          dialogType: DialogType.error,
+                          body: const Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Center(
+                                child: Text(
+                                  'รายการสั่งซื้อของท่านยกเลิกแล้ว',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 15),
+                                ),
+                              ),
+                            ],
+                          ),
+                          title: 'This is Ignored',
+                          desc: 'This is also Ignored',
+                          btnOkOnPress: () {},
+                        ).show();
                       }
                     },
-                    child: Text(
+                    child: const Text(
                       'ยกเลิกการสั่งซื้อ',
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
@@ -93,14 +182,60 @@ class _HistoryState extends State<History> {
                     onPressed: () async {
                       switch (items[0].status) {
                         case 'userorder':
-                          normalDialog3(context, 'ไม่สามารถเปิดพิกัดได้ค่ะ',
-                              'เนื่องจากรายการของท่านสำเร็จแล้ว ค่ะ');
+                          
+
+                           AwesomeDialog(
+                            context: context,
+                            animType: AnimType.bottomSlide,
+                            dialogType: DialogType.success,
+                            body: const Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Center(
+                                  child: Text(
+                                    'ไม่สามารถเปิดพิกัดได้ค่ะ\nเนื่องจากรายการของท่านสำเร็จแล้ว ค่ะ',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 15),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            title: 'This is Ignored',
+                            desc: 'This is also Ignored',
+                            btnOkOnPress: () {},
+                          ).show();
+
+
+
                           break;
                         case 'shopprocess':
-                          normalDialog3(
-                              context,
-                              'รายการของท่านยังไม่ได้ทำการจัดส่ง',
-                              'กรุณารอพนักงานจัดส่งท่านสามารถดูรายการต่อไปนี้ได้');
+                      
+                              AwesomeDialog(
+                            context: context,
+                            animType: AnimType.bottomSlide,
+                            dialogType: DialogType.info,
+                            body: const Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Center(
+                                  child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                    children: [
+                                      Text(
+                                        'รายการของท่านยังไม่ได้ทำการจัดส่ง\n          กรุณารอพนักงานจัดส่ง\n    ท่านสามารถดูรายการต่อไปนี้ได้',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 15),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                            title: 'This is Ignored',
+                            desc: 'This is also Ignored',
+                            btnOkOnPress: () {},
+                          ).show();
                           break;
                         case 'RiderHandle':
                           MaterialPageRoute route = MaterialPageRoute(
@@ -111,16 +246,50 @@ class _HistoryState extends State<History> {
                           Navigator.push(context, route).then((value) async {});
                           break;
                         case 'Finish':
-                          normalDialog2(
-                            context,
-                            'รายการสั่งซื้อของท่านสำเร็จแล้ว!',
-                            'กรุณาติดต่อทางร้านค่ะ');
+                          AwesomeDialog(
+                            context: context,
+                            animType: AnimType.bottomSlide,
+                            dialogType: DialogType.success,
+                            body: const Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Center(
+                                  child: Text(
+                                    'รายการสั่งซื้อของท่านสำเร็จแล้ว',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 15),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            title: 'This is Ignored',
+                            desc: 'This is also Ignored',
+                            btnOkOnPress: () {},
+                          ).show();
                           break;
                         case 'Cancel':
-                          normalDialog2(
-                            context,
-                            'รายการสั่งซื้อของท่านยกเลิกแล้ว!',
-                            'กรุณาติดต่อทางร้านค่ะ');
+                          AwesomeDialog(
+                          context: context,
+                          animType: AnimType.bottomSlide,
+                          dialogType: DialogType.error,
+                          body: const Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Center(
+                                child: Text(
+                                  'รายการสั่งซื้อของท่านยกเลิกแล้ว',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.w600,
+                                      fontSize: 15),
+                                ),
+                              ),
+                            ],
+                          ),
+                          title: 'This is Ignored',
+                          desc: 'This is also Ignored',
+                          btnOkOnPress: () {},
+                        ).show();
                           break;
                       }
 
@@ -135,7 +304,7 @@ class _HistoryState extends State<History> {
                       // }
                       // print("${orderModels[index].riderId}");
                     },
-                    child: Text(
+                    child: const Text(
                       'ติดตามการจัดส่ง',
                       style: TextStyle(fontWeight: FontWeight.bold),
                     ),
@@ -152,7 +321,7 @@ class _HistoryState extends State<History> {
               buildLisviewMenuWater(index),
               MyStyle().mySixedBox(),
               buildTotal(index),
-              SizedBox(
+              const SizedBox(
                 height: 30,
               )
               // buildBrandWater(index),
@@ -201,16 +370,35 @@ class _HistoryState extends State<History> {
     );
   }
 
-  Future<Null> cancleOrderUser(int index) async {
-    String orderNumber = listOrder[index].items[0].orderNumber!;
-    String url =
-        '${MyConstant().domain}/WaterShop/cancleOrderWhereorderId.php?isAdd=true&status=Cancle&order_number=$orderNumber';
+  // Future<Null> cancleOrderUser(int index) async {
+  //   String orderNumber = listOrder[index].items[0].orderNumber!;
+  //   String url =
+  //       '${MyConstant().domain}/WaterShop/cancleOrderWhereorderId.php?isAdd=true&status=Cancle&order_number=$orderNumber';
 
-    await Dio().get(url).then((value) {
-      readOrderFormIdUser();
-      normalDialogChack(context, 'ยกเลิกรายการสั่งซื้อสำเร็จ',
-          'รายการสั่งซื้อที่ $orderNumber');
-    });
+  //   await Dio().get(url).then((value) {
+  //     readOrderFormIdUser();
+  //     normalDialogChack(context, 'ยกเลิกรายการสั่งซื้อสำเร็จ',
+  //         'รายการสั่งซื้อที่ $orderNumber');
+  //   });
+  // }
+
+  Future<Null> cancleOrderUser(int index) async {
+    String orderNumber = '${listOrder[index].items[0].orderNumber}';
+    String path = '${MyConstant().domain}WaterShop/editStatusWhereuser_id.php';
+    // print(orderNumber);
+    // print(path);
+
+    await Dio().put(path,
+        data: {'status': 'Cancel', 'order_number': orderNumber}).then(
+      (value) {
+        if (value.toString() == 'true') {
+          readOrderFormIdUser();
+          refresh();
+          normalDialogChack(context, 'ยกเลิกรายการสั่งซื้อสำเร็จ',
+              'รายการสั่งซื้อที่ $orderNumber');
+        }
+      },
+    );
   }
 
   Widget buildStepIndicator(String? status) {
@@ -238,7 +426,7 @@ class _HistoryState extends State<History> {
           selectedStep: index,
           nbSteps: 4,
         ),
-        Row(
+        const Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             Text('สั่งซื้อ'),
@@ -278,7 +466,7 @@ class _HistoryState extends State<History> {
 
   ListView buildLisviewMenuWater(int index) => ListView.builder(
       shrinkWrap: true,
-      physics: ScrollPhysics(),
+      physics: const ScrollPhysics(),
       itemCount: listOrder[index].items.length,
       itemBuilder: (context, index2) {
         HistoryModel items = listOrder[index].items[index2];
@@ -321,7 +509,7 @@ class _HistoryState extends State<History> {
 
   Container buildHead() {
     return Container(
-      padding: EdgeInsets.only(left: 8.0),
+      padding: const EdgeInsets.only(left: 8.0),
       decoration: BoxDecoration(color: Colors.grey.shade300),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,

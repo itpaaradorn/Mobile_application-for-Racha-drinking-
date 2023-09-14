@@ -2,10 +2,9 @@ import 'dart:convert';
 
 import 'package:application_drinking_water_shop/model/user_model.dart';
 import 'package:application_drinking_water_shop/utility/my_style.dart';
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-
-import '../configs/api.dart';
 import '../model/order_model.dart';
 import '../screen/add_order.dart';
 import '../screen/edit_order.dart';
@@ -69,7 +68,7 @@ class _OrderListShopState extends State<OrderListShop> {
 
   void prepareListOrder(result) {
     ordermodels.clear();
-    
+
     if (result != null) {
       result?.forEach((elem) => ordermodels.add(OrderModel.fromJson(elem)));
 
@@ -465,10 +464,21 @@ class _OrderListShopState extends State<OrderListShop> {
       (value) {
         if (value.toString() == 'true') {
           notificationtoShop(index);
-
           refresh();
-
-          normalDialog(context, 'ส่งรายการน้ำดื่มไปยังพนักงานแล้วครับ');
+          AwesomeDialog(
+            context: context,
+            animType: AnimType.bottomSlide,
+            dialogType: DialogType.success,
+            body: Center(
+              child: Text(
+                'ส่งข้อความแจ้งเตือนไปยังลูกค้าแล้วค่ะ',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ),
+            title: 'This is Ignored',
+            desc: 'This is also Ignored',
+            btnOkOnPress: () {},
+          ).show();
         }
       },
     );
@@ -484,27 +494,39 @@ class _OrderListShopState extends State<OrderListShop> {
         data: {'status': 'Cancel', 'order_number': orderNumber}).then(
       (value) {
         if (value.toString() == 'true') {
-          // notificationCancleShop(index);
+          notificationCancleShop(index);
           refresh();
-          normalDialogChack(context, 'ยกเลิกรายการสั่งซื้อสำเร็จ',
-              'รายการสั่งซื้อที่ $orderNumber');
+          AwesomeDialog(
+            context: context,
+            animType: AnimType.bottomSlide,
+            dialogType: DialogType.noHeader,
+            body: Center(
+              child: Text(
+                'ยกเลิกรายการสั่งซื้อสำเร็จ',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ),
+            title: 'This is Ignored',
+            desc: 'This is also Ignored',
+            btnOkOnPress: () {},
+          ).show();
         }
       },
     );
   }
 
   Future<Null> notificationCancleShop(int index) async {
-    String orderNumber = ordermodels[index].orderNumber!;
+    String id = listOrder[index].items[0].userId!;
     String urlFindToken =
-        '${MyConstant().domain}WaterShop/getUserWhereIdid.php?isAdd=true&order_number=$orderNumber';
+        '${MyConstant().domain}WaterShop/getUserWhereId.php?isAdd=true&id=$id';
 
     await Dio().get(urlFindToken).then((value) {
       var result = json.decode(value.data);
-      print('result == $result');
+      // print('result == $result');
       for (var json in result) {
         UserModel model = UserModel.fromJson(json);
         String tokenUser = model.token!;
-        print('tokenShop ==>> $tokenUser');
+        // print('tokenShop ==>> $tokenUser');
         String title = 'คุณ ${model.name} ขออภัยในความไม่สะดวก';
         String body =
             'ทางร้านได้ยกเลิกคำสั่งซื้อของคุณกรุณาติดต่อร้าน ขอบคุณค่ะ';
