@@ -118,7 +118,7 @@ class _EditBrandWaterState extends State<EditBrandWater> {
         String? id = brandModel!.brandId;
 
         String? url =
-            '${MyConstant().domain}/WaterShop/editBrand.php?isAdd=true&brand_id=$brand_id&brand_name=$brand_name&brand_image=$brand_image&idShop=$idShop';
+            '${MyConstant().domain}/WaterShop/editBrand.php?isAdd=true&brand_id=$brand_id&brand_name=$brand_name&brand_image=$brand_image';
         await Dio().get(url).then((value){
               if (value.toString() == 'true'){
                 Navigator.pop(context);

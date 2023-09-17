@@ -147,7 +147,7 @@ class _EditWaterMenuState extends State<EditWaterMenu> {
 
         String? id = waterModel!.id;
         String url =
-            '${MyConstant().domain}/WaterShop/editWater.php?isAdd=true&id=$id&brandname=$brandname&PathImage=$pathImage&Price=$price&Size=$size&idbrand=$idbrand&quantity=$quantity';
+            '${MyConstant().domain}/WaterShop/editWater.php?isAdd=true&id=$id&brandname=$brandname&PathImage=$brand_image&Price=$price&Size=$size&idbrand=$idbrand&quantity=$quantity';
         await Dio().get(url).then((value) {
           if (value.toString() == 'true') {
             Navigator.pop(context);

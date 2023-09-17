@@ -87,7 +87,7 @@ class _AddbrandWaterState extends State<AddbrandWater> {
           String? idShop = preferences.getString('id');
 
           String? urlInsertData =
-              '${MyConstant().domain}/WaterShop/addBrandWater.php?isAdd=true&idShop=$idShop&brand_id=$brand_id&brand_name=$brand_name&brand_image=$brand_image';
+              '${MyConstant().domain}/WaterShop/addBrandWater.php?isAdd=true&brand_id=$brand_id&brand_name=$brand_name&brand_image=$brand_image';
           await Dio()
               .get(urlInsertData)
               .then((value) => Navigator.pop(context));

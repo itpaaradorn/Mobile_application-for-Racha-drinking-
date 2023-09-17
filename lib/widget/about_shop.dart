@@ -1,4 +1,3 @@
-
 import 'dart:convert';
 
 import 'package:application_drinking_water_shop/configs/api.dart';
@@ -56,11 +55,12 @@ class _AboutShopState extends State<AboutShop> {
   Future<Null> readDataShop() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     String? id = preferences.getString('id');
-    String url = '${MyConstant().domain}/WaterShop/getdetailShop.php?isAdd=true&id=46';
+    String url =
+        '${MyConstant().domain}/WaterShop/getdetailShop.php?isAdd=true&id=46';
     await Dio().get(url).then((value) {
-      // print('value = $value');
+      print('value = $value');
       var result = json.decode(value.data);
-      // print('result = $result');
+      print('result = $result');
       for (var map in result) {
         setState(() {
           userModel = UserModel.fromJson(map);
@@ -70,9 +70,6 @@ class _AboutShopState extends State<AboutShop> {
       }
     });
   }
-
-  
-
 
   Future<LocationData> findLocationData() async {
     Location? location = Location();
@@ -91,14 +88,13 @@ class _AboutShopState extends State<AboutShop> {
         children: <Widget>[
           userModel == null
               ? MyStyle().showProgress()
-              : userModel!.nameShop!.isEmpty
-                  ? showNoData(context)
-                  : showList()
+              :  showList()
         ],
       ),
     );
   }
-    Widget showNoData(BuildContext context) =>
+
+  Widget showNoData(BuildContext context) =>
       MyStyle().titleCenter(context, 'ยังไม่มีข้อมูล');
 
   Widget showList() {
@@ -107,23 +103,35 @@ class _AboutShopState extends State<AboutShop> {
         showMap(),
         ListTile(
           leading: Icon(Icons.shop),
-          title: Text('ร้าน${userModel!.nameShop}'),
+          title: Text(
+            'ร้านราชาน้ำดื่ม',
+            style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
+          ),
         ),
         ListTile(
           leading: Icon(Icons.home),
-          title: Text('${userModel!.address}'),
+          title: Text(
+            '${userModel!.address}',
+            style: TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
+          ),
         ),
         ListTile(
           leading: Icon(Icons.phone),
-          title: Text('${userModel!.phone}'),
+          title: Text('${userModel!.phone}',
+            style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),),
         ),
         ListTile(
           leading: Icon(Icons.social_distance),
-          title: Text(distance == null ? 'กำลังคำนวณระยะทาง...' : '$distanceString กิโลเมตร'),
+          title: Text(distance == null
+              ? 'กำลังคำนวณระยะทาง...'
+              : '$distanceString กิโลเมตร',
+            style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),),
         ),
         ListTile(
           leading: Icon(Icons.monetization_on),
-          title: Text(transport == null ? 'กำลังคำนวณราคา..' : '$transport บาท'),
+          title:
+              Text(transport == null ? 'กำลังคำนวณราคา..' : '$transport บาท',
+            style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),),
         ),
         // showMap(),
       ],
@@ -155,7 +163,7 @@ class _AboutShopState extends State<AboutShop> {
           position: LatLng(lat2!, lng2!),
           icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
           infoWindow: InfoWindow(
-            title: 'ร้าน ${userModel!.nameShop}',
+            title: 'ร้านราชาน้ำดื่ม',
           ));
     }
 
@@ -167,7 +175,7 @@ class _AboutShopState extends State<AboutShop> {
     }
 
     return Container(
-      margin: EdgeInsets.only(left: 4, right: 4, top:4, bottom: 10),
+      margin: EdgeInsets.only(left: 4, right: 4, top: 4, bottom: 10),
       // color: Colors.grey,
       height: 400.0,
       child: lat1 == null
@@ -175,7 +183,8 @@ class _AboutShopState extends State<AboutShop> {
           : GoogleMap(
               initialCameraPosition: position!,
               mapType: MapType.normal,
-              onMapCreated: (controller) {},markers: mySet(),
+              onMapCreated: (controller) {},
+              markers: mySet(),
             ),
     );
   }

@@ -147,26 +147,39 @@ class _ConfirmPaymentState extends State<ConfirmPayment> {
   }
 
   Future<void> processUploadInsertData() async {
+    // String apisaveSlip = '${MyConstant().domain}/WaterShop/saveSlip.php';
+    // String nameSlip = 'slip${Random().nextInt(1000000)}.jpg';
+
+    // try {
+    //   Map<String, dynamic> map = {};
+    //   map['file'] =
+    //       await MultipartFile.fromFile(file!.path, filename: nameSlip);
+    //   FormData data = FormData.fromMap(map);
+    //   await Dio().post(apisaveSlip, data: data).then((value) async {
+    //     String imageSlip = '/WaterShop/Slip/$nameSlip';
+    //     print('value == $value');
+    //     DateTime dateTime = DateTime.now();
+    //     print(dateTime.toString());
+    //     String slipDateTime = DateFormat('yyyy-MM-dd HH:mm').format(dateTime);
+
     String apisaveSlip = '${MyConstant().domain}/WaterShop/saveSlip.php';
     String nameSlip = 'slip${Random().nextInt(1000000)}.jpg';
 
     try {
       Map<String, dynamic> map = {};
-      map['file'] =
-          await MultipartFile.fromFile(file!.path, filename: nameSlip);
+      map['file'] = await MultipartFile.fromFile(file!.path, filename: nameSlip);
       FormData data = FormData.fromMap(map);
       await Dio().post(apisaveSlip, data: data).then((value) async {
         String imageSlip = '/WaterShop/Slip/$nameSlip';
-        // print('value == $value');
+        print('value == $value');
         DateTime dateTime = DateTime.now();
         // print(dateTime.toString());
         String slipDateTime = DateFormat('yyyy-MM-dd HH:mm').format(dateTime);
-        // ignore: unused_local_variable
         SharedPreferences preferences = await SharedPreferences.getInstance();
         String? userId = preferences.getString('id');
         String? userName = preferences.getString('Name');
-        String path =
-            '${MyConstant().domain}/WaterShop/addpayment.php?isAdd=true&slip_date_time=$slipDateTime&image_slip=$imageSlip&order_id=none&user_id=$userId&user_name=$userName&rider_id=none';
+        String path ='http://192.168.1.99/WaterShop/addpayment.php?isAdd=true&slip_date_time=$slipDateTime&image_slip=$imageSlip&order_id=none&user_id=$userId&user_name=$userName&total=&emp_id=none';
+        //     // '${MyConstant().domain}/WaterShop/addpayment.php?isAdd=true&slip_date_time=$slipDateTime&image_slip=$imageSlip&order_id=none&user_id=$userId&user_name=$userName&rider_id=none';
         await Dio().get(path).then((value) => print('upload Sucess'));
       });
     } catch (e) {}
@@ -253,11 +266,13 @@ class _ConfirmPaymentState extends State<ConfirmPayment> {
       };
 
       Response response = await Dio().post(url, data: _map);
-      print('response = ${response.statusCode}');
-      print('response = ${response.data}');
+      // print('response = ${response.statusCode}');
+      // print('response = ${response.data}');
     }
 
     notificationTosShop(user_name!);
+    processUploadInsertData();
+    
 
     setState(() {
       status = true;

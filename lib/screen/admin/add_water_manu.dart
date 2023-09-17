@@ -108,11 +108,11 @@ class _AddMenuWaterState extends State<AddMenuWater> {
 
           print('urlPathImage = ${MyConstant().domain}$urlPathImage');
 
-          SharedPreferences preferences = await SharedPreferences.getInstance();
-          String? idShop = preferences.getString('id');
+          // SharedPreferences preferences = await SharedPreferences.getInstance();
+          // String? idShop = preferences.getString('id');
 
           String? urlInsertData =
-              '${MyConstant().domain}/WaterShop/addWater.php?isAdd=true&idShop=$idShop&brandname=$brandname&PathImage=$urlPathImage&Price=$price&Size=$size&idbrand=$idbrand&quantity=$quantity';
+              '${MyConstant().domain}/WaterShop/addWater.php?isAdd=true&brandname=$brandname&PathImage=$urlPathImage&Price=$price&Size=$size&idbrand=$idbrand&quantity=$quantity';
           // print('urlInsertData ======== $urlInsertData');
           await Dio()
               .get(urlInsertData)

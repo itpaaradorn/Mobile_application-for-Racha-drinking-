@@ -22,7 +22,7 @@ class SignUp extends StatefulWidget {
 class _SignUpState extends State<SignUp> {
   String? name, user, password, customer, address, phone;
   String? chooseType;
-  String? avatar = '';
+  String? avatar;
   double? lat, lng;
   File? file;
 
@@ -237,9 +237,10 @@ class _SignUpState extends State<SignUp> {
       String? password}) async {
     print('### processInsertMySQL Work and avatar ==>> $avatar');
     String apiInsertUser =
-        '${MyConstant().domain}/WaterShop/addUser.php?isAdd=true&Name=$name&User=$user&Password=$password&ChooseType=Customer&Address=$address&Phone=$phone&Urlpicture=$avatar&Lat=$lat&Lng=$lng';
+        '${MyConstant().domain}/WaterShop/addUser.php?isAdd=true&Name=$name&User=$user&Password=$password&ChooseType=Customer&Address=$address&Phone=$phone&UrlPicture=$avatar&Lat=$lat&Lng=$lng';
     await Dio().get(apiInsertUser).then((value) {
       if (value.toString() == 'true') {
+        
          AwesomeDialog(
             context: context,
             animType: AnimType.bottomSlide,
@@ -496,7 +497,7 @@ class _SignUpState extends State<SignUp> {
         width: 270.0,
         child: TextFormField(
           controller: phoneController,
-          keyboardType: TextInputType.name,
+          keyboardType: TextInputType.phone,
           validator: (value) {
             if (value.toString().isEmpty) {
               return 'กรุณากรอก เบอร์โทร ด้วย ค่ะ';
