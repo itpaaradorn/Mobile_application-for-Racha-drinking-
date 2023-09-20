@@ -367,7 +367,7 @@ class _OrderListShopState extends State<OrderListShop> {
                 child: FloatingActionButton(
                   onPressed: () {
                     MaterialPageRoute route = MaterialPageRoute(
-                      builder: (context) => AddOrderEmpAndShop(),
+                      builder: (context) => addOrderShop(),
                     );
                     Navigator.push(context, route)
                         .then((value) => findOrderShop());

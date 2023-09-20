@@ -182,7 +182,7 @@ class _FollowTrackingDeliveryState extends State<FollowTrackingDelivery> {
       icon: BitmapDescriptor.defaultMarkerWithHue(150.0),
       infoWindow: InfoWindow(
           title: 'พนักงานอยู่ที่นี่ ',
-          snippet: 'ชื่อพนักงาน${userModel!.name}'),
+          snippet: 'ชื่อพนักงาน ${userModel!.name}'),
     );
   }
 

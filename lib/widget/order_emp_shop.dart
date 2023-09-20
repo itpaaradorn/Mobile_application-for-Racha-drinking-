@@ -90,11 +90,11 @@ class _OrderConfirmEmpState extends State<OrderConfirmEmp> {
                 padding: EdgeInsets.only(bottom: 16.0, right: 16.0),
                 child: FloatingActionButton(
                   onPressed: () {
-                    MaterialPageRoute route = MaterialPageRoute(
-                      builder: (context) => AddOrderEmpAndShop(),
-                    );
-                    Navigator.push(context, route)
-                        .then((value) => findOrderShop());
+                    // MaterialPageRoute route = MaterialPageRoute(
+                    //   builder: (context) => AddOrderEmpAndShop(),
+                    // );
+                    // Navigator.push(context, route)
+                    //     .then((value) => findOrderShop());
                   },
                   child: Icon(Icons.add),
                 ),

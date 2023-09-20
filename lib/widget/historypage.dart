@@ -182,9 +182,7 @@ class _HistoryState extends State<History> {
                     onPressed: () async {
                       switch (items[0].status) {
                         case 'userorder':
-                          
-
-                           AwesomeDialog(
+                          AwesomeDialog(
                             context: context,
                             animType: AnimType.bottomSlide,
                             dialogType: DialogType.success,
@@ -206,12 +204,9 @@ class _HistoryState extends State<History> {
                             btnOkOnPress: () {},
                           ).show();
 
-
-
                           break;
                         case 'shopprocess':
-                      
-                              AwesomeDialog(
+                          AwesomeDialog(
                             context: context,
                             animType: AnimType.bottomSlide,
                             dialogType: DialogType.info,
@@ -219,7 +214,9 @@ class _HistoryState extends State<History> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Center(
-                                  child: Row(mainAxisAlignment: MainAxisAlignment.spaceAround,
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceAround,
                                     children: [
                                       Text(
                                         'รายการของท่านยังไม่ได้ทำการจัดส่ง\n          กรุณารอพนักงานจัดส่ง\n    ท่านสามารถดูรายการต่อไปนี้ได้',
@@ -270,26 +267,26 @@ class _HistoryState extends State<History> {
                           break;
                         case 'Cancel':
                           AwesomeDialog(
-                          context: context,
-                          animType: AnimType.bottomSlide,
-                          dialogType: DialogType.error,
-                          body: const Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Center(
-                                child: Text(
-                                  'รายการสั่งซื้อของท่านยกเลิกแล้ว',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.w600,
-                                      fontSize: 15),
+                            context: context,
+                            animType: AnimType.bottomSlide,
+                            dialogType: DialogType.error,
+                            body: const Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Center(
+                                  child: Text(
+                                    'รายการสั่งซื้อของท่านยกเลิกแล้ว',
+                                    style: TextStyle(
+                                        fontWeight: FontWeight.w600,
+                                        fontSize: 15),
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
-                          title: 'This is Ignored',
-                          desc: 'This is also Ignored',
-                          btnOkOnPress: () {},
-                        ).show();
+                              ],
+                            ),
+                            title: 'This is Ignored',
+                            desc: 'This is also Ignored',
+                            btnOkOnPress: () {},
+                          ).show();
                           break;
                       }
 

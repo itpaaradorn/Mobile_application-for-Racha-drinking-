@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:application_drinking_water_shop/model/brand_model.dart';
 import 'package:application_drinking_water_shop/utility/my_style.dart';
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -57,7 +58,22 @@ class _EditBrandWaterState extends State<EditBrandWater> {
     return FloatingActionButton(
       onPressed: () {
         if (brand_name!.isEmpty) {
-          normalDialog(context, 'กรุณากรอกให้ครบทุกช่อง');
+           AwesomeDialog(
+            context: context,
+            animType: AnimType.bottomSlide,
+            dialogType: DialogType.warning,
+            body: Center(
+              child: Text(
+                "กรุณากรอกข้อมูลให้ครบ!",
+                style: TextStyle(fontStyle: FontStyle.normal , fontWeight: FontWeight.bold),
+              ),
+            ),
+            title: 'This is Ignored',
+            desc: 'This is also Ignored',
+            btnOkOnPress: () {
+              // Navigator.pop(context);
+            },
+          ).show();
         } else {
           confirmEdit();
         }

@@ -71,7 +71,7 @@ class _MainEmpState extends State<MainEmp> {
         String url =
             '${MyConstant().domain}/WaterShop/updatelatlngemp.php?isAdd=true&id=$emp_id&Lat=$la1&Lng=$la2';
         await Dio().get(url).then(
-              (value) => print('LatLngEmp update success'),
+              (value) => {},
             );
       }
     }

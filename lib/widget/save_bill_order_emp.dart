@@ -2,12 +2,13 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:application_drinking_water_shop/model/order_model.dart';
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../utility/dialog.dart';
 import '../utility/my_constant.dart';
 import '../utility/my_style.dart';
 
@@ -27,18 +28,18 @@ class _SaveBillOrderEmpState extends State<SaveBillOrderEmp> {
   @override
   void initState() {
     // TODO: implement initState
-    super.initState();
     orderModel = widget.orderModel;
     user_id = orderModel!.userId;
     user_name = orderModel!.name;
     order_id = orderModel!.orderNumber;
     slipDateTime = orderModel!.createAt;
-  }
+    super.initState();
+    }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('รายการสั่งซื้อที่ ${order_id}')),
+      appBar: AppBar(title: Text('รายการสั่งซื้อคุณ ${user_name}')),
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -67,6 +68,7 @@ class _SaveBillOrderEmpState extends State<SaveBillOrderEmp> {
       style: MyStyle().mainConfirmTitle,
     );
   }
+
   Widget slipDate() => Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -85,7 +87,7 @@ class _SaveBillOrderEmpState extends State<SaveBillOrderEmp> {
         ],
       );
 
-      Widget orderId() => Row(
+  Widget orderId() => Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Container(
@@ -103,7 +105,7 @@ class _SaveBillOrderEmpState extends State<SaveBillOrderEmp> {
         ],
       );
 
-      Widget userIdGas() => Row(
+  Widget userIdGas() => Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Container(
@@ -121,7 +123,7 @@ class _SaveBillOrderEmpState extends State<SaveBillOrderEmp> {
         ],
       );
 
-       Widget userNameGas() => Row(
+  Widget userNameGas() => Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Container(
@@ -183,6 +185,7 @@ class _SaveBillOrderEmpState extends State<SaveBillOrderEmp> {
       ],
     );
   }
+
   Future<void> processTakeBill(ImageSource source) async {
     try {
       var result = await ImagePicker().pickImage(
@@ -196,15 +199,49 @@ class _SaveBillOrderEmpState extends State<SaveBillOrderEmp> {
     } catch (e) {}
   }
 
-   Container newButtonConfirm() {
+  Container newButtonConfirm() {
     return Container(
       width: 200,
       child: ElevatedButton(
         onPressed: () {
           if (file == null) {
-            normalDialog(context, 'กรุณาแนบใบเสร็จชำระเงินก่อนสั่งซื้อค่ะ');
+            // normalDialog(context, 'กรุณาแนบใบเสร็จชำระเงินก่อนสั่งซื้อค่ะ');
+            AwesomeDialog(
+              context: context,
+              animType: AnimType.bottomSlide,
+              dialogType: DialogType.warning,
+              body: Center(
+                child: Text(
+                  "กรุณาแนบใบเสร็จชำระเงินก่อนสั่งซื้อ!",
+                  style: TextStyle(
+                      fontStyle: FontStyle.normal, fontWeight: FontWeight.bold),
+                ),
+              ),
+              title: 'This is Ignored',
+              desc: 'This is also Ignored',
+              btnOkOnPress: () {
+                // Navigator.pop(context);
+              },
+            ).show();
           } else if (total == null) {
-            normalDialog(context, 'กรุณาป้อนจำนวนเงินทั้งหมด');
+            // normalDialog(context, 'กรุณาป้อนจำนวนเงินทั้งหมด');
+            AwesomeDialog(
+              context: context,
+              animType: AnimType.bottomSlide,
+              dialogType: DialogType.warning,
+              body: Center(
+                child: Text(
+                  "กรุณาป้อนจำนวนเงินทั้งหมด!",
+                  style: TextStyle(
+                      fontStyle: FontStyle.normal, fontWeight: FontWeight.bold),
+                ),
+              ),
+              title: 'This is Ignored',
+              desc: 'This is also Ignored',
+              btnOkOnPress: () {
+                // Navigator.pop(context);
+              },
+            ).show();
           } else {
             processUploadInsertData();
             Navigator.pop(context);
@@ -216,43 +253,54 @@ class _SaveBillOrderEmpState extends State<SaveBillOrderEmp> {
   }
 
   Future<void> processUploadInsertData() async {
-    String apisaveSlip = '${MyConstant().domain}/WaterShop/saveSlip.php';
-    String nameSlip = 'slip${Random().nextInt(1000000)}.jpg';
+    // String apisaveSlip = '${MyConstant().domain}/WaterShop/saveSlip.php';
+    // String nameSlip = 'slip${Random().nextInt(1000000)}.jpg';
 
-    try {
-      Map<String, dynamic> map = {};
-      map['file'] = await MultipartFile.fromFile(file!.path, filename: nameSlip);
-      FormData data = FormData.fromMap(map);
-      await Dio().post(apisaveSlip, data: data).then((value) async {
-        String imageSlip = '/WaterShop/Slip/$nameSlip';
-        print('value == $value');
-        // DateTime dateTime = DateTime.now();
-        // // print(dateTime.toString());
-        // String slipDateTime = DateFormat('yyyy-MM-dd HH:mm').format(dateTime);
-        SharedPreferences preferences = await SharedPreferences.getInstance();
-        String? rider_id = preferences.getString('id');
-        String path =
-            '${MyConstant().domain}/WaterShop/addpayment.php?isAdd=true&slip_date_time=$slipDateTime&image_slip=$imageSlip&order_id=$order_id&user_id=$user_id&user_name=$user_name&total=$total&rider_id=$rider_id';
-        await Dio().get(path).then((value) => print('upload Sucess'));
-      });
-    } catch (e) {}
+    // try {
+    //   Map<String, dynamic> map = {};
+    //   map['file'] =
+    //       await MultipartFile.fromFile(file!.path, filename: nameSlip);
+    //   FormData data = FormData.fromMap(map);
+    //   await Dio().post(apisaveSlip, data: data).then((value) async {
+    //     String imageSlip = '/WaterShop/Slip/$nameSlip';
+    //     print('value == $value');
+    //     DateTime dateTime = DateTime.now();
+    //     // print(dateTime.toString());
+    //     String slipDateTime = DateFormat('yyyy-MM-dd HH:mm').format(dateTime);
+    //     SharedPreferences preferences = await SharedPreferences.getInstance();
+    //     String? emp_id = preferences.getString('id');
+    //     String path =
+    //         'http://192.168.1.99/WaterShop/addpayment.php?isAdd=true&slip_date_time=$slipDateTime&image_slip=$imageSlip&order_id=none&user_id=$user_id&user_name=$user_name&total=&emp_id=none';
+
+    //     await Dio().get(path).then((value) => print('upload Sucess'));
+
+    //     print('->> $emp_id');
+    //     print('->> $order_id');
+    //     print('->> $total');
+    //     print('->> $user_name');
+    //     print('->> $user_id');
+    //   });
+    // } catch (e) {}
+
+       String apisaveSlip = '${MyConstant().domain}/WaterShop/saveSlip.php';
+      String nameSlip = 'slip${Random().nextInt(1000000)}.jpg';
+
+      try {
+        Map<String, dynamic> map = {};
+        map['file'] = await MultipartFile.fromFile(file!.path, filename: nameSlip);
+        FormData data = FormData.fromMap(map);
+        await Dio().post(apisaveSlip, data: data).then((value) async {
+          String imageSlip = '/WaterShop/Slip/$nameSlip';
+          print('value == $value');
+          DateTime dateTime = DateTime.now();
+          // print(dateTime.toString());
+          String slipDateTime = DateFormat('yyyy-MM-dd HH:mm').format(dateTime);
+          SharedPreferences preferences = await SharedPreferences.getInstance();
+          String? emp_id = preferences.getString('id');
+
+        String path ='${MyConstant().domain}/WaterShop/addpayment.php?isAdd=true&slip_date_time=$slipDateTime&image_slip=$imageSlip&order_id=none&user_id=$user_id&user_name=$user_name&total=$total&emp_id=$emp_id';
+          await Dio().get(path).then((value) => print('upload Sucess'));
+        });
+      } catch (e) {}
   }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 }
-
-
-

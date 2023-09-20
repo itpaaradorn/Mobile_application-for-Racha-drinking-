@@ -1,7 +1,7 @@
-
 import 'dart:io';
 import 'dart:math';
 
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
@@ -50,7 +50,7 @@ class _EditAccountEmpState extends State<EditAccountEmp> {
     setState(() {
       lat = double.parse(userModel!.lat!);
       lng = double.parse(userModel!.lng!);
-      
+
       print(' lat == $lat , lng == $lng');
     });
   }
@@ -63,24 +63,42 @@ class _EditAccountEmpState extends State<EditAccountEmp> {
         title: Text("แก้ไขข้อมูลพนักงาน"),
         actions: [
           IconButton(
-            icon: Icon(Icons.save ),
-            onPressed: () {
-              if (
-              name == null ||
-                  name!.isEmpty ||
-                  phone == null ||
-                  phone!.isEmpty ||
-                  user == null ||
-                  user!.isEmpty ||
-                  password == null ||
-                  password!.isEmpty) {
-                normalDialog2(context, 'มีช่องว่าง !', 'กรุณากรอกข้อมูลให้ครบ');
-              } else {
-                updateProfileandLocation().then(
-                (value) => Navigator.pop(context),
-              );
-              }
-            }),
+              icon: Icon(Icons.save),
+              onPressed: () {
+                if (name == null ||
+                    name!.isEmpty ||
+                    phone == null ||
+                    phone!.isEmpty ||
+                    user == null ||
+                    user!.isEmpty ||
+                    password == null ||
+                    password!.isEmpty) {
+                  // normalDialog2(
+                  //     context, 'มีช่องว่าง !', 'กรุณากรอกข้อมูลให้ครบ');
+                  AwesomeDialog(
+                    context: context,
+                    animType: AnimType.bottomSlide,
+                    dialogType: DialogType.warning,
+                    body: Center(
+                      child: Text(
+                        "กรุณากรอกข้อมูลให้ครบ!",
+                        style: TextStyle(
+                            fontStyle: FontStyle.normal,
+                            fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    title: 'This is Ignored',
+                    desc: 'This is also Ignored',
+                    btnOkOnPress: () {
+                      // Navigator.pop(context);
+                    },
+                  ).show();
+                } else {
+                  updateProfileandLocation().then(
+                    (value) => Navigator.pop(context),
+                  );
+                }
+              }),
         ],
       ),
       body: SingleChildScrollView(
@@ -89,7 +107,7 @@ class _EditAccountEmpState extends State<EditAccountEmp> {
             SizedBox(
               height: 15.0,
             ),
-           groupImage(),
+            groupImage(),
             nameUser(),
             userForm(),
             passwordForm(),
@@ -216,13 +234,14 @@ class _EditAccountEmpState extends State<EditAccountEmp> {
     String urlUpload = '${MyConstant().domain}/WaterShop/saveAvatar.php';
     await Dio().post(urlUpload, data: formData).then((value) async {
       urlpicture = '/WaterShop/avatar/$nameFile';
-     
+
       String url =
           '${MyConstant().domain}/WaterShop/editProfilelocation.php?isAdd=true&id=$user_id&UrlPicture=$urlpicture&Name=$name&User=$user&Password=$password&Phone=$phone&Address=$address&Lat=$lat&Lng=$lng';
 
       await Dio().put(url).then(
         (value) {
-          Toast.show("แก้ไขข้อมูพนักงานสำเร็จ", duration: Toast.lengthLong, gravity:  Toast.bottom);
+          Toast.show("แก้ไขข้อมูพนักงานสำเร็จ",
+              duration: Toast.lengthLong, gravity: Toast.bottom);
         },
       );
     });
@@ -252,8 +271,6 @@ class _EditAccountEmpState extends State<EditAccountEmp> {
               title: 'คุณอยู่ที่นี่ ', snippet: 'lat = $lat, lng = $lng'),
         ),
       ].toSet();
-
-
 
   Row groupImage() => Row(
         mainAxisAlignment: MainAxisAlignment.center,

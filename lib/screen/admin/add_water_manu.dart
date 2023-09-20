@@ -7,6 +7,7 @@ import 'package:application_drinking_water_shop/model/water_model.dart';
 import 'package:application_drinking_water_shop/utility/my_constant.dart';
 import 'package:application_drinking_water_shop/utility/my_style.dart';
 import 'package:application_drinking_water_shop/utility/dialog.dart';
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -70,7 +71,27 @@ class _AddMenuWaterState extends State<AddMenuWater> {
       child: ElevatedButton.icon(
         onPressed: () {
           if (file == null) {
-            normalDialog(context, 'ยังไม่ได้เลือกรูปภาพ Camera หรือ Gallery !');
+            // normalDialog(context, 'ยังไม่ได้เลือกรูปภาพ Camera หรือ Gallery !');
+            AwesomeDialog(
+            context: context,
+            animType: AnimType.bottomSlide,
+            dialogType: DialogType.warning,
+            body: Center(
+              child: Text(
+                "ยังไม่ได้เลือกรูปภาพ Camera หรือ Gallery!",
+                style: TextStyle(fontStyle: FontStyle.normal , ),
+              ),
+            ),
+            title: 'This is Ignored',
+            desc: 'This is also Ignored',
+            btnOkOnPress: () {
+              // Navigator.pop(context);
+            },
+          ).show();
+
+
+
+
           } else if (
               // idbrand == null ||
               //   idbrand!.isEmpty ||
@@ -78,7 +99,25 @@ class _AddMenuWaterState extends State<AddMenuWater> {
                   price!.isEmpty ||
                   size == null ||
                   size!.isEmpty) {
-            normalDialog(context, 'กรุณากรอกข้อมูลทุกช่อง !');
+            // normalDialog(context, 'กรุณากรอกข้อมูลทุกช่อง !');
+            AwesomeDialog(
+            context: context,
+            animType: AnimType.bottomSlide,
+            dialogType: DialogType.warning,
+            body: Center(
+              child: Text(
+                "กรุณากรอกข้อมูลทุกช่อง!",
+                style: TextStyle(fontStyle: FontStyle.normal , ),
+              ),
+            ),
+            title: 'This is Ignored',
+            desc: 'This is also Ignored',
+            btnOkOnPress: () {
+              // Navigator.pop(context);
+            },
+          ).show();
+            
+            
           } else {
             uploadWaterAndInsertData();
           }

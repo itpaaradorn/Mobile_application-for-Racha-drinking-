@@ -6,6 +6,7 @@ import 'package:application_drinking_water_shop/model/water_model.dart';
 import 'package:application_drinking_water_shop/utility/my_constant.dart';
 
 import 'package:application_drinking_water_shop/utility/dialog.dart';
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -75,7 +76,22 @@ class _EditWaterMenuState extends State<EditWaterMenu> {
     return FloatingActionButton(
       onPressed: () {
         if (brandname!.isEmpty || size!.isEmpty || price!.isEmpty) {
-          normalDialog(context, 'กรุณากรอกให้ครบทุกช่อง!');
+           AwesomeDialog(
+            context: context,
+            animType: AnimType.bottomSlide,
+            dialogType: DialogType.warning,
+            body: Center(
+              child: Text(
+                "กรุณากรอกข้อมูลให้ครบ!",
+                style: TextStyle(fontStyle: FontStyle.normal , fontWeight: FontWeight.bold),
+              ),
+            ),
+            title: 'This is Ignored',
+            desc: 'This is also Ignored',
+            btnOkOnPress: () {
+              // Navigator.pop(context);
+            },
+          ).show();
         } else {
           confirmEdit();
         }

@@ -104,9 +104,9 @@ class _ReceiptShopState extends State<ReceiptShop> {
           Card(
             color: Color.fromARGB(255, 238, 244, 248),
             child: Container(
-              padding: EdgeInsets.all(10.0),
-              width: MediaQuery.of(context).size.width * 0.5,
-              height: MediaQuery.of(context).size.width * 0.5,
+              padding: EdgeInsets.all(4.0),
+              width: MediaQuery.of(context).size.width * 0.4,
+              height: MediaQuery.of(context).size.width * 0.6,
               child: paymentmodels[index].imageSlip == null
                   ? buildNoneAvatarImage()
                   : Image.network(
@@ -115,36 +115,58 @@ class _ReceiptShopState extends State<ReceiptShop> {
           ),
           Container(
             margin: const EdgeInsets.all(15.0),
-            padding: const EdgeInsets.all(3.0),
+            padding: const EdgeInsets.all(10.0),
             decoration:
                 BoxDecoration(border: Border.all(color: Colors.blueAccent)),
-            width: MediaQuery.of(context).size.width * 0.4,
-            height: MediaQuery.of(context).size.width * 0.4,
+            width: MediaQuery.of(context).size.width * 0.5,
+            height: MediaQuery.of(context).size.width * 0.6,
             child: SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text(
-                    'เวลาสั่งซื้อ : ${paymentmodels[index].slipDateTime} ',
-                    style: MyStyle().mainh2Title,
-                  ),
-                  Text(
-                    'รหัสพนักงาน : ${paymentmodels[index].riderId} ',
-                    style: MyStyle().mainh2Title,
-                  ),
-                  Text(
-                    'รหัสสมาชิก : ${paymentmodels[index].userId} ',
-                    style: MyStyle().mainh2Title,
-                  ),
-                  Text(
-                    'ชื่อสมาชิก : ${paymentmodels[index].userName} ',
-                    style: MyStyle().mainh2Title,
-                  ),
-                  Text(
-                    'รหัสคำสั่งซื้อ : ${paymentmodels[index].orderId} ',
-                    style: MyStyle().mainh2Title,
-                  ),
-                ],
+              child: Container(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Row(
+                      children: [
+                        Text(
+                          'เวลาสั่งซื้อ  \n➤  ${paymentmodels[index].slipDateTime} ',
+                          style: MyStyle().mainh2Title,
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Text(
+                          'รหัสพนักงาน  \n➤  ${paymentmodels[index].riderId} ',
+                          style: MyStyle().mainh2Title,
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Text(
+                          'รหัสสมาชิก  \n➤  ${paymentmodels[index].userId} ',
+                          style: MyStyle().mainh2Title,
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Text(
+                          'ชื่อสมาชิก  \n➤  ${paymentmodels[index].userName} ',
+                          style: MyStyle().mainh2Title,
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Text(
+                          'รหัสคำสั่งซื้อ  \n➤  ${paymentmodels[index].orderId} ',
+                          style: MyStyle().mainh2Title,
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

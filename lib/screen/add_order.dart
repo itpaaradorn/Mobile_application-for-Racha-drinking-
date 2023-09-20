@@ -1,137 +1,102 @@
-import 'dart:io';
-import 'dart:math';
-
-import 'package:application_drinking_water_shop/utility/my_style.dart';
-import 'package:dio/dio.dart';
+import 'package:application_drinking_water_shop/screen/promtpay.dart';
+import 'package:application_drinking_water_shop/screen/show_cartShop.dart';
+import 'package:application_drinking_water_shop/screen/show_listManu_watershop.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
-import '../utility/app_text_field.dart';
-import '../utility/dialog.dart';
-import '../utility/my_constant.dart';
+import 'bankpay.dart';
+import 'confirm_payment.dart';
 
-class AddOrderEmpAndShop extends StatefulWidget {
-  const AddOrderEmpAndShop({Key? key}) : super(key: key);
+
+class addOrderShop extends StatefulWidget {
+  const addOrderShop({super.key});
 
   @override
-  State<AddOrderEmpAndShop> createState() => __AddOrderEmpAndShopState();
+  _addOrderShopState createState() => _addOrderShopState();
 }
 
-class __AddOrderEmpAndShopState extends State<AddOrderEmpAndShop> {
-  File? file;
+class _addOrderShopState extends State<addOrderShop> {
+  List<Widget> widgets = [
+    listManuAddOrderWater(),
+    ShowCartShop()
+  ];
 
-  String? brand_name;
-  var sizecontroller = TextEditingController();
-  var usernamecontroller = TextEditingController();
-  var quantitycontroller = TextEditingController();
-  var pricecontroller = TextEditingController();
-  String selectedValue = "Sing";
+  List<IconData> icons = [
+    Icons.add_box_sharp,
+    Icons.card_travel,
+  ];
+
+  List<String> titles = ['รายการน้ำดื่ม', 'ตะกร้า'];
+
+  int indexPostion = 0;
+  List<BottomNavigationBarItem> bottomNavigationBarItems = [];
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    int i = 0;
+    for (var item in titles) {
+      bottomNavigationBarItems
+          .add(createBottomNavigationBarItem(icons[i], item));
+      i++;
+    }
+  }
+
+  BottomNavigationBarItem createBottomNavigationBarItem(
+          IconData iconData, String string) =>
+      BottomNavigationBarItem(icon: Icon(iconData), label: string);
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          "AddOrder Page",
+    return Stack(
+      children: [
+        Scaffold(
+          appBar: AppBar(
+            title: Text('${titles[indexPostion]}'),
+          ),
+          body: widgets[indexPostion],
+          bottomNavigationBar: BottomNavigationBar(
+            selectedIconTheme: IconThemeData(color: Colors.blue),
+            unselectedIconTheme: IconThemeData(color: Colors.grey),
+            selectedItemColor: Colors.blue.shade900,
+            unselectedItemColor: Colors.grey,
+            items: bottomNavigationBarItems,
+            currentIndex: indexPostion,
+            onTap: (value) {
+              setState(() {
+                indexPostion = value;
+              });
+            },
+          ),
         ),
-      ),
-      body: SingleChildScrollView(
-        child: Column(
+        // shoppingCartbutton(context),
+      ],
+    );
+  }
+
+  Widget shoppingCartbutton(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: <Widget>[
+        Column(
+          mainAxisAlignment: MainAxisAlignment.end,
           children: <Widget>[
-            SizedBox(height: 40),
             Container(
-              width: 300,
-              child: DropdownButtonFormField(
-                value: selectedValue,
-                items: dropdownItems,
-                onChanged: (String? value) {
-                  setState(() {
-                    brand_name = value!;
-                  });
+              margin: EdgeInsets.only(right: 30.0, bottom: 70.0),
+              child: FloatingActionButton(
+                child: Icon(Icons.receipt),
+                onPressed: () {
+                  MaterialPageRoute route = MaterialPageRoute(
+                    builder: (context) => ConfirmPayment(),
+                  );
+                  Navigator.push(context, route);
                 },
               ),
             ),
-            MyStyle().mySixedBox(),
-            AppTextField(
-                textController: usernamecontroller,
-                hintText: "ชื่อ",
-                icon: Icons.add),
-            MyStyle().mySixedBox(),
-            AppTextField(
-                textController: sizecontroller,
-                hintText: "ขนาด",
-                icon: Icons.add),
-            MyStyle().mySixedBox(),
-            AppTextField(
-                textController: quantitycontroller,
-                hintText: "จำนวน",
-                icon: Icons.add),
-            MyStyle().mySixedBox(),
-            AppTextField(
-                textController: pricecontroller,
-                hintText: "รวม",
-                icon: Icons.add),
-            SizedBox(
-              height: 30,
-            ),
-            saveButton(),
           ],
         ),
-      ),
+      ],
     );
-  }
-
-  List<DropdownMenuItem<String>> get dropdownItems {
-    List<DropdownMenuItem<String>> menuItems = [
-      DropdownMenuItem(child: Text("Namthip"), value: "Namthip"),
-      DropdownMenuItem(child: Text("Crystal"), value: "Crystal"),
-      DropdownMenuItem(child: Text("Sing"), value: "Sing"),
-      DropdownMenuItem(child: Text("Nestle"), value: "Nestle"),
-    ];
-    return menuItems;
-  }
-
-  Widget saveButton() {
-    return Container(
-      width: 200.0,
-      child: ElevatedButton.icon(
-        onPressed: () {
-          orderThread();
-        },
-        icon: Icon(
-          Icons.save,
-          color: Colors.white,
-        ),
-        label: Text(
-          'Save Gategory',
-          style: TextStyle(color: Colors.white),
-        ),
-      ),
-    );
-  }
-
-  Future<Null> orderThread() async {
-    var price = pricecontroller.text;
-    var quantity = quantitycontroller.text;
-    var size = sizecontroller.text;
-    var sum = pricecontroller.text;
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    String? user_id = preferences.getString('id');
-    String? user_name = preferences.getString('Name');
-    DateTime dateTime = DateTime.now();
-    // print(dateTime.toString());
-    String order_date_time = DateFormat('yyyy-MM-dd HH:mm').format(dateTime);
-
-    String url =
-        '${MyConstant().domain}/WaterShop/addOrder.php?isAdd=true&orderDateTime=$order_date_time&user_id=$user_id&user_name=$user_name&water_id=none&size=[$size]&distance=0&transport=0&water_brand_name=[$brand_name]&price=$price&amount=[$quantity]&sum=[$sum]&riderId=none&pamentStatus=payondelivery&status=userorder';
-
-    await Dio().get(url).then((value) {
-      if (value.toString() == 'true') {
-        Navigator.pop(context);
-        normalDialog(context, 'เพิ่มการสั่งซื้อสำเร็จ');
-      } else {
-        normalDialog(context, 'ไม่สามารถสั่งซื้อได้กรุณาลองใหม่');
-      }
-    });
   }
 }
