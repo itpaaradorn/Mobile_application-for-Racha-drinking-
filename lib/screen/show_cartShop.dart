@@ -125,7 +125,6 @@ class _ShowCartShopState extends State<ShowCartShop> {
               height: 30,
               thickness: 5,
             ),
-            buildclearshop(),
             buildHeadTitle(),
             buildListWater(),
             Divider(
@@ -134,7 +133,7 @@ class _ShowCartShopState extends State<ShowCartShop> {
             ),
             buildTotal(),
             MyStyle().mySixedBox(),
-            buildPaymentButton(),
+            // buildPaymentButton(),
             buildAddOrderButton(),
           ],
         ),
@@ -219,7 +218,7 @@ class _ShowCartShopState extends State<ShowCartShop> {
               orderThread();
             },
             label: Text(
-              'สั่งซื้อปลายทาง',
+              'สั่งซื้อ',
               style: TextStyle(color: Colors.white),
             ),
             icon: Icon(
@@ -254,22 +253,7 @@ class _ShowCartShopState extends State<ShowCartShop> {
     return Container(
       margin: EdgeInsets.only(top: 1, bottom: 10),
       child: Column(
-        children: [
-          Row(
-            children: [
-              MyStyle().showTitle('รายการในตะกร้า'),
-            ],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              MyStyle().showTitleH44(
-                  'ระยะทาง : ${orderDetails[0].distance} กิโลเมตร'),
-              MyStyle()
-                  .showTitleH3('ค่าจัดส่ง : ${orderDetails[0].transport} บาท'),
-            ],
-          ),
-        ],
+        children: [],
       ),
     );
   }
@@ -362,7 +346,7 @@ class _ShowCartShopState extends State<ShowCartShop> {
     // String? url =
     //     'http://192.168.1.99/WaterShop/deleteOrderDetail.php?id=${orderdetail.id}';
 
-    String url = 'http://192.168.1.99/WaterShop/deleteOrderDetail.php';
+    String url = '${MyConstant().domain}/WaterShop/deleteOrderDetail.php';
 
     Response resp = await Dio().delete(url, data: {'id': orderdetail.id});
 
@@ -422,9 +406,10 @@ class _ShowCartShopState extends State<ShowCartShop> {
 
     DateTime now = DateTime.now();
 
-    String orderNumber = "$user_id#${now.year}${prepareDigit(now.month)}${prepareDigit(now.day)}${prepareDigit(now.hour)}${prepareDigit(now.minute)}${prepareDigit(now.second)}";
+    String orderNumber =
+        "$user_id#${now.year}${prepareDigit(now.month)}${prepareDigit(now.day)}${prepareDigit(now.hour)}${prepareDigit(now.minute)}${prepareDigit(now.second)}";
 
-    String? url = 'http://192.168.1.99/WaterShop/addOrderWater.php';
+    String? url = '${MyConstant().domain}/WaterShop/addOrderWater.php';
 
     for (var i = 0; i < orderDetails.length; i++) {
       Map<String, String> _map = {
@@ -439,7 +424,24 @@ class _ShowCartShopState extends State<ShowCartShop> {
       print('response = ${response.statusCode}');
       print('response = ${response.data}');
     }
-    notificationToShop(user_name!);
+    // notificationToShop(user_name!);
+
+    AwesomeDialog(
+      context: context,
+      animType: AnimType.bottomSlide,
+      dialogType: DialogType.success,
+      body: Center(
+        child: Text(
+          'ทำรายการสั่งซื้อ เสร็จสิ้น',
+          style: TextStyle(fontStyle: FontStyle.normal),
+        ),
+      ),
+      title: 'This is Ignored',
+      desc: 'This is also Ignored',
+      btnOkOnPress: () {
+        Navigator.pop(context);
+      },
+    ).show();
 
     setState(() {
       status = true;
@@ -485,9 +487,8 @@ class _ShowCartShopState extends State<ShowCartShop> {
     });
   }
 
- 
   Future<Null> sendNotificationToShop(String urlSendToken) async {
-    await Dio().get(urlSendToken).then((value) =>AwesomeDialog(
+    await Dio().get(urlSendToken).then((value) => AwesomeDialog(
           context: context,
           animType: AnimType.bottomSlide,
           dialogType: DialogType.success,

@@ -25,7 +25,7 @@ class _addOrderShopState extends State<addOrderShop> {
     Icons.card_travel,
   ];
 
-  List<String> titles = ['รายการน้ำดื่ม', 'ตะกร้า'];
+  List<String> titles = ['รายการน้ำดื่มที่ต้องการเพิ่ม', 'รายการในตะกร้า'];
 
   int indexPostion = 0;
   List<BottomNavigationBarItem> bottomNavigationBarItems = [];

@@ -125,7 +125,6 @@ class _ShowCartState extends State<ShowCart> {
               height: 30,
               thickness: 5,
             ),
-            buildclearshop(),
             buildHeadTitle(),
             buildListWater(),
             Divider(
@@ -142,21 +141,7 @@ class _ShowCartState extends State<ShowCart> {
     );
   }
 
-  Row buildclearshop() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.end,
-      children: [
-        TextButton(
-            onPressed: () {
-              // confirmDeleteData();
-            },
-            child: Text(
-              'ลบรายการทั้งหมด',
-              style: MyStyle().mainH2Title,
-            )),
-      ],
-    );
-  }
+  
 
   Widget buildOrderButton() {
     return Row(

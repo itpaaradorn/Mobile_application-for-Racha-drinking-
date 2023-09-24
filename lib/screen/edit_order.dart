@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:application_drinking_water_shop/model/edit_order_model.dart';
 import 'package:application_drinking_water_shop/utility/my_constant.dart';
 import 'package:application_drinking_water_shop/utility/my_style.dart';
 import 'package:dio/dio.dart';
@@ -19,12 +22,14 @@ class EditOrderEmp extends StatefulWidget {
 
 class _EditOrderEmpState extends State<EditOrderEmp> {
   late OrderModel orderModel;
-  String? order_id, orderDateTime,
+  String? order_id,
+      orderDateTime,
       user_id,
       user_name,
       waterId,
       waterBrandId,
-      size,sum,
+      size,
+      sum,
       distance,
       transport,
       waterBrandName,
@@ -51,10 +56,147 @@ class _EditOrderEmpState extends State<EditOrderEmp> {
     pamentStatus = orderModel.paymentStatus;
     sum = orderModel.sum;
     waterBrandId = orderModel.brandId;
+
+    getEditOrder(orderModel.orderNumber ?? '');
+  }
+
+  List<EditOrderModel> listEditOrderModel = [];
+  List<EditOrderModel> oldListEditOrderModel = [];
+  EditOrderModel? masterDate;
+
+  getEditOrder(String order_number) async {
+    String url =
+        'http://192.168.1.99/WaterShop/editOrder.php?order_number=${order_number.replaceAll('#', '%23')}';
+    print(url);
+    Response resp = await Dio().get(url);
+
+    if (resp.statusCode == 200) {
+      for (var json in jsonDecode(resp.data)) {
+        listEditOrderModel.add(EditOrderModel.fromJson(json));
+      }
+      oldListEditOrderModel = listEditOrderModel;
+      masterDate =
+          listEditOrderModel.where((element) => element.amount != null).first;
+    }
+
+    setState(() {});
+  }
+
+  add(index) {
+    int amount = int.tryParse(listEditOrderModel[index].amount ?? '') ?? 0;
+    listEditOrderModel[index].amount = (amount + 1).toString();
+    setState(() {});
+  }
+
+  delete(index) {
+    int amount = int.tryParse(listEditOrderModel[index].amount ?? '') ?? 0;
+    if (amount == 0) return;
+    listEditOrderModel[index].amount = (amount - 1).toString();
+    setState(() {});
+  }
+
+  delete_order_table(id) => Dio().delete(
+      'http://192.168.1.99/WaterShop/deleteOrderTableByOrdernumber.php',
+      data: {'id': id});
+
+  delete_order_detail(id) =>
+      Dio().delete('http://192.168.1.99/WaterShop/deleteOrderDetail.php',
+          data: {'id': id});
+
+  add_order_table(EditOrderModel item) async {
+    int amount = int.tryParse(item.amount ?? '') ?? 0;
+    int price = int.tryParse(item.price ?? '') ?? 0;
+    int sum = amount * price;
+
+    var formData = FormData.fromMap({
+      'water_id': item.id,
+      'amount': item.amount,
+      'sum': sum,
+      'distance': '0',
+      'transport': '0',
+      'create_by': masterDate?.createBy,
+    });
+
+    Response resp = await Dio().post(
+        'http://192.168.1.99/WaterShop/addOrderDetail.php',
+        data: formData);
+    return resp.data;
+  }
+
+  add_order_detail(EditOrderModel item, order_detail_id) {
+    var data = {
+      "create_by": masterDate?.createBy,
+      "emp_id": "none",
+      "payment_status": masterDate?.paymentStatus,
+      "order_detail_id": order_detail_id,
+      "order_number": masterDate?.orderNumber,
+    };
+
+    Dio().post('http://192.168.1.99/WaterShop/addOrderWater.php', data: data);
+  }
+
+  ok() async {
+    // delete old data
+    for (EditOrderModel item in oldListEditOrderModel) {
+      delete_order_table(item.orderNumber);
+      delete_order_detail(item.orderDetailId);
+    }
+
+    // add new data
+    for (EditOrderModel item in listEditOrderModel) {
+      int amount = int.tryParse(item.amount ?? '') ?? 0;
+      if (amount != 0) {
+        String order_detail_id = await add_order_table(item);
+        add_order_detail(item, order_detail_id);
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
+    // print(dropdownItemspay);
+
+    return Scaffold(
+      appBar: AppBar(),
+      body: Column(
+        children: [
+          TextButton(
+            onPressed: () => ok(),
+            child: Text(
+              'ok',
+              style: TextStyle(fontSize: 48),
+            ),
+          ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: listEditOrderModel.length,
+              itemBuilder: (context, index) {
+                return Column(
+                  children: [
+                    Text(listEditOrderModel[index].brandName ?? ''),
+                    Text(listEditOrderModel[index].size ?? ''),
+                    Text(listEditOrderModel[index].price ?? ''),
+                    Text(listEditOrderModel[index].amount ?? '0'),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        TextButton(
+                            onPressed: () => delete(index),
+                            child: Text('delete')),
+                        TextButton(
+                            onPressed: () => add(index), child: Text('add')),
+                      ],
+                    ),
+                    const SizedBox(height: 60),
+                  ],
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+
     return Scaffold(
       appBar: AppBar(
         title: Text('Edit Order_id: ${orderModel.orderNumber}'),
@@ -62,7 +204,8 @@ class _EditOrderEmpState extends State<EditOrderEmp> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            MyStyle().mySixedBox(),MyStyle().mySixedBox(),
+            MyStyle().mySixedBox(),
+            MyStyle().mySixedBox(),
             BigText(text: "สถานะจัดส่ง"),
             MyStyle().mySixedBox(),
             Container(
@@ -77,21 +220,23 @@ class _EditOrderEmpState extends State<EditOrderEmp> {
                 },
               ),
             ),
-            MyStyle().mySixedBox(),MyStyle().mySixedBox(),
+            MyStyle().mySixedBox(),
+            MyStyle().mySixedBox(),
             BigText(text: "สถานะการชำระเงิน"),
             MyStyle().mySixedBox(),
-            Container(
-              width: 300,
-              child: DropdownButtonFormField(
-                value: pamentStatus,
-                items: dropdownItemspay,
-                onChanged: (String? value) {
-                  setState(() {
-                    pamentStatus = value!;
-                  });
-                },
-              ),
-            ),MyStyle().mySixedBox(),
+            // Container(
+            //   width: 300,
+            //   child: DropdownButtonFormField(
+            //     value: pamentStatus,
+            //     items: dropdownItemspay,
+            //     onChanged: (String? value) {
+            //       setState(() {
+            //         pamentStatus = value!;
+            //       });
+            //     },
+            //   ),
+            // ),
+            MyStyle().mySixedBox(),
             disTanceWater(),
             usernameOrder(),
             transportWater(),
@@ -184,7 +329,8 @@ class _EditOrderEmpState extends State<EditOrderEmp> {
     showDialog(
       context: context,
       builder: (context) => SimpleDialog(
-        title: MyStyle().showTitleH2('คุณต้องการเปลี่ยนแปลงรายการ\nสั่งซื้อที่ ${orderModel.orderNumber} ใช่ไหม ?'),
+        title: MyStyle().showTitleH2(
+            'คุณต้องการเปลี่ยนแปลงรายการ\nสั่งซื้อที่ ${orderModel.orderNumber} ใช่ไหม ?'),
         children: <Widget>[
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
