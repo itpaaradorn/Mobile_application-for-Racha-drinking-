@@ -298,7 +298,7 @@ class _SaveBillOrderEmpState extends State<SaveBillOrderEmp> {
           SharedPreferences preferences = await SharedPreferences.getInstance();
           String? emp_id = preferences.getString('id');
 
-        String path ='${MyConstant().domain}/WaterShop/addpayment.php?isAdd=true&slip_date_time=$slipDateTime&image_slip=$imageSlip&order_id=none&user_id=$user_id&user_name=$user_name&total=$total&emp_id=$emp_id';
+        String path ='${MyConstant().domain}/WaterShop/addpayment.php?isAdd=true&slip_date_time=$slipDateTime&image_slip=$imageSlip&order_id=${order_id?.replaceAll('#', '%23')}&user_id=$user_id&user_name=$user_name&total=$total&emp_id=$emp_id';
           await Dio().get(path).then((value) => print('upload Sucess'));
         });
       } catch (e) {}

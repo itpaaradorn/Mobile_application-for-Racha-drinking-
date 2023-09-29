@@ -203,7 +203,7 @@ class _OrderListShopState extends State<OrderListShop> {
                         'เวลาสั่งซื้อ : ${listOrder[i].items[0].createAt}'),
                     MyStyle().showTitleH33(
                         'สถานะการชำระเงิน : ${listOrder[i].items[0].paymentStatus}'),
-                    MyStyle().showTitleH33('สถานะการจัดส่ง : รอยืนยัน'),
+                    MyStyle().showTitleH33('สถานะการจัดส่ง : รอยืนยัน ✐'),
                     MyStyle().mySixedBox(),
                     buildTitle(),
                     ListView.builder(

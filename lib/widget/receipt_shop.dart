@@ -133,14 +133,15 @@ class _ReceiptShopState extends State<ReceiptShop> {
                         ),
                       ],
                     ),
-                    Row(
-                      children: [
-                        Text(
-                          'รหัสพนักงาน  \n➤  ${paymentmodels[index].riderId} ',
-                          style: MyStyle().mainh2Title,
-                        ),
-                      ],
-                    ),
+                    const SizedBox(height: 3),
+                    // Row(
+                    //   children: [
+                    //     Text(
+                    //       'รหัสพนักงาน  \n➤  ${paymentmodels[index].empId} ',
+                    //       style: MyStyle().mainh2Title,
+                    //     ),
+                    //   ],
+                    // ),
                     Row(
                       children: [
                         Text(
@@ -149,6 +150,7 @@ class _ReceiptShopState extends State<ReceiptShop> {
                         ),
                       ],
                     ),
+                    const SizedBox(height: 3),
                     Row(
                       children: [
                         Text(
@@ -157,6 +159,7 @@ class _ReceiptShopState extends State<ReceiptShop> {
                         ),
                       ],
                     ),
+                    const SizedBox(height: 3),
                     Row(
                       children: [
                         Text(

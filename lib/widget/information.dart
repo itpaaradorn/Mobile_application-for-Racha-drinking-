@@ -49,7 +49,7 @@ class _InformationState extends State<Information> {
 
   void routeToAddInfo() {
     Widget widget =
-        userModel!.nameShop!.isEmpty ? AddInfoShop() : EditInfoShop();
+        userModel!.address!.isEmpty ? AddInfoShop() : EditInfoShop();
     MaterialPageRoute materialPageRoute = MaterialPageRoute(
       builder: (context) => widget,
     );
@@ -61,14 +61,13 @@ class _InformationState extends State<Information> {
     return Scaffold(
       appBar: AppBar(
          backgroundColor: Colors.white,
-        title: Text('รายละเอียดของร้าน ${userModel?.nameShop}',
+        title: Text('รายละเอียดของร้าน ราชาน้ำดื่ม',
           style: TextStyle(color: Colors.indigo),),
       ),
       body: Stack(
         children: <Widget>[
           userModel == null
-              ? MyStyle().showProgress()
-              : userModel!.nameShop!.isEmpty
+              
                   ? showNodata(context)
                   : showListinfoShop(),
           addAndEditButton(),

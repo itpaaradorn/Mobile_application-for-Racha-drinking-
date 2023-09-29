@@ -2,18 +2,23 @@ import 'dart:io';
 
 import 'package:application_drinking_water_shop/screen/profilepage.dart';
 import 'package:application_drinking_water_shop/screen/show_shop_cart.dart';
+import 'package:application_drinking_water_shop/screen/signIn.dart';
 import 'package:application_drinking_water_shop/utility/my_style.dart';
 import 'package:application_drinking_water_shop/utility/singout_process.dart';
 import 'package:application_drinking_water_shop/widget/historypage.dart';
 
 import 'package:application_drinking_water_shop/widget/show_list_shop.dart';
+import 'package:dio/dio.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../utility/dialog.dart';
+import '../utility/my_constant.dart';
 import '../widget/tab_bar_material.dart';
+import 'admin/main_shop.dart';
+import 'employee/main_emp.dart';
 
 class MainUser extends StatefulWidget {
   @override
@@ -37,6 +42,7 @@ class _MainUserState extends State<MainUser> {
     super.initState();
     aboutNotification();
     findUser();
+    getToken();
     currentWidget = ShowListShop();
   }
 
@@ -78,6 +84,35 @@ class _MainUserState extends State<MainUser> {
     });
   }
 
+
+
+
+
+
+
+
+
+  Future<void> getToken() async {
+    FirebaseMessaging messaging = FirebaseMessaging.instance;
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    String? idLogin = preferences.getString(MyConstant().keyId);
+// use the returned token to send messages to users from your custom server
+    String? token = await messaging.getToken(
+      vapidKey: "BGpdLRs......",
+    );
+    print('token ==> $token');
+    print('idLogin ==> $idLogin');
+
+    if (idLogin != null && idLogin.isNotEmpty) {
+      String url =
+          '${MyConstant().domain}/WaterShop/editTokenWhereId.php?isAdd=true&id=$idLogin&Token=$token';
+      await Dio().get(url).then(
+            (value) => print('##### token update success #####'),
+          );
+    }
+  }
+
+ 
   @override
   Widget build(BuildContext context) {
     return Stack(

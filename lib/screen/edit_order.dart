@@ -7,6 +7,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:toast/toast.dart';
 
 import '../../model/order_model.dart';
 import '../../utility/big_text.dart';
@@ -66,7 +67,7 @@ class _EditOrderEmpState extends State<EditOrderEmp> {
 
   getEditOrder(String order_number) async {
     String url =
-        'http://192.168.1.99/WaterShop/editOrder.php?order_number=${order_number.replaceAll('#', '%23')}';
+        '${MyConstant().domain}/WaterShop/editOrder.php?order_number=${order_number.replaceAll('#', '%23')}';
     print(url);
     Response resp = await Dio().get(url);
 
@@ -96,11 +97,11 @@ class _EditOrderEmpState extends State<EditOrderEmp> {
   }
 
   delete_order_table(id) => Dio().delete(
-      'http://192.168.1.99/WaterShop/deleteOrderTableByOrdernumber.php',
+      '${MyConstant().domain}/WaterShop/deleteOrderTableByOrdernumber.php',
       data: {'id': id});
 
   delete_order_detail(id) =>
-      Dio().delete('http://192.168.1.99/WaterShop/deleteOrderDetail.php',
+      Dio().delete('${MyConstant().domain}/WaterShop/deleteOrderDetail.php',
           data: {'id': id});
 
   add_order_table(EditOrderModel item) async {
@@ -112,13 +113,13 @@ class _EditOrderEmpState extends State<EditOrderEmp> {
       'water_id': item.id,
       'amount': item.amount,
       'sum': sum,
-      'distance': '0',
-      'transport': '0',
+      'distance': masterDate?.distance,
+      'transport': masterDate?.transport,
       'create_by': masterDate?.createBy,
     });
 
     Response resp = await Dio().post(
-        'http://192.168.1.99/WaterShop/addOrderDetail.php',
+        '${MyConstant().domain}/WaterShop/addOrderDetail.php',
         data: formData);
     return resp.data;
   }
@@ -132,7 +133,8 @@ class _EditOrderEmpState extends State<EditOrderEmp> {
       "order_number": masterDate?.orderNumber,
     };
 
-    Dio().post('http://192.168.1.99/WaterShop/addOrderWater.php', data: data);
+    Dio()
+        .post('${MyConstant().domain}/WaterShop/addOrderWater.php', data: data);
   }
 
   ok() async {
@@ -150,43 +152,116 @@ class _EditOrderEmpState extends State<EditOrderEmp> {
         add_order_detail(item, order_detail_id);
       }
     }
+    Navigator.pop(context);
+    Toast.show("แก้ไขคำสั่งซื้อสำเร็จ",
+        duration: Toast.lengthLong, gravity: Toast.bottom);
   }
 
   @override
   Widget build(BuildContext context) {
     // print(dropdownItemspay);
-
+    ToastContext().init(context);
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(
+        title: Text('EditOrder'),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.save),
+            onPressed: () => ok(),
+          )
+        ],
+      ),
       body: Column(
         children: [
-          TextButton(
-            onPressed: () => ok(),
-            child: Text(
-              'ok',
-              style: TextStyle(fontSize: 48),
-            ),
-          ),
+          // TextButton(
+          //   onPressed: () => ok(),
+          //   child: Text(
+          //     'ok',
+          //     style: TextStyle(fontSize: 48),
+          //   ),
+          // ),
           Expanded(
             child: ListView.builder(
               itemCount: listEditOrderModel.length,
               itemBuilder: (context, index) {
-                return Column(
+                return Row(
                   children: [
-                    Text(listEditOrderModel[index].brandName ?? ''),
-                    Text(listEditOrderModel[index].size ?? ''),
-                    Text(listEditOrderModel[index].price ?? ''),
-                    Text(listEditOrderModel[index].amount ?? '0'),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        TextButton(
-                            onPressed: () => delete(index),
-                            child: Text('delete')),
-                        TextButton(
-                            onPressed: () => add(index), child: Text('add')),
-                      ],
+                    showImageManu(context, index),
+                    Container(
+                      width: MediaQuery.of(context).size.width * 0.45,
+                      height: MediaQuery.of(context).size.width * 0.4,
+                      child: SingleChildScrollView(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            MyStyle().mySixedBox(),
+                            Text(
+                              'ยี่ห้อ ${listEditOrderModel[index].brandName ?? ''}',
+                              style: MyStyle().mainSize,
+                            ),
+                            MyStyle().mySixedBox005(),
+                            Text(
+                              'ขนาด ${listEditOrderModel[index].size ?? ''} ml',
+                              style: MyStyle().mainH3Title,
+                            ),
+                            MyStyle().mySixedBox005(),
+                            Text(
+                              'ราคา ${listEditOrderModel[index].price ?? ''} บาท',
+                              style: MyStyle().mainH3Title,
+                            ),
+                            MyStyle().mySixedBox05(),
+                            Text(
+                              'สั่งซื้อ ${listEditOrderModel[index].amount ?? ''}',
+                              style: MyStyle().mainhPTitle,
+                            ),
+                            const SizedBox(height: 3),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                // TextButton(
+                                //     onPressed: () => delete(index),
+                                //     child: Text('delete')),
+                                IconButton(
+                                  icon: Icon(
+                                    Icons.remove_circle,
+                                    size: 30,
+                                    color: Colors.red,
+                                  ),
+                                  onPressed: () => delete(index),
+                                ),
+
+                                IconButton(
+                                  icon: Icon(
+                                    Icons.add_circle,
+                                    size: 30,
+                                    color: Colors.blue,
+                                  ),
+                                  onPressed: () => add(index),
+                                ),
+
+                                // TextButton(
+                                //     onPressed: () => add(index),
+                                //     child: Text('add')),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
                     ),
+                    // Text(listEditOrderModel[index].brandName ?? ''),
+                    // Text(listEditOrderModel[index].size ?? ''),
+                    // Text(listEditOrderModel[index].price ?? ''),
+                    // Text(listEditOrderModel[index].amount ?? '0'),
+                    // Row(
+                    //   mainAxisAlignment: MainAxisAlignment.center,
+                    //   children: [
+                    //     TextButton(
+                    //         onPressed: () => delete(index),
+                    //         child: Text('delete')),
+                    //     TextButton(
+                    //         onPressed: () => add(index), child: Text('add')),
+                    //   ],
+                    // ),
                     const SizedBox(height: 60),
                   ],
                 );
@@ -196,54 +271,23 @@ class _EditOrderEmpState extends State<EditOrderEmp> {
         ],
       ),
     );
+  }
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Edit Order_id: ${orderModel.orderNumber}'),
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            MyStyle().mySixedBox(),
-            MyStyle().mySixedBox(),
-            BigText(text: "สถานะจัดส่ง"),
-            MyStyle().mySixedBox(),
-            Container(
-              width: 300,
-              child: DropdownButtonFormField(
-                value: status,
-                items: dropdownItems,
-                onChanged: (String? value) {
-                  setState(() {
-                    status = value!;
-                  });
-                },
-              ),
+  // Image showImageManu(int index) => Image.network(
+  //       '${MyConstant().domain}${listEditOrderModel[index].pathImage}',
+  //     );
+
+  Container showImageManu(BuildContext context, int index) {
+    return Container(
+      margin: EdgeInsets.only(right: 8.0, left: 8.0, top: 15.0),
+      width: MediaQuery.of(context).size.width * 0.5 - 16,
+      height: MediaQuery.of(context).size.width * 0.45,
+      decoration: BoxDecoration(
+        image: DecorationImage(
+            image: NetworkImage(
+              '${MyConstant().domain}${listEditOrderModel[index].pathImage}',
             ),
-            MyStyle().mySixedBox(),
-            MyStyle().mySixedBox(),
-            BigText(text: "สถานะการชำระเงิน"),
-            MyStyle().mySixedBox(),
-            // Container(
-            //   width: 300,
-            //   child: DropdownButtonFormField(
-            //     value: pamentStatus,
-            //     items: dropdownItemspay,
-            //     onChanged: (String? value) {
-            //       setState(() {
-            //         pamentStatus = value!;
-            //       });
-            //     },
-            //   ),
-            // ),
-            MyStyle().mySixedBox(),
-            disTanceWater(),
-            usernameOrder(),
-            transportWater(),
-            MyStyle().mySixedBox(),
-            saveButton(),
-          ],
-        ),
+            fit: BoxFit.cover),
       ),
     );
   }

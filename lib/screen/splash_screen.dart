@@ -102,7 +102,7 @@ class _SplashScreenState extends State<SplashScreen> {
       String url =
           '${MyConstant().domain}/WaterShop/editTokenWhereId.php?isAdd=true&id=$idLogin&Token=$token';
       await Dio().get(url).then(
-            (value) => print('##### token update success #####'),
+            (value) => '',
           );
     }
   }

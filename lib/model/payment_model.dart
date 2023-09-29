@@ -6,7 +6,7 @@ class PaymentModels {
   String? userId;
   String? userName;
   String? total;
-  String? riderId;
+  String? empId;
 
   PaymentModels(
       {this.payId,
@@ -16,7 +16,7 @@ class PaymentModels {
       this.userId,
       this.userName,
       this.total,
-      this.riderId});
+      this.empId});
 
   PaymentModels.fromJson(Map<String, dynamic> json) {
     payId = json['pay_id'];
@@ -26,7 +26,7 @@ class PaymentModels {
     userId = json['user_id'];
     userName = json['user_name'];
     total = json['total'];
-    riderId = json['rider_id'];
+    empId = json['emp_id'];
   }
 
   Map<String, dynamic> toJson() {
@@ -38,7 +38,7 @@ class PaymentModels {
     data['user_id'] = this.userId;
     data['user_name'] = this.userName;
     data['total'] = this.total;
-    data['rider_id'] = this.riderId;
+    data['emp_id'] = this.empId;
     return data;
   }
 }

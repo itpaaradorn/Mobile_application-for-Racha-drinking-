@@ -138,10 +138,10 @@ class _OrderConfirmShopState extends State<OrderConfirmShop> {
 
   Future<void> _createPDF(int index) async {
     PdfDocument document = PdfDocument();
+    
     var page = document.pages.add();
 
-    drawGrid(
-        index, page, listAmounts, listnameWater, listPrices, listSums, totals);
+    drawGrid(index, page,listOrder);
     Imagebill(page, index, ordermodels);
     Detailbill(page, index, ordermodels);
 
@@ -190,30 +190,35 @@ class _OrderConfirmShopState extends State<OrderConfirmShop> {
     );
   }
 
-  static void drawGrid(int index, PdfPage page, List listAmounts, listnameWater,
-      listPrices, listSums, totals) {
+  static void drawGrid(int index, PdfPage page,listOrder ) {
     final grid = PdfGrid();
     grid.columns.add(count: 4);
 
-    final headerRow = grid.headers.add(1)[0];
-    headerRow.style.backgroundBrush = PdfSolidBrush(PdfColor(0, 0, 122));
+    final headerRow = grid.headers.add(3)[0];
+    headerRow.style.backgroundBrush = PdfSolidBrush(PdfColor(90, 100, 90));
     headerRow.style.textBrush = PdfBrushes.white;
-    headerRow.cells[0].value = 'Amount';
-    headerRow.cells[1].value = 'Brand';
-    headerRow.cells[2].value = 'Price';
-    headerRow.cells[3].value = 'Total';
+    headerRow.cells[0].value = ' Amount';
+    headerRow.cells[1].value = ' Brand';
+    headerRow.cells[2].value = ' Price';
+    headerRow.cells[3].value = ' Total';
     headerRow.style.font =
-        PdfStandardFont(PdfFontFamily.helvetica, 20, style: PdfFontStyle.bold);
+        PdfStandardFont(PdfFontFamily.helvetica, 22, style: PdfFontStyle.regular);
 
     final row = grid.rows.add();
     row.style.font =
-        PdfStandardFont(PdfFontFamily.helvetica, 20, style: PdfFontStyle.bold);
+        PdfStandardFont(PdfFontFamily.helvetica, 21, style: PdfFontStyle.regular);
     // ignore: unnecessary_null_comparison
-    if (listAmounts != null) {
-      row.cells[0].value = '${listAmounts[index]}';
-      row.cells[1].value = '${listnameWater[index]}';
-      row.cells[2].value = '${listPrices[index]}';
-      row.cells[3].value = '${totals[index]}';
+    if (listOrder != null) {
+      List<OrderModel> items = listOrder[index].items;
+      // row.cells[0].value = '  ${listOrder[index].items[0].amount}x';
+      row.cells[0].value = '  ${items[index].amount ?? ''}x';
+      // row.cells[1].value = '   ${listOrder[index].items[0].brandName}';
+      row.cells[1].value = '   ${items[index].brandName ?? ''}';
+      // row.cells[2].value = '   ${listOrder[index].items[0].price}';
+      row.cells[2].value = '   ${items[index].price ?? ''}';
+      row.cells[3].value = '   ${listOrder[index].items.fold(0, (previous, current) => previous + int.parse(current.sum ?? '0'))}';
+
+      print(' =>>>> $items');
     }
 
     for (var i = 0; i < headerRow.cells.count; i++) {
@@ -222,6 +227,8 @@ class _OrderConfirmShopState extends State<OrderConfirmShop> {
     }
 
     grid.draw(page: page, bounds: Rect.fromLTWH(0, 205, 0, 0));
+
+    
   }
 
   Future<void> saveAndLanchFile(List<int> bytes, String filename) async {
@@ -231,18 +238,7 @@ class _OrderConfirmShopState extends State<OrderConfirmShop> {
     OpenFile.open('$path/$filename');
   }
 
-  List<String> changeArray(String string) {
-    List<String> list = [];
-    String myString = string.substring(1, string.length - 1);
-    print('myString = $myString');
-    list = myString.split(',');
-    int index = 0;
-    for (var string in list) {
-      list[index] = string.trim();
-      index++;
-    }
-    return list;
-  }
+  
 
   Widget showListOrderWater() {
     return ListView.builder(
@@ -275,7 +271,7 @@ class _OrderConfirmShopState extends State<OrderConfirmShop> {
                     'คำสั่งซื้อ : ${listOrder[i].items[0].orderNumber}'),
                 MyStyle().showTitleH33(
                     'สถานะการชำระเงิน : ${listOrder[i].items[0].paymentStatus}'),
-                MyStyle().showTitleH33('สถานะการจัดส่ง : สำเร็จ'),
+                MyStyle().showTitleH33('สถานะการจัดส่ง : สำเร็จ ✔'),
                 MyStyle().mySixedBox(),
                 buildTitle(),
                 ListView.builder(
@@ -331,7 +327,7 @@ class _OrderConfirmShopState extends State<OrderConfirmShop> {
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
                             Text(
-                              'รวมทั้งหมด :',
+                              'รวมทั้งสิ้น :',
                               style: MyStyle().mainh1Title,
                             ),
                           ],

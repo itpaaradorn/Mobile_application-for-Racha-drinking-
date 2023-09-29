@@ -150,7 +150,7 @@ class _OrderProcessShopState extends State<OrderProcessShop> {
                     'เวลาสั่งซื้อ : ${listOrder[i].items[0].createAt}'),
                 MyStyle().showTitleH33(
                     'สถานะการชำระเงิน : ${listOrder[i].items[0].paymentStatus}'),
-                MyStyle().showTitleH33('สถานะการจัดส่ง : รอยืนยัน'),
+                MyStyle().showTitleH33('สถานะการจัดส่ง : กำลังจัดส่ง ✈'),
                 MyStyle().mySixedBox(),
                 buildTitle(),
                 ListView.builder(
@@ -206,7 +206,7 @@ class _OrderProcessShopState extends State<OrderProcessShop> {
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
                             Text(
-                              'รวมทั้งหมด :',
+                              'รวมทั้งสิ้น :',
                               style: MyStyle().mainh1Title,
                             ),
                           ],

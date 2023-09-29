@@ -87,7 +87,7 @@ class _EditInfoShopState extends State<EditInfoShop> {
   Widget showContet() => SingleChildScrollView(
         child: Column(
           children: [
-            nameShopFrom(),
+            // nameShopFrom(),
             showImage(),
             addressFrom(),
             phoneFrom(),
@@ -200,7 +200,7 @@ class _EditInfoShopState extends State<EditInfoShop> {
   Container showMap() {
     return Container(
       margin: EdgeInsets.only(top: 16.0),
-      height: 250,
+      height: 540,
       child: GoogleMap(
         initialCameraPosition: CameraPosition(
           target: LatLng(lat!, lng!),

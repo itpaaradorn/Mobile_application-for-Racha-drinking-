@@ -10,6 +10,8 @@ class EditOrderModel {
   String? orderNumber;
   String? orderDetailId;
   String? amount;
+  String? distance;
+  String? transport;
   String? paymentStatus;
   String? createBy;
 
@@ -25,6 +27,8 @@ class EditOrderModel {
       this.orderNumber,
       this.orderDetailId,
       this.amount,
+      this.distance,
+      this.transport,
       this.paymentStatus,
       this.createBy});
 
@@ -40,6 +44,8 @@ class EditOrderModel {
     orderNumber = json['order_number'];
     orderDetailId = json['order_detail_id'];
     amount = json['amount'];
+    distance = json['distance'];
+    transport = json['transport'];
     paymentStatus = json['payment_status'];
     createBy = json['create_by'];
   }
@@ -57,7 +63,10 @@ class EditOrderModel {
     data['order_number'] = this.orderNumber;
     data['order_detail_id'] = this.orderDetailId;
     data['amount'] = this.amount;
+    data['distance'] = this.distance;
+    data['transport'] = this.transport;
     data['payment_status'] = this.paymentStatus;
+    data['create_by'] = this.createBy;
     return data;
   }
 }

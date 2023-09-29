@@ -7,6 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../model/order_model.dart';
 import '../model/user_model.dart';
 import '../screen/add_order.dart';
+import '../screen/edit_order.dart';
 import '../screen/employee/follow_map_emp.dart';
 import '../utility/my_constant.dart';
 import '../utility/my_style.dart';
@@ -90,11 +91,11 @@ class _OrderConfirmEmpState extends State<OrderConfirmEmp> {
                 padding: EdgeInsets.only(bottom: 16.0, right: 16.0),
                 child: FloatingActionButton(
                   onPressed: () {
-                    // MaterialPageRoute route = MaterialPageRoute(
-                    //   builder: (context) => AddOrderEmpAndShop(),
-                    // );
-                    // Navigator.push(context, route)
-                    //     .then((value) => findOrderShop());
+                    MaterialPageRoute route = MaterialPageRoute(
+                      builder: (context) => addOrderShop(),
+                    );
+                    Navigator.push(context, route)
+                        .then((value) => findOrderShop());
                   },
                   child: Icon(Icons.add),
                 ),
@@ -295,7 +296,7 @@ class _OrderConfirmEmpState extends State<OrderConfirmEmp> {
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
                                 Text(
-                                  'รวมทั้งหมด :',
+                                  'รวมทั้งสิ้น :',
                                   style: MyStyle().mainh1Title,
                                 ),
                               ],
@@ -325,14 +326,14 @@ class _OrderConfirmEmpState extends State<OrderConfirmEmp> {
                         if (listOrder[i].items[0].status != 'Cancel') ...[
                           ElevatedButton(
                             onPressed: () {
-                              // MaterialPageRoute route = MaterialPageRoute(
-                              //   builder: (context) => EditOrderEmp(
-                              //     orderModel: ordermodels[i],
-                              //   ),
-                              // );
-                              // Navigator.push(context, route).then(
-                              //   (value) => findOrderShop(),
-                              // );
+                              MaterialPageRoute route = MaterialPageRoute(
+                                builder: (context) => EditOrderEmp(
+                                  orderModel: ordermodels[i],
+                                ),
+                              );
+                              Navigator.push(context, route).then(
+                                (value) => findOrderShop(),
+                              );
                             },
                             child: Text("แก้ไข"),
                           ),
