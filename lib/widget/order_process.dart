@@ -110,11 +110,11 @@ class _OrderProcessShopState extends State<OrderProcessShop> {
         Map<String, List<OrderModel>> items = {};
 
         ordermodels.forEach((elem) {
-          if (items[elem.orderNumber] == null) {
-            items[elem.orderNumber as String] = [];
+          if (items[elem.orderTableId] == null) {
+            items[elem.orderTableId as String] = [];
           }
 
-          items[elem.orderNumber as String]?.add(elem);
+          items[elem.orderTableId as String]?.add(elem);
         });
 
         items.forEach((key, value) =>
@@ -145,7 +145,7 @@ class _OrderProcessShopState extends State<OrderProcessShop> {
               children: [
                 MyStyle().showTitleH2('คุณ ${listOrder[i].items[0].name}'),
                 MyStyle().showTitleH33(
-                    'คำสั่งซื้อ : ${listOrder[i].items[0].orderNumber}'),
+                    'คำสั่งซื้อ : ${listOrder[i].items[0].orderTableId}'),
                 MyStyle().showTitleH33(
                     'เวลาสั่งซื้อ : ${listOrder[i].items[0].createAt}'),
                 MyStyle().showTitleH33(

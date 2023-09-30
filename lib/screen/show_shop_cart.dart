@@ -2,6 +2,11 @@ import 'dart:convert';
 
 import 'package:application_drinking_water_shop/model/water_model.dart';
 import 'package:application_drinking_water_shop/screen/payment.dart';
+import 'package:application_drinking_water_shop/services/add_order.dart';
+import 'package:application_drinking_water_shop/services/delete_order.dart';
+import 'package:application_drinking_water_shop/services/get_cart.dart';
+import 'package:application_drinking_water_shop/services/get_last_order_id.dart';
+import 'package:application_drinking_water_shop/services/updateorder_status.dart';
 import 'package:application_drinking_water_shop/utility/my_constant.dart';
 import 'package:application_drinking_water_shop/utility/my_style.dart';
 import 'package:application_drinking_water_shop/utility/dialog.dart';
@@ -67,40 +72,67 @@ class _ShowCartState extends State<ShowCart> {
       orderDetails.clear();
     }
 
-    SharedPreferences preferences = await SharedPreferences.getInstance();
+    Response resp = await getCartApi();
 
-    String? create_by = preferences.getString('id');
-    // print('idShop =>>> $idShop');
+    setState(() {
+      status = false;
+    });
 
-    String url =
-        '${MyConstant().domain}/WaterShop/getOrderDetail_WhereIdUser.php?create_by=$create_by';
-    await Dio().get(url).then((value) {
-      setState(() {
-        status = false;
-      });
+    if (resp.toString() != 'null') {
+      // print('resp =>> $resp');
+      var result = json.decode(resp.data);
+      // print('result ==>> $result');
 
-      if (value.toString() != 'null') {
-        // print('value =>> $value');
-        var result = json.decode(value.data);
-        print('result ==>> $result');
+      for (var map in result) {
+        OrderDetail orderdetail = OrderDetail.fromJson(map);
+        String sumString = orderdetail.sum!;
 
-        for (var map in result) {
-          OrderDetail orderdetail = OrderDetail.fromJson(map);
-          String sumString = orderdetail.sum!;
+        int sumInt = int.parse(sumString);
 
-          int sumInt = int.parse(sumString);
-
-          setState(() {
-            orderDetails.add(orderdetail);
-            total = total + sumInt;
-          });
-        }
-      } else {
         setState(() {
-          status = true;
+          orderDetails.add(orderdetail);
+          total = total + sumInt;
         });
       }
-    });
+    } else {
+      setState(() {
+        status = true;
+      });
+    }
+
+    // SharedPreferences preferences = await SharedPreferences.getInstance();
+    // String? create_by = preferences.getString('id');
+    // print('idShop =>>> $idShop');
+
+    // String url =
+    //     '${MyConstant().domain}/WaterShop/getOrderDetail_WhereIdUser.php?create_by=$create_by';
+    // await Dio().get(url).then((value) {
+    //   setState(() {
+    //     status = false;
+    //   });
+
+    //   if (value.toString() != 'null') {
+    //     // print('value =>> $value');
+    //     var result = json.decode(value.data);
+    //     print('result ==>> $result');
+
+    //     for (var map in result) {
+    //       OrderDetail orderdetail = OrderDetail.fromJson(map);
+    //       String sumString = orderdetail.sum!;
+
+    //       int sumInt = int.parse(sumString);
+
+    //       setState(() {
+    //         orderDetails.add(orderdetail);
+    //         total = total + sumInt;
+    //       });
+    //     }
+    //   } else {
+    //     setState(() {
+    //       status = true;
+    //     });
+    //   }
+    // });
   }
 
   @override
@@ -141,8 +173,6 @@ class _ShowCartState extends State<ShowCart> {
     );
   }
 
-  
-
   Widget buildOrderButton() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.end,
@@ -171,7 +201,7 @@ class _ShowCartState extends State<ShowCart> {
           child: ElevatedButton.icon(
             onPressed: () {
               MaterialPageRoute route = MaterialPageRoute(
-                builder: (context) => Bank(),
+                builder: (context) => Bank(order_id: orderDetails[0].id ?? ''),
               );
               Navigator.push(context, route);
             },
@@ -347,12 +377,14 @@ class _ShowCartState extends State<ShowCart> {
     // String? url =
     //     'http://192.168.1.99/WaterShop/deleteOrderDetail.php?id=${orderdetail.id}';
 
-    String url = 'http://192.168.1.99/WaterShop/deleteOrderDetail.php';
+    // String url = 'http://192.168.1.99/WaterShop/deleteOrderDetail.php';
 
-    Response resp = await Dio().delete(url, data: {'id': orderdetail.id});
+    // Response resp = await Dio().delete(url, data: {'id': orderdetail.id});
 
-    print(resp.statusCode);
-    print(resp.statusMessage);
+    // print(resp.statusCode);
+    // print(resp.statusMessage);
+
+    Response resp = await deleteOrderCardApi(orderdetail: orderdetail);
 
     if (resp.statusCode == 200) {
       readOrderFormIdUser();
@@ -405,25 +437,42 @@ class _ShowCartState extends State<ShowCart> {
     //   print(
     //       'water_id == $water_id, water_brand_id == $water_brand_id, size == $size, water_brand_name == $water_brand_name, price == $price, amount == $amount, sum == $sum ');
 
-    DateTime now = DateTime.now();
+    // DateTime now = DateTime.now();
 
-    String orderNumber = "$user_id#${now.year}${prepareDigit(now.month)}${prepareDigit(now.day)}${prepareDigit(now.hour)}${prepareDigit(now.minute)}${prepareDigit(now.second)}";
+    // String orderNumber = "$user_id#${now.year}${prepareDigit(now.month)}${prepareDigit(now.day)}${prepareDigit(now.hour)}${prepareDigit(now.minute)}${prepareDigit(now.second)}";
 
-    String? url = 'http://192.168.1.99/WaterShop/addOrderWater.php';
+    // String? url = 'http://192.168.1.99/WaterShop/addOrderWater.php';
 
-    for (var i = 0; i < orderDetails.length; i++) {
-      Map<String, String> _map = {
-        "create_by": user_id.toString(),
-        "emp_id": "none",
-        "payment_status": "เก็บเงินปลายทาง",
-        "order_detail_id": orderDetails[i].id.toString(),
-        "order_number": orderNumber,
-      };
+    // for (var i = 0; i < orderDetails.length; i++) {
+    //   Map<String, String> _map = {
+    //     "create_by": user_id.toString(),
+    //     "emp_id": "none",
+    //     "payment_status": "เก็บเงินปลายทาง",
+    //     "order_detail_id": orderDetails[i].id.toString(),
+    //     "order_number": orderNumber,
+    //   };
 
-      Response response = await Dio().post(url, data: _map);
-      print('response = ${response.statusCode}');
-      print('response = ${response.data}');
-    }
+    //   Response response = await Dio().post(url, data: _map);
+    //   print('response = ${response.statusCode}');
+    //   print('response = ${response.data}');
+    // }
+
+    // Response resp = await getLastOrderId();
+
+    // int? order_id = resp.data;
+
+    // if (order_id == "null") {
+    //   resp = await addOrderWaterApi();
+    //   print('addOrderWaterApi');
+    //   print(resp.data);
+    // }
+
+    Response resp = await updateOrderStatus(
+      emp_id: '0',
+      order_id: orderDetails[0].id ?? '0',
+      payment_status: 'เก็บเงินปลายทาง',
+    );
+
     notificationToShop(user_name!);
 
     setState(() {
@@ -470,9 +519,8 @@ class _ShowCartState extends State<ShowCart> {
     });
   }
 
- 
   Future<Null> sendNotificationToShop(String urlSendToken) async {
-    await Dio().get(urlSendToken).then((value) =>AwesomeDialog(
+    await Dio().get(urlSendToken).then((value) => AwesomeDialog(
           context: context,
           animType: AnimType.bottomSlide,
           dialogType: DialogType.success,

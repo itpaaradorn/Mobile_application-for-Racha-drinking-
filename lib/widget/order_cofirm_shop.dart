@@ -115,11 +115,11 @@ class _OrderConfirmShopState extends State<OrderConfirmShop> {
         Map<String, List<OrderModel>> items = {};
 
         ordermodels.forEach((elem) {
-          if (items[elem.orderNumber] == null) {
-            items[elem.orderNumber as String] = [];
+          if (items[elem.orderTableId] == null) {
+            items[elem.orderTableId as String] = [];
           }
 
-          items[elem.orderNumber as String]?.add(elem);
+          items[elem.orderTableId as String]?.add(elem);
         });
 
         items.forEach((key, value) =>
@@ -268,7 +268,7 @@ class _OrderConfirmShopState extends State<OrderConfirmShop> {
                   ],
                 ),
                 MyStyle().showTitleH33(
-                    'คำสั่งซื้อ : ${listOrder[i].items[0].orderNumber}'),
+                    'คำสั่งซื้อ : ${listOrder[i].items[0].orderTableId}'),
                 MyStyle().showTitleH33(
                     'สถานะการชำระเงิน : ${listOrder[i].items[0].paymentStatus}'),
                 MyStyle().showTitleH33('สถานะการจัดส่ง : สำเร็จ ✔'),

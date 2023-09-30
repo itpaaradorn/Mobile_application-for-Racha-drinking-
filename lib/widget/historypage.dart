@@ -380,19 +380,19 @@ class _HistoryState extends State<History> {
   // }
 
   Future<Null> cancleOrderUser(int index) async {
-    String orderNumber = '${listOrder[index].items[0].orderNumber}';
+    String order_id = '${listOrder[index].items[0].orderTableId}';
     String path = '${MyConstant().domain}WaterShop/editStatusWhereuser_id.php';
-    // print(orderNumber);
+    // print(order_id);
     // print(path);
 
-    await Dio().put(path,
-        data: {'status': 'Cancel', 'order_number': orderNumber}).then(
+    await Dio()
+        .put(path, data: {'status': 'Cancel', 'order_id': order_id}).then(
       (value) {
         if (value.toString() == 'true') {
           readOrderFormIdUser();
           refresh();
           normalDialogChack(context, 'ยกเลิกรายการสั่งซื้อสำเร็จ',
-              'รายการสั่งซื้อที่ $orderNumber');
+              'รายการสั่งซื้อที่ $order_id');
         }
       },
     );
@@ -666,11 +666,11 @@ class _HistoryState extends State<History> {
       Map<String, List<HistoryModel>> items = {};
 
       ordermodels.forEach((elem) {
-        if (items[elem.orderNumber] == null) {
-          items[elem.orderNumber as String] = [];
+        if (items[elem.orderTableId] == null) {
+          items[elem.orderTableId as String] = [];
         }
 
-        items[elem.orderNumber as String]?.add(elem);
+        items[elem.orderTableId as String]?.add(elem);
       });
 
       listOrder.clear();

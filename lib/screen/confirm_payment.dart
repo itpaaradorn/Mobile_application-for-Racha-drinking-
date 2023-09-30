@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 
+import 'package:application_drinking_water_shop/services/updateorder_status.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -21,6 +22,10 @@ import '../utility/sqlite_helper.dart';
 import 'main_user.dart';
 
 class ConfirmPayment extends StatefulWidget {
+  final String order_id;
+
+  const ConfirmPayment({super.key, required this.order_id});
+  
   @override
   State<ConfirmPayment> createState() => _ConfirmPaymentState();
 }
@@ -37,7 +42,7 @@ class _ConfirmPaymentState extends State<ConfirmPayment> {
     // TODO: implement initState
     super.initState();
     findCurrentTime();
-    readOrderFormIdUser();
+    // readOrderFormIdUser();
   }
 
   void findCurrentTime() {
@@ -49,46 +54,46 @@ class _ConfirmPaymentState extends State<ConfirmPayment> {
     // print('datetime ==> $dateTime');
   }
 
-  Future<Null> readOrderFormIdUser() async {
-    if (orderDetails.length != 0) {
-      orderDetails.clear();
-    }
+  // Future<Null> readOrderFormIdUser() async {
+  //   if (orderDetails.length != 0) {
+  //     orderDetails.clear();
+  //   }
 
-    SharedPreferences preferences = await SharedPreferences.getInstance();
+  //   SharedPreferences preferences = await SharedPreferences.getInstance();
 
-    String? create_by = preferences.getString('id');
-    // print('idShop =>>> $idShop');
+  //   String? create_by = preferences.getString('id');
+  //   // print('idShop =>>> $idShop');
 
-    String url =
-        '${MyConstant().domain}/WaterShop/getOrderDetail_WhereIdUser.php?create_by=$create_by';
-    await Dio().get(url).then((value) {
-      setState(() {
-        status = false;
-      });
+  //   String url =
+  //       '${MyConstant().domain}/WaterShop/getOrderDetail_WhereIdUser.php?create_by=$create_by';
+  //   await Dio().get(url).then((value) {
+  //     setState(() {
+  //       status = false;
+  //     });
 
-      if (value.toString() != 'null') {
-        // print('value =>> $value');
-        var result = json.decode(value.data);
-        print('result ==>> $result');
+  //     if (value.toString() != 'null') {
+  //       // print('value =>> $value');
+  //       var result = json.decode(value.data);
+  //       print('result ==>> $result');
 
-        for (var map in result) {
-          OrderDetail orderdetail = OrderDetail.fromJson(map);
-          String sumString = orderdetail.sum!;
+  //       for (var map in result) {
+  //         OrderDetail orderdetail = OrderDetail.fromJson(map);
+  //         String sumString = orderdetail.sum!;
 
-          int sumInt = int.parse(sumString);
+  //         int sumInt = int.parse(sumString);
 
-          setState(() {
-            orderDetails.add(orderdetail);
-            total = total + sumInt;
-          });
-        }
-      } else {
-        setState(() {
-          status = true;
-        });
-      }
-    });
-  }
+  //         setState(() {
+  //           orderDetails.add(orderdetail);
+  //           total = total + sumInt;
+  //         });
+  //       }
+  //     } else {
+  //       setState(() {
+  //         status = true;
+  //       });
+  //     }
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -139,21 +144,22 @@ class _ConfirmPaymentState extends State<ConfirmPayment> {
             orderThread();
           } else {
             AwesomeDialog(
-            context: context,
-            animType: AnimType.bottomSlide,
-            dialogType: DialogType.warning,
-            body: Center(
-              child: Text(
-                "กรุณาแนบใบเสร็จก่อนสั่งซื้อ!",
-                style: TextStyle(fontStyle: FontStyle.normal , fontWeight: FontWeight.bold),
+              context: context,
+              animType: AnimType.bottomSlide,
+              dialogType: DialogType.warning,
+              body: Center(
+                child: Text(
+                  "กรุณาแนบใบเสร็จก่อนสั่งซื้อ!",
+                  style: TextStyle(
+                      fontStyle: FontStyle.normal, fontWeight: FontWeight.bold),
+                ),
               ),
-            ),
-            title: 'This is Ignored',
-            desc: 'This is also Ignored',
-            btnOkOnPress: () {
-              // Navigator.pop(context);
-            },
-          ).show();
+              title: 'This is Ignored',
+              desc: 'This is also Ignored',
+              btnOkOnPress: () {
+                // Navigator.pop(context);
+              },
+            ).show();
           }
         },
         child: Text('ยืนยันการชำระเงินสั่งซื้อ'),
@@ -162,13 +168,13 @@ class _ConfirmPaymentState extends State<ConfirmPayment> {
   }
 
   Future<void> processUploadInsertData() async {
- 
     String apisaveSlip = '${MyConstant().domain}/WaterShop/saveSlip.php';
     String nameSlip = 'slip${Random().nextInt(1000000)}.jpg';
 
     try {
       Map<String, dynamic> map = {};
-      map['file'] = await MultipartFile.fromFile(file!.path, filename: nameSlip);
+      map['file'] =
+          await MultipartFile.fromFile(file!.path, filename: nameSlip);
       FormData data = FormData.fromMap(map);
       await Dio().post(apisaveSlip, data: data).then((value) async {
         String imageSlip = '/WaterShop/Slip/$nameSlip';
@@ -179,7 +185,8 @@ class _ConfirmPaymentState extends State<ConfirmPayment> {
         SharedPreferences preferences = await SharedPreferences.getInstance();
         String? userId = preferences.getString('id');
         String? userName = preferences.getString('Name');
-        String path ='${MyConstant().domain}/WaterShop/addpayment.php?isAdd=true&slip_date_time=$slipDateTime&image_slip=$imageSlip&order_id=none&user_id=$userId&user_name=$userName&total=&emp_id=none';
+        String path =
+            '${MyConstant().domain}/WaterShop/addpayment.php?isAdd=true&slip_date_time=$slipDateTime&image_slip=$imageSlip&order_id=none&user_id=$userId&user_name=$userName&total=&emp_id=none';
         //     // '${MyConstant().domain}/WaterShop/addpayment.php?isAdd=true&slip_date_time=$slipDateTime&image_slip=$imageSlip&order_id=none&user_id=$userId&user_name=$userName&rider_id=none';
         await Dio().get(path).then((value) => print('upload Sucess'));
       });
@@ -247,39 +254,55 @@ class _ConfirmPaymentState extends State<ConfirmPayment> {
   }
 
   Future<Null> orderThread() async {
+    Response resp = await updateOrderStatus(
+      emp_id: '0',
+      order_id: widget.order_id,
+      payment_status: 'ชำระเงินล่วงหน้าแล้ว',
+    );
+
     SharedPreferences preferences = await SharedPreferences.getInstance();
-    String? user_id = preferences.getString('id');
+    // String? user_id = preferences.getString('id');
     String? user_name = preferences.getString('Name');
-
-    String? url = '${MyConstant().domain}/WaterShop/addOrderWater.php';
-
-    DateTime now = DateTime.now();
-    String orderNumber =
-        "$user_id#${now.year}${prepareDigit(now.month)}${prepareDigit(now.day)}${prepareDigit(now.hour)}${prepareDigit(now.minute)}${prepareDigit(now.second)}";
-
-    for (var i = 0; i < orderDetails.length; i++) {
-      Map<String, String> _map = {
-        "create_by": user_id.toString(),
-        "emp_id": "none",
-        "payment_status": "ชำระเงินล่วงหน้าแล้ว",
-        "order_detail_id": orderDetails[i].id.toString(),
-        "order_number": orderNumber,
-      };
-
-      Response response = await Dio().post(url, data: _map);
-      // print('response = ${response.statusCode}');
-      // print('response = ${response.data}');
-    }
 
     notificationTosShop(user_name!);
     processUploadInsertData();
-
-    
 
     setState(() {
       status = true;
       orderDetails = [];
     });
+
+    // SharedPreferences preferences = await SharedPreferences.getInstance();
+    // String? user_id = preferences.getString('id');
+    // String? user_name = preferences.getString('Name');
+
+    // String? url = '${MyConstant().domain}/WaterShop/addOrderWater.php';
+
+    // DateTime now = DateTime.now();
+    // String orderNumber =
+    //     "$user_id#${now.year}${prepareDigit(now.month)}${prepareDigit(now.day)}${prepareDigit(now.hour)}${prepareDigit(now.minute)}${prepareDigit(now.second)}";
+
+    // for (var i = 0; i < orderDetails.length; i++) {
+    //   Map<String, String> _map = {
+    //     "create_by": user_id.toString(),
+    //     "emp_id": "none",
+    //     "payment_status": "ชำระเงินล่วงหน้าแล้ว",
+    //     "order_detail_id": orderDetails[i].id.toString(),
+    //     "order_number": orderNumber,
+    //   };
+
+    //   Response response = await Dio().post(url, data: _map);
+    //   // print('response = ${response.statusCode}');
+    //   // print('response = ${response.data}');
+    // }
+
+    // notificationTosShop(user_name!);
+    // processUploadInsertData();
+
+    // setState(() {
+    //   status = true;
+    //   orderDetails = [];
+    // });
 
     // await Dio().get(url).then((value) {
     //   if (value.toString() == 'true') {
@@ -297,7 +320,7 @@ class _ConfirmPaymentState extends State<ConfirmPayment> {
       (value) {
         Toast.show("ทำรายการสั่งซื้อ เสร็จสิ้น",
             duration: Toast.lengthLong, gravity: Toast.bottom);
-        readOrderFormIdUser();
+        // readOrderFormIdUser();
       },
     );
   }

@@ -6,7 +6,9 @@ import 'confirm_payment.dart';
 
 
 class Bank extends StatefulWidget {
-  const Bank({super.key});
+  final String order_id;
+
+  const Bank({super.key, required this.order_id});
 
   @override
   _BankState createState() => _BankState();
@@ -86,7 +88,7 @@ class _BankState extends State<Bank> {
                 child: Icon(Icons.receipt),
                 onPressed: () {
                   MaterialPageRoute route = MaterialPageRoute(
-                    builder: (context) => ConfirmPayment(),
+                    builder: (context) => ConfirmPayment(order_id: widget.order_id),
                   );
                   Navigator.push(context, route);
                 },

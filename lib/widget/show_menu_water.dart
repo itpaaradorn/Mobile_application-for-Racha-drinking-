@@ -4,6 +4,8 @@ import 'package:application_drinking_water_shop/model/brand_model.dart';
 import 'package:application_drinking_water_shop/model/cart_model.dart';
 import 'package:application_drinking_water_shop/model/user_model.dart';
 import 'package:application_drinking_water_shop/model/water_model.dart';
+import 'package:application_drinking_water_shop/services/add_order.dart';
+import 'package:application_drinking_water_shop/services/get_last_order_id.dart';
 import 'package:application_drinking_water_shop/utility/my_constant.dart';
 import 'package:application_drinking_water_shop/utility/my_style.dart';
 import 'package:application_drinking_water_shop/utility/sqlite_helper.dart';
@@ -264,70 +266,87 @@ class _ShowMenuWaterState extends State<ShowMenuWater> {
   }
 
   Future<Null> addOrderToCart(int index) async {
-    String? brand_id = brandModel!.brandId;
-    String? brand_name = brandModel!.brandName;
-    String? water_id = waterModels[index].id!;
-    String? price = waterModels[index].price!;
-    String? size = waterModels[index].size!;
+    Response resp = await getLastOrderId();
 
-    int priceInt = int.parse(price);
-    int sumInt = priceInt * amount;
+    dynamic order_id = resp.data.toString().trim().replaceAll('"', '');
 
-    lat2 = double.parse(userModel!.lat!);
-    lng2 = double.parse(userModel!.lng!);
-    double? distance = MyAPI().calculateDistance(lat1!, lng1!, lat2!, lng2!);
+    if (order_id == "null") {
+      resp = await addOrderWaterApi(status: "usercart");
+      order_id = resp.data;
+    }
 
-    var myFormat = NumberFormat('##0.0#', 'en_US');
-    String distanceString = myFormat.format(distance);
+    resp = await addOrderDetailApi(
+      order_id: order_id,
+      amount: amount,
+      brandModel: brandModel,
+      index: index,
+      lat1: lat1 ?? 0,
+      lng1: lng1 ?? 0,
+      userModel: userModel,
+      waterModels: waterModels,
+    );
+    print(resp.data);
 
-    int transport = MyAPI().calculateTransport(distance);
+    // String? brand_id = brandModel!.brandId;
+    // String? brand_name = brandModel!.brandName;
+    // String? water_id = waterModels[index].id!;
+    // String? price = waterModels[index].price!;
+    // String? size = waterModels[index].size!;
 
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-    String? user_id = preferences.getString('id');
+    // int priceInt = int.parse(price);
+    // int sumInt = priceInt * amount;
 
-    print(
-        'water_id == $water_id,brand_id == $brand_id, brand_name == $brand_name, price == $price, size == $size, amount == $amount, sum == $sumInt, distance == $distanceString, transport == $transport  ');
-    Map<String, dynamic> map = Map();
-    map['water_id'] = water_id;
-    map['brand_id'] = brand_id;
-    map['brand_name'] = brand_name;
-    map['price'] = price;
-    map['size'] = size;
-    map['amount'] = amount.toString();
-    map['sum'] = sumInt.toString();
-    map['distance'] = distanceString;
-    map['transport'] = transport.toString();
+    // lat2 = double.parse(userModel!.lat!);
+    // lng2 = double.parse(userModel!.lng!);
+    // double? distance = MyAPI().calculateDistance(lat1!, lng1!, lat2!, lng2!);
 
-    print('map == ${map.toString()}');
+    // var myFormat = NumberFormat('##0.0#', 'en_US');
+    // String distanceString = myFormat.format(distance);
 
-    CartModel? cartModel = CartModel.fromJson(map);
+    // int transport = MyAPI().calculateTransport(distance);
+
+    // SharedPreferences preferences = await SharedPreferences.getInstance();
+    // String? user_id = preferences.getString('id');
+
+    // print(
+    //     'water_id == $water_id,brand_id == $brand_id, brand_name == $brand_name, price == $price, size == $size, amount == $amount, sum == $sumInt, distance == $distanceString, transport == $transport  ');
+    // Map<String, dynamic> map = Map();
+    // map['water_id'] = water_id;
+    // map['brand_id'] = brand_id;
+    // map['brand_name'] = brand_name;
+    // map['price'] = price;
+    // map['size'] = size;
+    // map['amount'] = amount.toString();
+    // map['sum'] = sumInt.toString();
+    // map['distance'] = distanceString;
+    // map['transport'] = transport.toString();
+
+    // print('map == ${map.toString()}');
+
+    // CartModel? cartModel = CartModel.fromJson(map);
 
     // var object = await SQLiteHelper().readAllDataFormSQLite();
     // print('object leht == ${object.length}');
 
     // if (object.length == 0) {
-      // await SQLiteHelper().insertDataToSQLite(cartModel).then((value)  {
-      //   print('insert Sucess');
-      //   Toast.show("เพิ่มตะกร้าเรียบร้อยแล้ว", duration: Toast.lengthLong, gravity:  Toast.bottom);
-      // });
+    // await SQLiteHelper().insertDataToSQLite(cartModel).then((value)  {
+    //   print('insert Sucess');
+    //   Toast.show("เพิ่มตะกร้าเรียบร้อยแล้ว", duration: Toast.lengthLong, gravity:  Toast.bottom);
+    // });
 
-      var formData = FormData.fromMap({
-        'water_id': water_id,
-        'amount': amount,
-        'sum': sumInt,
-        'distance': distanceString,
-        'transport': transport,
-        'create_by': user_id,
-      });
+    // var formData = FormData.fromMap({
+    //   'water_id': water_id,
+    //   'amount': amount,
+    //   'sum': sumInt,
+    //   'distance': distanceString,
+    //   'transport': transport,
+    //   'create_by': user_id,
+    // });
 
-
-
-
-
-      String? url = '${MyConstant().domain}/WaterShop/addOrderDetail.php';
-      Response response = await Dio().post(url, data: formData);
-      print(response.statusCode);
-      Toast.show("เพิ่มตะกร้าเรียบร้อยแล้ว", duration: Toast.lengthLong, gravity:  Toast.bottom);
+    // String? url = '${MyConstant().domain}/WaterShop/addOrderDetail.php';
+    // Response response = await Dio().post(url, data: formData);
+    // print(response.statusCode);
+    // Toast.show("เพิ่มตะกร้าเรียบร้อยแล้ว", duration: Toast.lengthLong, gravity:  Toast.bottom);
     // } else {
     //   String id_brandSQLite = object[0].brandId!;
     //   // print('brandSQLite ==>> $id_brandSQLite');

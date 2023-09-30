@@ -88,7 +88,8 @@ class _addOrderShopState extends State<addOrderShop> {
                 child: Icon(Icons.receipt),
                 onPressed: () {
                   MaterialPageRoute route = MaterialPageRoute(
-                    builder: (context) => ConfirmPayment(),
+                    // builder: (context) => ConfirmPayment(),
+                    builder: (context) => Container(),
                   );
                   Navigator.push(context, route);
                 },

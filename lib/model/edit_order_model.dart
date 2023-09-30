@@ -14,6 +14,7 @@ class EditOrderModel {
   String? transport;
   String? paymentStatus;
   String? createBy;
+  String? status;
 
   EditOrderModel(
       {this.id,
@@ -30,7 +31,7 @@ class EditOrderModel {
       this.distance,
       this.transport,
       this.paymentStatus,
-      this.createBy});
+      this.createBy, this.status});
 
   EditOrderModel.fromJson(Map<String, dynamic> json) {
     id = json['id'];
@@ -48,6 +49,7 @@ class EditOrderModel {
     transport = json['transport'];
     paymentStatus = json['payment_status'];
     createBy = json['create_by'];
+    status = json['status'];
   }
 
   Map<String, dynamic> toJson() {
@@ -67,6 +69,7 @@ class EditOrderModel {
     data['transport'] = this.transport;
     data['payment_status'] = this.paymentStatus;
     data['create_by'] = this.createBy;
+    data['status'] = this.status;
     return data;
   }
 }

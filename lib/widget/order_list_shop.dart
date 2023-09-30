@@ -84,11 +84,11 @@ class _OrderListShopState extends State<OrderListShop> {
       Map<String, List<OrderModel>> items = {};
 
       ordermodels.forEach((elem) {
-        if (items[elem.orderNumber] == null) {
-          items[elem.orderNumber as String] = [];
+        if (items[elem.orderTableId] == null) {
+          items[elem.orderTableId as String] = [];
         }
 
-        items[elem.orderNumber as String]?.add(elem);
+        items[elem.orderTableId as String]?.add(elem);
       });
 
       listOrder.clear();
@@ -198,7 +198,7 @@ class _OrderListShopState extends State<OrderListShop> {
                   children: [
                     MyStyle().showTitleH2('คุณ ${listOrder[i].items[0].name}'),
                     MyStyle().showTitleH33(
-                        'คำสั่งซื้อ : ${listOrder[i].items[0].orderNumber}'),
+                        'คำสั่งซื้อ : ${listOrder[i].items[0].orderTableId}'),
                     MyStyle().showTitleH33(
                         'เวลาสั่งซื้อ : ${listOrder[i].items[0].createAt}'),
                     MyStyle().showTitleH33(
@@ -455,12 +455,14 @@ class _OrderListShopState extends State<OrderListShop> {
   }
 
   Future<Null> updateStatusConfirmOrder(int index) async {
-    String orderNumber = '${listOrder[index].items[0].orderNumber}';
+    String order_id = '${listOrder[index].items[0].orderTableId}';
     String path = '${MyConstant().domain}WaterShop/editStatusWhereuser_id.php';
     print(path);
 
-    await Dio().put(path,
-        data: {'status': 'shopprocess', 'order_number': orderNumber}).then(
+    await Dio().put(path, data: {
+      'status': 'shopprocess',
+      'order_id': order_id,
+    }).then(
       (value) {
         if (value.toString() == 'true') {
           notificationtoShop(index);
@@ -485,17 +487,19 @@ class _OrderListShopState extends State<OrderListShop> {
   }
 
   Future<Null> cancleOrderUser(int index) async {
-    String orderNumber = '${listOrder[index].items[0].orderNumber}';
+    String order_id = '${listOrder[index].items[0].orderTableId}';
     String path = '${MyConstant().domain}WaterShop/editStatusWhereuser_id.php';
-    print(orderNumber);
-    print(path);
 
-    await Dio().put(path,
-        data: {'status': 'Cancel', 'order_number': orderNumber}).then(
+    // print(orderNumber);
+    // print(path);
+
+    await Dio()
+        .put(path, data: {'status': 'Cancel', 'order_id': order_id}).then(
       (value) {
         if (value.toString() == 'true') {
           notificationCancleShop(index);
           refresh();
+
           AwesomeDialog(
             context: context,
             animType: AnimType.bottomSlide,

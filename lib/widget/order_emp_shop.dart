@@ -194,11 +194,11 @@ class _OrderConfirmEmpState extends State<OrderConfirmEmp> {
       Map<String, List<OrderModel>> items = {};
 
       ordermodels.forEach((elem) {
-        if (items[elem.orderNumber] == null) {
-          items[elem.orderNumber as String] = [];
+        if (items[elem.orderTableId] == null) {
+          items[elem.orderTableId as String] = [];
         }
 
-        items[elem.orderNumber as String]?.add(elem);
+        items[elem.orderTableId as String]?.add(elem);
       });
 
       listOrder.clear();
@@ -235,7 +235,7 @@ class _OrderConfirmEmpState extends State<OrderConfirmEmp> {
                   children: [
                     MyStyle().showTitleH2('คุณ ${listOrder[i].items[0].name}'),
                     MyStyle().showTitleH33(
-                        'คำสั่งซื้อ : ${listOrder[i].items[0].orderNumber}'),
+                        'คำสั่งซื้อ : ${listOrder[i].items[0].orderTableId}'),
                     MyStyle().showTitleH33(
                         'เวลาสั่งซื้อ : ${listOrder[i].items[0].createAt}'),
                     MyStyle().showTitleH33(
@@ -480,7 +480,7 @@ class _OrderConfirmEmpState extends State<OrderConfirmEmp> {
   Future<Null> updateStatusConfirmOrder(int index) async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     String? emp_id = preferences.getString('id');
-    String orderNumber = '${listOrder[index].items[0].orderNumber}';
+    String orderTableId = '${listOrder[index].items[0].orderTableId}';
     String path =
         '${MyConstant().domain}/WaterShop/editStatusWhereuser_id_RiderHandle.php?';
     print(path);
@@ -488,7 +488,7 @@ class _OrderConfirmEmpState extends State<OrderConfirmEmp> {
     await Dio().put(path, data: {
       'status': 'RiderHandle',
       'emp_id': '$emp_id',
-      'order_number': orderNumber
+      'order_id': orderTableId
     }).then(
       (value) {
         if (value.toString() == 'true') {
