@@ -1,12 +1,14 @@
 import 'package:dio/dio.dart';
 
+import '../utility/my_constant.dart';
+
 Future<Response> updateOrderStatus({
   required String order_id,
   required String emp_id,
   String status = "userorder",
   required String payment_status,
 }) async {
-  String url = "http://192.168.1.99/WaterShop/updateOrderStatus.php";
+  String url = "${MyConstant().domain}/WaterShop/updateOrderStatus.php";
 
   Map<String, dynamic> data = {
     "order_id": order_id,

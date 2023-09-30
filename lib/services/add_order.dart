@@ -10,7 +10,7 @@ import 'package:toast/toast.dart';
 
 Future<Response> addOrderWaterApi(
     {String payment_status = "", required String status}) async {
-  String? url = 'http://192.168.1.99/WaterShop/addOrderWater.php';
+  String? url = '${MyConstant().domain}/WaterShop/addOrderWater.php';
 
   DateTime now = DateTime.now();
   SharedPreferences preferences = await SharedPreferences.getInstance();

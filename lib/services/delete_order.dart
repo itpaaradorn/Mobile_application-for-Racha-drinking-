@@ -1,8 +1,10 @@
 import 'package:application_drinking_water_shop/model/order_detail.dart';
 import 'package:dio/dio.dart';
 
+import '../utility/my_constant.dart';
+
 Future<Response> deleteOrderCardApi({required OrderDetail orderdetail}) async {
-  String url = 'http://192.168.1.99/WaterShop/deleteOrderDetail.php';
+  String url = '${MyConstant().domain}/WaterShop/deleteOrderDetail.php';
 
   Map<String, dynamic> data = {
     'order_id': orderdetail.id,
