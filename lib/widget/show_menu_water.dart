@@ -259,16 +259,33 @@ class _ShowMenuWaterState extends State<ShowMenuWater> {
   }
 
   Future<Null> findLocation() async {
-    var currentLocation = await Location.instance.getLocation();
-    lat1 = currentLocation.latitude;
-    lng1 = currentLocation.longitude;
+    // var currentLocation = await Location.instance.getLocation();
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    String? user_id = preferences.getString('id');
+
+    String url =
+        "http://192.168.1.99/WaterShop/getUserWhereId.php?isAdd=true&id=$user_id";
+    Response resp = await Dio().get(url);
+
+    if (resp.statusCode == 200) {
+      lat1 = double.parse(jsonDecode(resp.data)[0]['Lat']);
+      lng1 = double.parse(jsonDecode(resp.data)[0]['Lng']);
+      ;
+    }
+
+    print(lat1);
+    print(lng1);
+
+    // lat1 = currentLocation.latitude;
+    // lng1 = currentLocation.longitude;
     // print('lat1 ==> $lat1 , lng1 ==> $lng1');
   }
 
   Future<Null> addOrderToCart(int index) async {
     Response resp = await getLastOrderId();
-
     dynamic order_id = resp.data.toString().trim().replaceAll('"', '');
+    SharedPreferences preferences = await SharedPreferences.getInstance();
+    String? user_id = preferences.getString('id');
 
     if (order_id == "null") {
       resp = await addOrderWaterApi(
@@ -276,6 +293,7 @@ class _ShowMenuWaterState extends State<ShowMenuWater> {
         lat1: lat1 ?? 0,
         lng1: lng1 ?? 0,
         userModel: userModel,
+        user_id: user_id ?? "",
       );
       order_id = resp.data;
     }
@@ -286,6 +304,7 @@ class _ShowMenuWaterState extends State<ShowMenuWater> {
       brandModel: brandModel,
       index: index,
       waterModels: waterModels,
+      user_id: user_id ?? "",
     );
     print(resp.data);
 

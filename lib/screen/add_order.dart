@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'bankpay.dart';
 import 'confirm_payment.dart';
 
-
 class addOrderShop extends StatefulWidget {
   final CustomerModel? customerModel;
   final bool isAdmin;
@@ -19,14 +18,7 @@ class addOrderShop extends StatefulWidget {
 }
 
 class _addOrderShopState extends State<addOrderShop> {
-  bool get isAdmin => widget.isAdmin;
-
-  List<Widget> widgets = [
-    listManuAddOrderWater(
-      
-    ),
-    ShowCartShop()
-  ];
+  // List<Widget> widgets = [listManuAddOrderWater(), ShowCartShop()];
 
   List<IconData> icons = [
     Icons.add_box_sharp,
@@ -63,7 +55,13 @@ class _addOrderShopState extends State<addOrderShop> {
           appBar: AppBar(
             title: Text('${titles[indexPostion]}'),
           ),
-          body: widgets[indexPostion],
+          body: [
+            listManuAddOrderWater(
+              isAdmin: widget.isAdmin,
+              customerModel: widget.customerModel,
+            ),
+            ShowCartShop(customerModel: widget.customerModel as CustomerModel)
+          ][indexPostion],
           bottomNavigationBar: BottomNavigationBar(
             selectedIconTheme: IconThemeData(color: Colors.blue),
             unselectedIconTheme: IconThemeData(color: Colors.grey),

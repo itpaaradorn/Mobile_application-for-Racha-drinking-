@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:application_drinking_water_shop/model/customer_model.dart';
 import 'package:application_drinking_water_shop/model/water_model.dart';
 import 'package:application_drinking_water_shop/screen/payment.dart';
 import 'package:application_drinking_water_shop/utility/my_constant.dart';
@@ -15,10 +16,15 @@ import 'package:toast/toast.dart';
 
 import '../model/order_detail.dart';
 import '../model/user_model.dart';
+import '../services/delete_order.dart';
+import '../services/updateorder_status.dart';
 import 'main_user.dart';
 
 class ShowCartShop extends StatefulWidget {
-  const ShowCartShop({super.key});
+
+  final CustomerModel customerModel;
+  
+  const ShowCartShop({super.key, required this.customerModel});
 
   @override
   State<ShowCartShop> createState() => _ShowCartShopState();
@@ -67,17 +73,14 @@ class _ShowCartShopState extends State<ShowCartShop> {
       orderDetails.clear();
     }
 
-    SharedPreferences preferences = await SharedPreferences.getInstance();
-
-    String? create_by = preferences.getString('id');
-    // print('idShop =>>> $idShop');
 
     String url =
-        '${MyConstant().domain}/WaterShop/getOrderDetail_WhereIdUser.php?create_by=$create_by';
+        '${MyConstant().domain}/WaterShop/getOrderDetail_WhereIdUser.php?user_id=${widget.customerModel.id}&status=admincart';
     await Dio().get(url).then((value) {
       setState(() {
         status = false;
       });
+
 
       if (value.toString() != 'null') {
         // print('value =>> $value');
@@ -347,12 +350,8 @@ class _ShowCartShopState extends State<ShowCartShop> {
     // String? url =
     //     'http://192.168.1.99/WaterShop/deleteOrderDetail.php?id=${orderdetail.id}';
 
-    String url = '${MyConstant().domain}/WaterShop/deleteOrderDetail.php';
+      Response resp = await deleteOrderCardApi(orderdetail: orderdetail);
 
-    Response resp = await Dio().delete(url, data: {'id': orderdetail.id});
-
-    print(resp.statusCode);
-    print(resp.statusMessage);
 
     if (resp.statusCode == 200) {
       readOrderFormIdUser();
@@ -405,27 +404,35 @@ class _ShowCartShopState extends State<ShowCartShop> {
     //   print(
     //       'water_id == $water_id, water_brand_id == $water_brand_id, size == $size, water_brand_name == $water_brand_name, price == $price, amount == $amount, sum == $sum ');
 
-    DateTime now = DateTime.now();
+    // DateTime now = DateTime.now();
 
-    String orderNumber =
-        "$user_id#${now.year}${prepareDigit(now.month)}${prepareDigit(now.day)}${prepareDigit(now.hour)}${prepareDigit(now.minute)}${prepareDigit(now.second)}";
+    // String orderNumber =
+    //     "$user_id#${now.year}${prepareDigit(now.month)}${prepareDigit(now.day)}${prepareDigit(now.hour)}${prepareDigit(now.minute)}${prepareDigit(now.second)}";
 
-    String? url = '${MyConstant().domain}/WaterShop/addOrderWater.php';
+    // String? url = '${MyConstant().domain}/WaterShop/addOrderWater.php';
 
-    for (var i = 0; i < orderDetails.length; i++) {
-      Map<String, String> _map = {
-        "create_by": user_id.toString(),
-        "emp_id": "none",
-        "payment_status": "เก็บเงินปลายทาง",
-        "order_detail_id": orderDetails[i].id.toString(),
-        "order_number": orderNumber,
-      };
+    // for (var i = 0; i < orderDetails.length; i++) {
+    //   Map<String, String> _map = {
+    //     "create_by": user_id.toString(),
+    //     "emp_id": "none",
+    //     "payment_status": "เก็บเงินปลายทาง",
+    //     "order_detail_id": orderDetails[i].id.toString(),
+    //     "order_number": orderNumber,
+    //   };
 
-      Response response = await Dio().post(url, data: _map);
-      print('response = ${response.statusCode}');
-      print('response = ${response.data}');
-    }
+    //   Response response = await Dio().post(url, data: _map);
+    //   print('response = ${response.statusCode}');
+    //   print('response = ${response.data}');
+    // }
     // notificationToShop(user_name!);
+
+
+
+    Response resp = await updateOrderStatus(
+      emp_id: '0',
+      order_id: orderDetails[0].id ?? '0',
+      payment_status: 'เก็บเงินปลายทาง',
+    );
 
     AwesomeDialog(
       context: context,
@@ -440,6 +447,7 @@ class _ShowCartShopState extends State<ShowCartShop> {
       title: 'This is Ignored',
       desc: 'This is also Ignored',
       btnOkOnPress: () {
+        Navigator.pop(context);
         Navigator.pop(context);
       },
     ).show();

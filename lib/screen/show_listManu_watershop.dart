@@ -45,8 +45,27 @@ class _listManuAddOrderWaterState extends State<listManuAddOrderWater> {
     super.initState();
     // brandModel = widget.brandWaterModel;
     readWaterMenu();
-    // readDataAdmin();
+    readDataAdmin();
     // findLocation();
+  }
+
+  Future<Null> readDataAdmin() async {
+    String url =
+        '${MyConstant().domain}/WaterShop/readUserModelWhereChooseTpy.php?isAdd=true&ChooseType=Admin';
+
+    await Dio().get(url).then((value) {
+      var result = json.decode(value.data);
+      // print('value == $value');
+
+      for (var map in result) {
+        setState(() {
+          userModel = UserModel.fromJson(map);
+          lat2 = double.parse('${userModel!.lat}');
+          lng2 = double.parse('${userModel!.lng}');
+        });
+        // print(" useradmin ===> ${userModel!.id}");
+      }
+    });
   }
 
   Future<Null> readWaterMenu() async {
@@ -233,16 +252,24 @@ class _listManuAddOrderWaterState extends State<listManuAddOrderWater> {
   }
 
   Future<Null> addOrderToCart(int index) async {
-    Response resp = await getLastOrderId();
-
+    Response resp = await getLastOrderId(status: "admincart", userId: widget.customerModel?.id);
     dynamic order_id = resp.data.toString().trim().replaceAll('"', '');
+    String? user_id;
+
+    if (widget.isAdmin) {
+      user_id = widget.customerModel?.id;
+    } else {
+      SharedPreferences preferences = await SharedPreferences.getInstance();
+      user_id = preferences.getString('id');
+    }
 
     if (order_id == "null") {
       resp = await addOrderWaterApi(
-        status: "usercart",
-        lat1: lat1 ?? 0,
-        lng1: lng1 ?? 0,
+        status: widget.isAdmin ? "admincart" : "usercart",
+        lat1: double.parse(widget.customerModel?.lat ?? '0'),
+        lng1: double.parse(widget.customerModel?.lng ?? '0'),
         userModel: userModel,
+        user_id: user_id ?? "",
       );
       order_id = resp.data;
     }
@@ -250,9 +277,10 @@ class _listManuAddOrderWaterState extends State<listManuAddOrderWater> {
     resp = await addOrderDetailApi(
       order_id: order_id,
       amount: amount,
-      brandModel: brandModel,
+      brandModel: BrandWaterModel.fromJson(waterModels[index].toJson()),
       index: index,
       waterModels: waterModels,
+      user_id: user_id ?? "",
     );
     print(resp.data);
   }

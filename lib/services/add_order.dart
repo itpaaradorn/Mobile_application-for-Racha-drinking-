@@ -14,16 +14,27 @@ Future<Response> addOrderWaterApi({
   required UserModel? userModel,
   required double lat1,
   required double lng1,
+  required String user_id,
 }) async {
   String? url = '${MyConstant().domain}/WaterShop/addOrderWater.php';
 
   DateTime now = DateTime.now();
-  SharedPreferences preferences = await SharedPreferences.getInstance();
-  String? user_id = preferences.getString('id');
 
   double lat2 = double.parse(userModel!.lat!);
   double lng2 = double.parse(userModel!.lng!);
+  print(lat2);
+  print(lat2);
+  // return Response(
+  //     requestOptions: RequestOptions(
+  //   method: 'GET',
+  // ));
+
+  print("${lat1}, ${lat2}");
+  print("${lng1}, ${lng2}");
+
+
   double? distance = MyAPI().calculateDistance(lat1!, lng1!, lat2!, lng2!);
+  print('distance -> $distance');
 
   var myFormat = NumberFormat('##0.0#', 'en_US');
   String distanceString = myFormat.format(distance);
@@ -31,7 +42,7 @@ Future<Response> addOrderWaterApi({
   int transport = MyAPI().calculateTransport(distance);
 
   Map<String, dynamic> _map = {
-    "create_by": user_id.toString(),
+    "create_by": user_id,
     "emp_id": "none",
     "payment_status": payment_status, // เก็บเงินปลายทาง
     "status": status,
@@ -52,10 +63,8 @@ Future<Response> addOrderDetailApi({
   required List<WaterModel> waterModels,
   required int index,
   required int amount,
+  required String user_id,
 }) async {
-  SharedPreferences preferences = await SharedPreferences.getInstance();
-  String? user_id = preferences.getString('id');
-
   String? brand_id = brandModel!.brandId;
   String? brand_name = brandModel!.brandName;
   String? water_id = waterModels[index].id!;

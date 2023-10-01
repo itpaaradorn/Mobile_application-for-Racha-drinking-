@@ -125,7 +125,8 @@ class _OrderConfirmShopState extends State<OrderConfirmShop> {
         items.forEach((key, value) =>
             listOrder.add(ListOrder(orderName: key, items: value)));
 
-        print('\nlistOrder: $listOrder\n\n');
+        // print('\nlistOrder: $listOrder\n\n');
+        print(' ->>>>>> $value');
 
         setState(() {});
       } else {
@@ -138,16 +139,16 @@ class _OrderConfirmShopState extends State<OrderConfirmShop> {
 
   Future<void> _createPDF(int index) async {
     PdfDocument document = PdfDocument();
-    
+
     var page = document.pages.add();
 
-    drawGrid(index, page,listOrder);
+    drawGrid(index, page, listOrder);
     Imagebill(page, index, ordermodels);
     Detailbill(page, index, ordermodels);
 
     List<int> bytes = await document.save();
 
-    saveAndLanchFile(bytes, 'Order_${ordermodels[index].orderNumber}.pdf');
+    saveAndLanchFile(bytes, 'Order_${ordermodels[index].orderTableId}.pdf');
     document.dispose();
   }
 
@@ -167,7 +168,7 @@ class _OrderConfirmShopState extends State<OrderConfirmShop> {
       bounds: const Rect.fromLTWH(0, 45, 0, 0),
     );
     page.graphics.drawString(
-      'Order ID: ${ordermodels[index].orderNumber}',
+      'Order ID: ${ordermodels[index].orderTableId}',
       PdfStandardFont(PdfFontFamily.helvetica, 23),
       bounds: const Rect.fromLTWH(0, 75, 0, 0),
     );
@@ -190,7 +191,7 @@ class _OrderConfirmShopState extends State<OrderConfirmShop> {
     );
   }
 
-  static void drawGrid(int index, PdfPage page,listOrder ) {
+  static void drawGrid(int index, PdfPage page, List listOrder) {
     final grid = PdfGrid();
     grid.columns.add(count: 4);
 
@@ -201,34 +202,86 @@ class _OrderConfirmShopState extends State<OrderConfirmShop> {
     headerRow.cells[1].value = ' Brand';
     headerRow.cells[2].value = ' Price';
     headerRow.cells[3].value = ' Total';
-    headerRow.style.font =
-        PdfStandardFont(PdfFontFamily.helvetica, 22, style: PdfFontStyle.regular);
+    headerRow.style.font = PdfStandardFont(PdfFontFamily.timesRoman, 20,
+        style: PdfFontStyle.regular);
 
-    final row = grid.rows.add();
-    row.style.font =
-        PdfStandardFont(PdfFontFamily.helvetica, 21, style: PdfFontStyle.regular);
-    // ignore: unnecessary_null_comparison
-    if (listOrder != null) {
-      List<OrderModel> items = listOrder[index].items;
-      // row.cells[0].value = '  ${listOrder[index].items[0].amount}x';
-      row.cells[0].value = '  ${items[index].amount ?? ''}x';
-      // row.cells[1].value = '   ${listOrder[index].items[0].brandName}';
-      row.cells[1].value = '   ${items[index].brandName ?? ''}';
-      // row.cells[2].value = '   ${listOrder[index].items[0].price}';
-      row.cells[2].value = '   ${items[index].price ?? ''}';
-      row.cells[3].value = '   ${listOrder[index].items.fold(0, (previous, current) => previous + int.parse(current.sum ?? '0'))}';
+    // PdfGridRow row = grid.rows.add();
+    // row.style.font = PdfStandardFont(PdfFontFamily.helvetica, 21,
+    //     style: PdfFontStyle.regular);
+    // row.cells[0].value = 'CA-1098';
+    // row.cells[1].value = 'AWC Logo Cap';
+    // row.cells[2].value = '\$8.99';
+    // row.cells[3].value = '2';
 
-      print(' =>>>> $items');
+    // row = grid.rows.add();
+    // row.style.font = PdfStandardFont(PdfFontFamily.helvetica, 21,
+    //     style: PdfFontStyle.regular);
+    // row.cells[0].value = 'LJ-0192';
+    // row.cells[1].value = 'Long-Sleeve Logo Jersey,M';
+    // row.cells[2].value = '\$49.99';
+    // row.cells[3].value = '3';
+
+    // row = grid.rows.add();
+    // row.style.font = PdfStandardFont(PdfFontFamily.helvetica, 21,
+    //     style: PdfFontStyle.regular);
+    // row.cells[0].value = 'So-B909-M';
+    // row.cells[1].value = 'Mountain Bike Socks,M';
+    // row.cells[2].value = '\$9.5';
+    // row.cells[3].value = '2';
+
+    // row = grid.rows.add();
+    // row.style.font = PdfStandardFont(PdfFontFamily.helvetica, 21,
+    //     style: PdfFontStyle.regular);
+    // row.cells[0].value = 'LJ-0192';
+    // row.cells[1].value = 'Long-Sleeve Logo Jersey,M';
+    // row.cells[2].value = '\$49.99';
+    // row.cells[3].value = '4';
+
+    List<OrderModel> items = listOrder[index].items;
+    PdfGridRow row;
+
+    for (int i = 0; i < items.length; i++) {
+      print(i);
+      print(' =>>>> ${items[i].brandName}');
+
+      row = grid.rows.add();
+
+      row.style.font = PdfStandardFont(PdfFontFamily.helvetica, 21,
+          style: PdfFontStyle.regular);
+
+      // row.cells[0].value = '  ${listOrder[i].items[0].amount}x';
+      row.cells[0].value = '  ${items[i].amount ?? ''}x';
+      // row.cells[1].value = '   ${listOrder[i].items[0].brandName}';
+      row.cells[1].value = '   ${items[i].brandName ?? ''}';
+      // row.cells[2].value = '   ${listOrder[i].items[0].price}';
+      row.cells[2].value = '   ${items[i].price ?? ''}';
+      row.cells[3].value = '   ${items[i].sum ?? ''}';
     }
+    int total = items.fold(
+        0, (previous, current) => previous + int.parse(current.sum ?? '0'));
+    total = total + int.parse(items[0].transport ?? '0');
+
+    int totalPric = items.fold(
+        0, (previous, current) => previous + int.parse(current.sum ?? '0'));
 
     for (var i = 0; i < headerRow.cells.count; i++) {
       headerRow.cells[i].style.cellPadding =
           PdfPaddings(bottom: 5, left: 5, right: 5, top: 5);
     }
 
-    grid.draw(page: page, bounds: Rect.fromLTWH(0, 205, 0, 0));
+    PdfLayoutResult? lo =
+        grid.draw(page: page, bounds: Rect.fromLTWH(0, 205, 0, 0));
 
-    
+    page.graphics.drawString(
+      'Total Price: $totalPric THB.',
+      PdfStandardFont(PdfFontFamily.helvetica, 18),
+      bounds: Rect.fromLTWH(10, (lo?.bounds.bottom ?? 0) + 40, 0, 0),
+    );
+    page.graphics.drawString(
+      'Total Price (with trasport): $total THB.',
+      PdfStandardFont(PdfFontFamily.helvetica, 18),
+      bounds: Rect.fromLTWH(220, (lo?.bounds.bottom ?? 0) + 40, 0, 0),
+    );
   }
 
   Future<void> saveAndLanchFile(List<int> bytes, String filename) async {
@@ -237,8 +290,6 @@ class _OrderConfirmShopState extends State<OrderConfirmShop> {
     await file.writeAsBytes(bytes, flush: true);
     OpenFile.open('$path/$filename');
   }
-
-  
 
   Widget showListOrderWater() {
     return ListView.builder(
