@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:application_drinking_water_shop/model/user_model.dart';
 import 'package:application_drinking_water_shop/utility/my_style.dart';
+import 'package:application_drinking_water_shop/widget/select_customer.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -367,7 +368,8 @@ class _OrderListShopState extends State<OrderListShop> {
                 child: FloatingActionButton(
                   onPressed: () {
                     MaterialPageRoute route = MaterialPageRoute(
-                      builder: (context) => addOrderShop(),
+                      // builder: (context) => addOrderShop(),
+                      builder: (context) => SelectCustomerPage(),
                     );
                     Navigator.push(context, route)
                         .then((value) => findOrderShop());

@@ -1,3 +1,4 @@
+import 'package:application_drinking_water_shop/model/customer_model.dart';
 import 'package:application_drinking_water_shop/screen/promtpay.dart';
 import 'package:application_drinking_water_shop/screen/show_cartShop.dart';
 import 'package:application_drinking_water_shop/screen/show_listManu_watershop.dart';
@@ -8,15 +9,22 @@ import 'confirm_payment.dart';
 
 
 class addOrderShop extends StatefulWidget {
-  const addOrderShop({super.key});
+  final CustomerModel? customerModel;
+  final bool isAdmin;
+
+  const addOrderShop({super.key, this.customerModel, this.isAdmin = false});
 
   @override
   _addOrderShopState createState() => _addOrderShopState();
 }
 
 class _addOrderShopState extends State<addOrderShop> {
+  bool get isAdmin => widget.isAdmin;
+
   List<Widget> widgets = [
-    listManuAddOrderWater(),
+    listManuAddOrderWater(
+      
+    ),
     ShowCartShop()
   ];
 

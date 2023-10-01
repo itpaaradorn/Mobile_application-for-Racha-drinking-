@@ -8,19 +8,35 @@ import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toast/toast.dart';
 
-Future<Response> addOrderWaterApi(
-    {String payment_status = "", required String status}) async {
+Future<Response> addOrderWaterApi({
+  String payment_status = "",
+  required String status,
+  required UserModel? userModel,
+  required double lat1,
+  required double lng1,
+}) async {
   String? url = '${MyConstant().domain}/WaterShop/addOrderWater.php';
 
   DateTime now = DateTime.now();
   SharedPreferences preferences = await SharedPreferences.getInstance();
   String? user_id = preferences.getString('id');
 
-  Map<String, String> _map = {
+  double lat2 = double.parse(userModel!.lat!);
+  double lng2 = double.parse(userModel!.lng!);
+  double? distance = MyAPI().calculateDistance(lat1!, lng1!, lat2!, lng2!);
+
+  var myFormat = NumberFormat('##0.0#', 'en_US');
+  String distanceString = myFormat.format(distance);
+
+  int transport = MyAPI().calculateTransport(distance);
+
+  Map<String, dynamic> _map = {
     "create_by": user_id.toString(),
     "emp_id": "none",
-    "payment_status": payment_status,   // เก็บเงินปลายทาง
+    "payment_status": payment_status, // เก็บเงินปลายทาง
     "status": status,
+    'distance': distanceString,
+    'transport': transport
   };
 
   Response response = await Dio().post(url, data: _map);
@@ -34,11 +50,8 @@ Future<Response> addOrderDetailApi({
   required String order_id,
   required BrandWaterModel? brandModel,
   required List<WaterModel> waterModels,
-  required UserModel? userModel,
   required int index,
   required int amount,
-  required double lat1,
-  required double lng1,
 }) async {
   SharedPreferences preferences = await SharedPreferences.getInstance();
   String? user_id = preferences.getString('id');
@@ -52,22 +65,11 @@ Future<Response> addOrderDetailApi({
   int priceInt = int.parse(price);
   int sumInt = priceInt * amount;
 
-  double lat2 = double.parse(userModel!.lat!);
-  double lng2 = double.parse(userModel!.lng!);
-  double? distance = MyAPI().calculateDistance(lat1!, lng1!, lat2!, lng2!);
-
-  var myFormat = NumberFormat('##0.0#', 'en_US');
-  String distanceString = myFormat.format(distance);
-
-  int transport = MyAPI().calculateTransport(distance);
-
   var formData = FormData.fromMap({
     "order_id": order_id,
     'water_id': water_id,
     'amount': amount,
     'sum': sumInt,
-    'distance': distanceString,
-    'transport': transport,
     'create_by': user_id,
   });
 

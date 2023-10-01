@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:application_drinking_water_shop/model/customer_model.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -18,6 +19,12 @@ import '../utility/my_constant.dart';
 import '../utility/my_style.dart';
 
 class listManuAddOrderWater extends StatefulWidget {
+  final CustomerModel? customerModel;
+  final bool isAdmin;
+
+  const listManuAddOrderWater(
+      {super.key, this.customerModel, this.isAdmin = false});
+
   @override
   State<listManuAddOrderWater> createState() => _listManuAddOrderWaterState();
 }
@@ -227,11 +234,16 @@ class _listManuAddOrderWaterState extends State<listManuAddOrderWater> {
 
   Future<Null> addOrderToCart(int index) async {
     Response resp = await getLastOrderId();
-   
+
     dynamic order_id = resp.data.toString().trim().replaceAll('"', '');
 
     if (order_id == "null") {
-      resp = await addOrderWaterApi(status: "usercart");
+      resp = await addOrderWaterApi(
+        status: "usercart",
+        lat1: lat1 ?? 0,
+        lng1: lng1 ?? 0,
+        userModel: userModel,
+      );
       order_id = resp.data;
     }
 
@@ -240,9 +252,6 @@ class _listManuAddOrderWaterState extends State<listManuAddOrderWater> {
       amount: amount,
       brandModel: brandModel,
       index: index,
-      lat1: lat1 ?? 0,
-      lng1: lng1 ?? 0,
-      userModel: userModel,
       waterModels: waterModels,
     );
     print(resp.data);

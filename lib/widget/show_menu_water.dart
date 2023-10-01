@@ -271,7 +271,12 @@ class _ShowMenuWaterState extends State<ShowMenuWater> {
     dynamic order_id = resp.data.toString().trim().replaceAll('"', '');
 
     if (order_id == "null") {
-      resp = await addOrderWaterApi(status: "usercart");
+      resp = await addOrderWaterApi(
+        status: "usercart",
+        lat1: lat1 ?? 0,
+        lng1: lng1 ?? 0,
+        userModel: userModel,
+      );
       order_id = resp.data;
     }
 
@@ -280,9 +285,6 @@ class _ShowMenuWaterState extends State<ShowMenuWater> {
       amount: amount,
       brandModel: brandModel,
       index: index,
-      lat1: lat1 ?? 0,
-      lng1: lng1 ?? 0,
-      userModel: userModel,
       waterModels: waterModels,
     );
     print(resp.data);

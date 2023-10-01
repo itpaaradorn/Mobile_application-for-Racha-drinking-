@@ -99,22 +99,20 @@ class _EditOrderEmpState extends State<EditOrderEmp> {
       '${MyConstant().domain}/WaterShop/deleteOrderTableByOrdernumber.php',
       data: {'id': id});
 
-  delete_order_detail(id, water_id) =>
-      Dio().delete('${MyConstant().domain}/WaterShop/deleteOrderDetail.php',
-          data: {'order_id': id, 'water_id': water_id});
+  delete_order_detail(id, water_id) => Dio().delete(
+      '${MyConstant().domain}/WaterShop/deleteOrderDetail.php?order_id=$id&water_id=$water_id',
+      data: {'order_id': id, 'water_id': water_id});
 
-  add_order_table(EditOrderModel item) async {
+  add_order_detail(EditOrderModel item) async {
     int amount = int.tryParse(item.amount ?? '') ?? 0;
     int price = int.tryParse(item.price ?? '') ?? 0;
     int sum = amount * price;
 
     var formData = FormData.fromMap({
-       "order_id": order_id,
+      "order_id": order_id,
       'water_id': item.id,
       'amount': item.amount,
       'sum': sum,
-      'distance': masterDate?.distance,
-      'transport': masterDate?.transport,
       'create_by': masterDate?.createBy,
     });
 
@@ -124,7 +122,7 @@ class _EditOrderEmpState extends State<EditOrderEmp> {
     return resp.data;
   }
 
-  // add_order_detail(EditOrderModel item, order_detail_id) {
+  // add_order_table(EditOrderModel item, order_detail_id) {
   //   var data = {
   //     "create_by": masterDate?.createBy,
   //     "emp_id": "none",
@@ -148,8 +146,8 @@ class _EditOrderEmpState extends State<EditOrderEmp> {
       int amount = int.tryParse(item.amount ?? '') ?? 0;
       print(amount);
       if (amount != 0) {
-        await add_order_table(item);
-      //   add_order_detail(item, order_detail_id);
+        await add_order_detail(item);
+        //   add_order_table(item, order_detail_id);
       }
     }
     Navigator.pop(context);
