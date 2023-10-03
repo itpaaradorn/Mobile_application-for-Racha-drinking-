@@ -6,6 +6,8 @@ import 'package:application_drinking_water_shop/services/get_customer.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
+import '../utility/my_style.dart';
+
 class SelectCustomerPage extends StatefulWidget {
   const SelectCustomerPage({super.key});
 
@@ -55,16 +57,16 @@ class _SelectCustomerPageState extends State<SelectCustomerPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
+      appBar: AppBar(title: Text('Select trade information'),),
       body: Column(
         children: [
-          TextFormField(
-            controller: searchController,
-          ),
-          TextButton(onPressed: search, child: Text('search')),
+          
+          fieldSearch(),
+          // TextButton(onPressed: search, child: Text('search')),
+          // IconButton(onPressed: search, icon: Icon(Icons.search),),
           const SizedBox(height: 20),
           if (searchCustomerModel.isEmpty) ...[
-            Text('Empty'),
+            Text('ไม่พบข้อมูล',style: TextStyle(fontSize: 18)),
           ],
           Expanded(
             child: ListView.builder(
@@ -80,7 +82,7 @@ class _SelectCustomerPageState extends State<SelectCustomerPage> {
                     );
                     Navigator.push(context, route);
                   },
-                  child: Text(searchCustomerModel[index].name ?? ''),
+                  child: Text('${searchCustomerModel[index].name ?? ''}',style: TextStyle(fontSize: 18),),
                 );
               },
             ),
@@ -89,6 +91,31 @@ class _SelectCustomerPageState extends State<SelectCustomerPage> {
       ),
     );
   }
+
+  // TextField fieldSearch() {
+  //   return TextField(
+  //         controller: searchController,
+  //         decoration: InputDecoration(
+  // hintText: 'Enter a message',
+  // suffixIcon: IconButton(
+  //   onPressed: search,
+  //   icon: Icon(Icons.search),
+  // ),)
+  //       );
+  // }
+
+  Widget fieldSearch() => Container(
+        margin: EdgeInsets.only(top: 15),
+        width: 350.0,
+        child: TextFormField(
+          controller: searchController,
+          decoration: InputDecoration(
+  hintText: 'Enter a message',
+  suffixIcon: IconButton(
+    onPressed: search,
+    icon: Icon(Icons.search),
+  ),)
+    ));
 
   @override
   void dispose() {

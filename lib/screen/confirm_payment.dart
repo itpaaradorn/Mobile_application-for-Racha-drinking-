@@ -186,7 +186,7 @@ class _ConfirmPaymentState extends State<ConfirmPayment> {
         String? userId = preferences.getString('id');
         String? userName = preferences.getString('Name');
         String path =
-            '${MyConstant().domain}/WaterShop/addpayment.php?isAdd=true&slip_date_time=$slipDateTime&image_slip=$imageSlip&order_id=none&user_id=$userId&user_name=$userName&total=&emp_id=none';
+            '${MyConstant().domain}/WaterShop/addpayment.php?isAdd=true&image_slip=$imageSlip&order_id=${widget.order_id},&user_id=$userId&user_name=$userName&total=&emp_id=none';
         //     // '${MyConstant().domain}/WaterShop/addpayment.php?isAdd=true&slip_date_time=$slipDateTime&image_slip=$imageSlip&order_id=none&user_id=$userId&user_name=$userName&rider_id=none';
         await Dio().get(path).then((value) => print('upload Sucess'));
       });

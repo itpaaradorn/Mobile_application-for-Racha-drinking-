@@ -161,7 +161,7 @@ class _EditOrderEmpState extends State<EditOrderEmp> {
     ToastContext().init(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text('EditOrder'),
+        title: Text('EditOrder ${orderModel.orderTableId}'),
         actions: <Widget>[
           IconButton(
             icon: Icon(Icons.save),

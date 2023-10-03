@@ -31,20 +31,22 @@ class _SaveBillOrderEmpState extends State<SaveBillOrderEmp> {
     orderModel = widget.orderModel;
     user_id = orderModel!.userId;
     user_name = orderModel!.name;
-    order_id = orderModel!.orderNumber;
+    order_id = orderModel!.orderTableId;
     slipDateTime = orderModel!.createAt;
     super.initState();
-    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('รายการสั่งซื้อคุณ ${user_name}')),
+      appBar: AppBar(title: Text('รายการสั่งซื้อที่ ${order_id}')),
       body: SingleChildScrollView(
         child: Column(
           children: [
             MyStyle().mySixedBox(),
+            MyStyle().mySixedBox(),
             headTitle(),
+            MyStyle().mySixedBox(),
             MyStyle().mySixedBox(),
             buildBillImage(),
             MyStyle().mySixedBox(),
@@ -77,6 +79,7 @@ class _SaveBillOrderEmpState extends State<SaveBillOrderEmp> {
             width: 250.0,
             child: TextFormField(
               onChanged: (value) => slipDateTime = value.trim(),
+              enabled: false,
               initialValue: slipDateTime,
               decoration: InputDecoration(
                 labelText: 'เวลาสั่งซื้อ',
@@ -95,6 +98,7 @@ class _SaveBillOrderEmpState extends State<SaveBillOrderEmp> {
             width: 250.0,
             child: TextFormField(
               onChanged: (value) => order_id = value.trim(),
+              enabled: false,
               initialValue: order_id,
               decoration: InputDecoration(
                 labelText: 'รหัสคำสั่งซื้อ',
@@ -113,6 +117,7 @@ class _SaveBillOrderEmpState extends State<SaveBillOrderEmp> {
             width: 250.0,
             child: TextFormField(
               onChanged: (value) => user_id = value.trim(),
+              enabled: false,
               initialValue: user_id,
               decoration: InputDecoration(
                 labelText: 'รหัสลูกค้า',
@@ -131,6 +136,7 @@ class _SaveBillOrderEmpState extends State<SaveBillOrderEmp> {
             width: 250.0,
             child: TextFormField(
               onChanged: (value) => user_name = value.trim(),
+              enabled: false,
               initialValue: user_name,
               decoration: InputDecoration(
                 labelText: 'ชื่อลูกค้า',
@@ -161,7 +167,6 @@ class _SaveBillOrderEmpState extends State<SaveBillOrderEmp> {
 
   Row buildBillImage() {
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.end,
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         IconButton(
@@ -169,12 +174,12 @@ class _SaveBillOrderEmpState extends State<SaveBillOrderEmp> {
           icon: Icon(Icons.add_a_photo),
         ),
         Padding(
-          padding: const EdgeInsets.only(left: 20),
+          padding: const EdgeInsets.only(),
           child: Container(
-            width: 180,
-            height: 180,
+            width: 160,
+            height: 160,
             child: file == null
-                ? Image.asset('images/nowater.png')
+                ? Image.asset('images/imageadd.png')
                 : Image.file(file!),
           ),
         ),
@@ -252,6 +257,8 @@ class _SaveBillOrderEmpState extends State<SaveBillOrderEmp> {
     );
   }
 
+  
+
   Future<void> processUploadInsertData() async {
     // String apisaveSlip = '${MyConstant().domain}/WaterShop/saveSlip.php';
     // String nameSlip = 'slip${Random().nextInt(1000000)}.jpg';
@@ -281,26 +288,30 @@ class _SaveBillOrderEmpState extends State<SaveBillOrderEmp> {
     //     print('->> $user_id');
     //   });
     // } catch (e) {}
+    
+    
 
-       String apisaveSlip = '${MyConstant().domain}/WaterShop/saveSlip.php';
-      String nameSlip = 'slip${Random().nextInt(1000000)}.jpg';
+    String apisaveSlip = '${MyConstant().domain}/WaterShop/saveSlip.php';
+    String nameSlip = 'slip${Random().nextInt(1000000)}.jpg';
 
-      try {
-        Map<String, dynamic> map = {};
-        map['file'] = await MultipartFile.fromFile(file!.path, filename: nameSlip);
-        FormData data = FormData.fromMap(map);
-        await Dio().post(apisaveSlip, data: data).then((value) async {
-          String imageSlip = '/WaterShop/Slip/$nameSlip';
-          print('value == $value');
-          DateTime dateTime = DateTime.now();
-          // print(dateTime.toString());
-          String slipDateTime = DateFormat('yyyy-MM-dd HH:mm').format(dateTime);
-          SharedPreferences preferences = await SharedPreferences.getInstance();
-          String? emp_id = preferences.getString('id');
+    try {
+      Map<String, dynamic> map = {};
+      map['file'] =
+          await MultipartFile.fromFile(file!.path, filename: nameSlip);
+      FormData data = FormData.fromMap(map);
+      await Dio().post(apisaveSlip, data: data).then((value) async {
+        String imageSlip = '/WaterShop/Slip/$nameSlip';
+        print('value == $value');
+        DateTime dateTime = DateTime.now();
+        // print(dateTime.toString());
+        String slipDateTime = DateFormat('yyyy-MM-dd HH:mm').format(dateTime);
+        SharedPreferences preferences = await SharedPreferences.getInstance();
+        String? emp_id = preferences.getString('id');
 
-        String path ='${MyConstant().domain}/WaterShop/addpayment.php?isAdd=true&slip_date_time=$slipDateTime&image_slip=$imageSlip&order_id=${order_id?.replaceAll('#', '%23')}&user_id=$user_id&user_name=$user_name&total=$total&emp_id=$emp_id';
-          await Dio().get(path).then((value) => print('upload Sucess'));
-        });
-      } catch (e) {}
+        String path =
+            '${MyConstant().domain}/WaterShop/addpayment.php?isAdd=true&image_slip=$imageSlip&order_id=${order_id}&user_id=$user_id&user_name=$user_name&total=$total&emp_id=$emp_id';
+        await Dio().get(path).then((value) => print('upload Sucess'));
+      });
+    } catch (e) {}
   }
 }

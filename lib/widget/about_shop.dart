@@ -30,7 +30,7 @@ class _AboutShopState extends State<AboutShop> {
   void initState() {
     super.initState();
     readDataShop();
-    findLocation();
+    // findLocation();
   }
 
   Future<Null> findLocation() async {
@@ -71,8 +71,8 @@ class _AboutShopState extends State<AboutShop> {
 
       transport = MyAPI().calculateTransport(distance!);
 
-      print('distance =>> $distance');
-      print('transport =>> $transport');
+      // print('distance =>> $distance');
+      // print('transport =>> $transport');
     });
   }
 
@@ -88,6 +88,7 @@ class _AboutShopState extends State<AboutShop> {
       for (var map in result) {
         setState(() {
           userModel = UserModel.fromJson(map);
+          findLocation();
         });
         // print('nameShop = ${detailShopModel.nameShop}');
       }

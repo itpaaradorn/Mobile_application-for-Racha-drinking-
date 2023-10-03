@@ -93,6 +93,9 @@ class _FollowMapCustomerState extends State<FollowMapCustomer> {
         lat2 = double.parse(userModel?.lat ?? '0');
         lng2 = double.parse(userModel?.lng ?? '0');
 
+        print('userModel -->> $userModel');
+        print('userModel -->> $userModels');
+
         setState(() {});
       }
     });
@@ -103,7 +106,7 @@ class _FollowMapCustomerState extends State<FollowMapCustomer> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "รายการสั่งซื้อที่ ${orderModel.orderNumber}",
+          "รายการสั่งซื้อที่ ${orderModel.orderTableId}",
         ),
       ),
       body:
@@ -120,7 +123,7 @@ class _FollowMapCustomerState extends State<FollowMapCustomer> {
           ),
           ListTile(
             leading: Icon(Icons.account_circle_rounded),
-            title: Text('ชื่อลูกค้า คุณ : ${userModel?.name}'),
+            title: Text('ชื่อลูกค้า คุณ : ${orderModel.name}'),
           ),
         ],
       );

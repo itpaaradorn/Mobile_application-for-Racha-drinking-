@@ -67,15 +67,10 @@ class _OrderProcessEmpState extends State<OrderProcessEmp> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Container(
-            height: 100,
-            width: 100,
-            child: Image.asset('images/nowater.png'),
-          ),
           MyStyle().mySixedBox(),
           Text(
             'ยังไม่มีข้อมูลการสั่งน้ำดื่ม',
-            style: TextStyle(fontSize: 28),
+            style: TextStyle(fontSize: 20),
           ),
         ],
       ),
@@ -151,6 +146,7 @@ class _OrderProcessEmpState extends State<OrderProcessEmp> {
       shrinkWrap: true,
       itemCount: listOrder.length,
       itemBuilder: (context, i) {
+        var items = listOrder[i].items;
         return Card(
           color: i % 2 == 0 ? Colors.grey.shade100 : Colors.grey.shade100,
           child: Padding(
@@ -236,12 +232,10 @@ class _OrderProcessEmpState extends State<OrderProcessEmp> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            listOrder[i].items[0].status == 'Cancel'
-                                ? MyStyle().showTitleH3('ยกเลิก')
-                                : Text(
-                                    '${listOrder[i].items.fold(0, (previous, current) => previous + int.parse(current.sum ?? '0'))} บาท',
-                                    style: MyStyle().mainhATitle,
-                                  ),
+                            Text(
+                              '${listOrder[i].items.fold(0, (previous, current) => previous + int.parse(current.sum ?? '0'))} บาท',
+                              style: MyStyle().mainhATitle,
+                            ),
                           ],
                         ),
                       ),
@@ -507,12 +501,12 @@ class _OrderProcessEmpState extends State<OrderProcessEmp> {
   }
 
   Future<Null> updateStatusConfirmOrder(int index) async {
-    String orderNumber = '${listOrder[index].items[0].orderNumber}';
+    String orderTableId = '${listOrder[index].items[0].orderTableId}';
     String path = '${MyConstant().domain}WaterShop/editStatusWhereuser_id.php';
     print(path);
 
-    await Dio().put(path,
-        data: {'status': 'Finish', 'order_number': orderNumber}).then(
+    await Dio()
+        .put(path, data: {'status': 'Finish', 'order_id': orderTableId}).then(
       (value) {
         if (value.toString() == 'true') {
           notificationtoShop(index);
@@ -522,12 +516,12 @@ class _OrderProcessEmpState extends State<OrderProcessEmp> {
   }
 
   Future<Null> updateStatusConfirmOrder_payment(int index) async {
-    String orderNumber = '${listOrder[index].items[0].orderNumber}';
+    String orderTableId = '${listOrder[index].items[0].orderTableId}';
     String path = '${MyConstant().domain}WaterShop/editStatusWhereuser_id.php';
     print(path);
 
-    await Dio().put(path,
-        data: {'status': 'Finish', 'order_number': orderNumber}).then(
+    await Dio()
+        .put(path, data: {'status': 'Finish', 'order_id': orderTableId}).then(
       (value) {
         if (value.toString() == 'true') {
           // notificationtoShop(index);

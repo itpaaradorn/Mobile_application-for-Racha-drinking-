@@ -220,7 +220,7 @@ class MyStyle {
             fontWeight: FontWeight.bold),
       );
   TextStyle mainConfirmTitle = TextStyle(
-    fontSize: 20,
+    fontSize: 23,
     fontWeight: FontWeight.w700,
     color: Color.fromARGB(255, 9, 82, 142),
   );

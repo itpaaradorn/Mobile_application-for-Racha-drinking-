@@ -95,7 +95,21 @@ class _LoginPageState extends State<LoginPage> {
               user!.isEmpty ||
               password == null ||
               password!.isEmpty) {
-            normalDialog(context, 'มีช่องว่างกรุณากรอกให้ครบ ครับ');
+            // normalDialog(context, 'มีช่องว่างกรุณากรอกให้ครบ ครับ');
+             AwesomeDialog(
+                context: context,
+                animType: AnimType.bottomSlide,
+                dialogType: DialogType.warning,
+                body: Center(
+                  child: Text(
+                  'มีช่องว่างกรุณากรอกให้ครบ',
+                    style: TextStyle(fontStyle: FontStyle.normal),
+                  ),
+                ),
+                title: 'This is Ignored',
+                desc: 'This is also Ignored',
+                btnOkOnPress: () {},
+              )..show();
           } else {
             checkAuthen();
           }

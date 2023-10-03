@@ -164,15 +164,11 @@ class _OrderListShopState extends State<OrderListShop> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Container(
-            height: 100,
-            width: 100,
-            child: Image.asset('images/nowater.png'),
-          ),
+         
           MyStyle().mySixedBox(),
           Text(
             'ยังไม่มีข้อมูลการสั่งน้ำดื่ม',
-            style: TextStyle(fontSize: 28),
+            style: TextStyle(fontSize: 20),
           ),
         ],
       ),

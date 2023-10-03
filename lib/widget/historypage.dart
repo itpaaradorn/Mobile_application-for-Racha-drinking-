@@ -185,16 +185,22 @@ class _HistoryState extends State<History> {
                           AwesomeDialog(
                             context: context,
                             animType: AnimType.bottomSlide,
-                            dialogType: DialogType.success,
+                            dialogType: DialogType.warning,
                             body: const Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Center(
-                                  child: Text(
-                                    'ไม่สามารถเปิดพิกัดได้ค่ะ\nเนื่องจากรายการของท่านสำเร็จแล้ว ค่ะ',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 15),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceAround,
+                                    children: [
+                                      Text(
+                                        'รายการของท่านยังไม่ได้ทำการจัดส่ง\n          กรุณารอพนักงานจัดส่ง\n    ท่านสามารถดูรายการต่อไปนี้ได้',
+                                        style: TextStyle(
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 15),
+                                      ),
+                                    ],
                                   ),
                                 ),
                               ],
@@ -209,7 +215,7 @@ class _HistoryState extends State<History> {
                           AwesomeDialog(
                             context: context,
                             animType: AnimType.bottomSlide,
-                            dialogType: DialogType.info,
+                            dialogType: DialogType.warning,
                             body: const Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
@@ -246,7 +252,7 @@ class _HistoryState extends State<History> {
                           AwesomeDialog(
                             context: context,
                             animType: AnimType.bottomSlide,
-                            dialogType: DialogType.success,
+                            dialogType: DialogType.info,
                             body: const Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
@@ -391,8 +397,33 @@ class _HistoryState extends State<History> {
         if (value.toString() == 'true') {
           readOrderFormIdUser();
           refresh();
-          normalDialogChack(context, 'ยกเลิกรายการสั่งซื้อสำเร็จ',
-              'รายการสั่งซื้อที่ $order_id');
+          
+
+          AwesomeDialog(
+            context: context,
+            animType: AnimType.bottomSlide,
+            dialogType: DialogType.success,
+            body: const Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Center(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Text(
+                        'ยกเลิกรายการสั่งซื้อสำเร็จ',
+                        style: TextStyle(
+                            fontWeight: FontWeight.w600, fontSize: 15),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            title: 'This is Ignored',
+            desc: 'This is also Ignored',
+            btnOkOnPress: () {},
+          ).show();
         }
       },
     );

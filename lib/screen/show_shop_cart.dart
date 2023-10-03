@@ -261,6 +261,7 @@ class _ShowCartState extends State<ShowCart> {
           Expanded(
             flex: 1,
             child: MyStyle().showTitleH3(total.toString()),
+            // child: MyStyle().showTitleH3(total.toString()),
           ),
         ],
       );

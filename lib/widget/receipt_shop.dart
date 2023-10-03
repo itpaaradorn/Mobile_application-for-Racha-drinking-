@@ -67,7 +67,7 @@ class _ReceiptShopState extends State<ReceiptShop> {
       ),
       body: Stack(
         children: <Widget>[
-          loadStatus ? buildNoneAvatarImage() : showContent(),
+          paymentmodels.isNotEmpty ? showPayment() : buildNoneAvatarImage()
         ],
       ),
     );
@@ -78,14 +78,10 @@ class _ReceiptShopState extends State<ReceiptShop> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Container(
-            height: 100,
-            width: 100,
-            child: Image.asset('images/nomoney.png'),
-          ),
+          
           Text(
             'ยังไม่มีข้อมูลการขำระเงิน',
-            style: TextStyle(fontSize: 28),
+            style: TextStyle(fontSize: 20),
           ),
         ],
       ),
@@ -128,7 +124,7 @@ class _ReceiptShopState extends State<ReceiptShop> {
                     Row(
                       children: [
                         Text(
-                          'เวลาสั่งซื้อ  \n➤  ${paymentmodels[index].slipDateTime} ',
+                          'เวลาชำระเงิน  \n➤  ${paymentmodels[index].slipDateTime} ',
                           style: MyStyle().mainh2Title,
                         ),
                       ],

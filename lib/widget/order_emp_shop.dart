@@ -67,15 +67,11 @@ class _OrderConfirmEmpState extends State<OrderConfirmEmp> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Container(
-            height: 100,
-            width: 100,
-            child: Image.asset('images/nowater.png'),
-          ),
+          
           MyStyle().mySixedBox(),
           Text(
             'ยังไม่มีข้อมูลการสั่งน้ำดื่ม',
-            style: TextStyle(fontSize: 28),
+            style: TextStyle(fontSize: 20),
           ),
         ],
       ),
@@ -514,13 +510,13 @@ class _OrderConfirmEmpState extends State<OrderConfirmEmp> {
   // }
 
   Future<Null> cancleOrderUser(int index) async {
-    String orderNumber = '${listOrder[index].items[0].orderNumber}';
+    String order_id = '${listOrder[index].items[0].orderTableId}';
     String path = '${MyConstant().domain}WaterShop/editStatusWhereuser_id.php';
-    print(orderNumber);
-    print(path);
+    // print(order_id);
+    // print(path);
 
     await Dio().put(path,
-        data: {'status': 'Cancel', 'order_number': orderNumber}).then(
+        data: {'status': 'Cancel', 'order_id': order_id}).then(
       (value) {
         if (value.toString() == 'true') {
           notificationCancleShop(index);

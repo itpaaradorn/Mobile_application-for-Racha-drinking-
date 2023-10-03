@@ -58,7 +58,7 @@ class _OrderConfirmShopState extends State<OrderConfirmShop> {
       ),
       body: Stack(
         children: <Widget>[
-          status ? showListOrderWater() : buildNoneOrder(),
+          listOrder.isNotEmpty ? showListOrderWater() : buildNoneOrder(),
         ],
       ),
     );
@@ -73,15 +73,10 @@ class _OrderConfirmShopState extends State<OrderConfirmShop> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Container(
-            height: 100,
-            width: 100,
-            child: Image.asset('images/nowater.png'),
-          ),
           MyStyle().mySixedBox(),
           Text(
             'ยังไม่มีข้อมูลการสั่งน้ำดื่ม',
-            style: TextStyle(fontSize: 28),
+            style: TextStyle(fontSize: 20),
           ),
         ],
       ),
@@ -164,29 +159,29 @@ class _OrderConfirmShopState extends State<OrderConfirmShop> {
       PdfPage page, int index, List<OrderModel> ordermodels) {
     page.graphics.drawString(
       'Name: ${ordermodels[index].name}',
-      PdfStandardFont(PdfFontFamily.helvetica, 23),
+      PdfStandardFont(PdfFontFamily.helvetica, 21),
       bounds: const Rect.fromLTWH(0, 45, 0, 0),
     );
     page.graphics.drawString(
       'Order ID: ${ordermodels[index].orderTableId}',
-      PdfStandardFont(PdfFontFamily.helvetica, 23),
+      PdfStandardFont(PdfFontFamily.helvetica, 21),
       bounds: const Rect.fromLTWH(0, 75, 0, 0),
     );
 
     page.graphics.drawString(
       'Order Time: ${ordermodels[index].createAt}',
-      PdfStandardFont(PdfFontFamily.helvetica, 23),
+      PdfStandardFont(PdfFontFamily.helvetica, 21),
       bounds: const Rect.fromLTWH(0, 105, 0, 0),
     );
 
     page.graphics.drawString(
       'Delivery Distance: ${ordermodels[index].distance} Km.',
-      PdfStandardFont(PdfFontFamily.helvetica, 23),
+      PdfStandardFont(PdfFontFamily.helvetica, 21),
       bounds: const Rect.fromLTWH(0, 135, 0, 0),
     );
     page.graphics.drawString(
       'Shipping cost: ${ordermodels[index].transport} THB.',
-      PdfStandardFont(PdfFontFamily.helvetica, 23),
+      PdfStandardFont(PdfFontFamily.helvetica, 21),
       bounds: const Rect.fromLTWH(0, 165, 0, 0),
     );
   }
@@ -196,14 +191,30 @@ class _OrderConfirmShopState extends State<OrderConfirmShop> {
     grid.columns.add(count: 4);
 
     final headerRow = grid.headers.add(3)[0];
-    headerRow.style.backgroundBrush = PdfSolidBrush(PdfColor(90, 100, 90));
-    headerRow.style.textBrush = PdfBrushes.white;
     headerRow.cells[0].value = ' Amount';
-    headerRow.cells[1].value = ' Brand';
+    headerRow.cells[1].value = ' Description';
     headerRow.cells[2].value = ' Price';
     headerRow.cells[3].value = ' Total';
-    headerRow.style.font = PdfStandardFont(PdfFontFamily.timesRoman, 20,
+
+    PdfGridCellStyle headerStyle = PdfGridCellStyle();
+    headerStyle.borders.all = PdfPen(PdfColor(126, 151, 173));
+    headerStyle.backgroundBrush = PdfSolidBrush(PdfColor(126, 151, 173));
+    headerStyle.textBrush = PdfBrushes.white;
+    headerStyle.font = PdfStandardFont(PdfFontFamily.helvetica, 21,
         style: PdfFontStyle.regular);
+
+    for (int i = 0; i < headerRow.cells.count; i++) {
+      if (i == 0 || i == 1) {
+        headerRow.cells[i].stringFormat = PdfStringFormat(
+            alignment: PdfTextAlignment.left,
+            lineAlignment: PdfVerticalAlignment.middle);
+      } else {
+        headerRow.cells[i].stringFormat = PdfStringFormat(
+            alignment: PdfTextAlignment.right,
+            lineAlignment: PdfVerticalAlignment.middle);
+      }
+      headerRow.cells[i].style = headerStyle;
+    }
 
     // PdfGridRow row = grid.rows.add();
     // row.style.font = PdfStandardFont(PdfFontFamily.helvetica, 21,
@@ -241,22 +252,45 @@ class _OrderConfirmShopState extends State<OrderConfirmShop> {
     PdfGridRow row;
 
     for (int i = 0; i < items.length; i++) {
-      print(i);
-      print(' =>>>> ${items[i].brandName}');
+      // print(i);
+      // print(' =>>>> ${items[i].brandName}');
 
       row = grid.rows.add();
 
-      row.style.font = PdfStandardFont(PdfFontFamily.helvetica, 21,
+      row.style.font = PdfStandardFont(PdfFontFamily.helvetica, 50,
           style: PdfFontStyle.regular);
 
       // row.cells[0].value = '  ${listOrder[i].items[0].amount}x';
-      row.cells[0].value = '  ${items[i].amount ?? ''}x';
+      row.cells[0].value = '  ${items[i].amount ?? ''}';
       // row.cells[1].value = '   ${listOrder[i].items[0].brandName}';
       row.cells[1].value = '   ${items[i].brandName ?? ''}';
       // row.cells[2].value = '   ${listOrder[i].items[0].price}';
       row.cells[2].value = '   ${items[i].price ?? ''}';
       row.cells[3].value = '   ${items[i].sum ?? ''}';
+
+      PdfGridCellStyle cells = PdfGridCellStyle();
+      cells.borders.all = PdfPens.white;
+      cells.borders.bottom = PdfPen(PdfColor(217, 217, 217), width: 0.70);
+      cells.font = PdfStandardFont(PdfFontFamily.helvetica, 19);
+      cells.textBrush = PdfSolidBrush(PdfColor(0, 0, 0));
+//Adds cell customizations
+      for (int i = 0; i < grid.rows.count; i++) {
+        PdfGridRow row = grid.rows[i];
+        for (int j = 0; j < row.cells.count; j++) {
+          row.cells[j].style = cells;
+          if (j == 0 || j == 1) {
+            row.cells[j].stringFormat = PdfStringFormat(
+                alignment: PdfTextAlignment.left,
+                lineAlignment: PdfVerticalAlignment.middle);
+          } else {
+            row.cells[j].stringFormat = PdfStringFormat(
+                alignment: PdfTextAlignment.right,
+                lineAlignment: PdfVerticalAlignment.middle);
+          }
+        }
+      }
     }
+
     int total = items.fold(
         0, (previous, current) => previous + int.parse(current.sum ?? '0'));
     total = total + int.parse(items[0].transport ?? '0');
