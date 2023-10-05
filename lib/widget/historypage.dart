@@ -610,7 +610,7 @@ class _HistoryState extends State<History> {
   }
 
   Future<Null> readOrderFormIdUser() async {
-    print('readOrderFormIdUser');
+    // print('readOrderFormIdUser');
 
     if (ordermodels.isNotEmpty) {
       ordermodels.clear();
@@ -711,7 +711,7 @@ class _HistoryState extends State<History> {
 
       setState(() {});
 
-      print('listOrder -> ${listOrder.length}');
+      // print('listOrder -> ${listOrder.length}');
 
       // for (var item in result) {
       // OrderModel model = OrderModel.fromJson(item);

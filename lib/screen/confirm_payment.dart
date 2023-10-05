@@ -208,7 +208,7 @@ class _ConfirmPaymentState extends State<ConfirmPayment> {
 
   Row buildBillImage() {
     return Row(
-      crossAxisAlignment: CrossAxisAlignment.end,
+      // crossAxisAlignment: CrossAxisAlignment.end,
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         IconButton(

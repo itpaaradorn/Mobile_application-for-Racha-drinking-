@@ -46,8 +46,11 @@ class _PrompayState extends State<Prompay> {
               .then((value) => Toast.show("Download สำเร็จ",
                   duration: Toast.lengthLong, gravity: Toast.bottom));
         } catch (e) {
+          Toast.show("Download สำเร็จ",
+              duration: Toast.lengthLong, gravity: Toast.bottom);
           print('error ==> ##${e.toString()}');
-          normalDialog(context, 'Error! กรุณาเปิด Permision Storageใน Setting');
+
+          // normalDialog(context, 'Error! กรุณาเปิด Permision Storageใน Setting');
         }
       },
       child: Text('Dowload QRcode'),

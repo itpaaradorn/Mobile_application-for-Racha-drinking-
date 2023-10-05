@@ -145,6 +145,11 @@ class _ShowCartState extends State<ShowCart> {
         : buildContent();
   }
 
+  Future refresh() async {
+    readOrderFormIdUser();
+  }
+
+
   Widget buildContent() {
     return Padding(
       padding: const EdgeInsets.all(8.0),
