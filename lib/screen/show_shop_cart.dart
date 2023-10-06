@@ -82,6 +82,8 @@ class _ShowCartState extends State<ShowCart> {
       // print('resp =>> $resp');
       var result = json.decode(resp.data);
       // print('result ==>> $result');
+      total = 0;
+      int transport = 0;
 
       for (var map in result) {
         OrderDetail orderdetail = OrderDetail.fromJson(map);
@@ -89,11 +91,13 @@ class _ShowCartState extends State<ShowCart> {
 
         int sumInt = int.parse(sumString);
 
-        setState(() {
-          orderDetails.add(orderdetail);
-          total = total + sumInt;
-        });
+        orderDetails.add(orderdetail);
+        total = total + sumInt;
+        transport = int.parse(orderdetail.transport ?? '0');
       }
+
+      total += transport;
+      setState(() {});
     } else {
       setState(() {
         status = true;
@@ -148,7 +152,6 @@ class _ShowCartState extends State<ShowCart> {
   Future refresh() async {
     readOrderFormIdUser();
   }
-
 
   Widget buildContent() {
     return Padding(
@@ -381,9 +384,9 @@ class _ShowCartState extends State<ShowCart> {
 
   Future<Null> deleteOrderCart(OrderDetail orderdetail) async {
     // String? url =
-    //     'http://192.168.1.99/WaterShop/deleteOrderDetail.php?id=${orderdetail.id}';
+    //     '${MyConstant().domain}WaterShop/deleteOrderDetail.php?id=${orderdetail.id}';
 
-    // String url = 'http://192.168.1.99/WaterShop/deleteOrderDetail.php';
+    // String url = '${MyConstant().domain}WaterShop/deleteOrderDetail.php';
 
     // Response resp = await Dio().delete(url, data: {'id': orderdetail.id});
 
@@ -447,7 +450,7 @@ class _ShowCartState extends State<ShowCart> {
 
     // String orderNumber = "$user_id#${now.year}${prepareDigit(now.month)}${prepareDigit(now.day)}${prepareDigit(now.hour)}${prepareDigit(now.minute)}${prepareDigit(now.second)}";
 
-    // String? url = 'http://192.168.1.99/WaterShop/addOrderWater.php';
+    // String? url = '${MyConstant().domain}WaterShop/addOrderWater.php';
 
     // for (var i = 0; i < orderDetails.length; i++) {
     //   Map<String, String> _map = {

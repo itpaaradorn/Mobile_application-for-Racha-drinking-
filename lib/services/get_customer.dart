@@ -1,6 +1,8 @@
 import 'package:dio/dio.dart';
 
+import '../utility/my_constant.dart';
+
 Future<Response> getCustomer() async {
-  String url = "http://192.168.1.99/WaterShop/getCustomer.php";
+  String url = "${MyConstant().domain}WaterShop/getCustomer.php";
   return await Dio().get(url);
 }

@@ -13,8 +13,9 @@ import '../utility/my_constant.dart';
 import '../utility/my_style.dart';
 
 class SaveBillOrderEmp extends StatefulWidget {
+  final Function() submit;
   final OrderModel orderModel;
-  const SaveBillOrderEmp({super.key, required this.orderModel});
+  const SaveBillOrderEmp({super.key, required this.orderModel, required this.submit});
 
   @override
   State<SaveBillOrderEmp> createState() => _SaveBillOrderEmpState();
@@ -248,6 +249,7 @@ class _SaveBillOrderEmpState extends State<SaveBillOrderEmp> {
               },
             ).show();
           } else {
+            widget.submit();
             processUploadInsertData();
             Navigator.pop(context);
           }
@@ -277,7 +279,7 @@ class _SaveBillOrderEmpState extends State<SaveBillOrderEmp> {
     //     SharedPreferences preferences = await SharedPreferences.getInstance();
     //     String? emp_id = preferences.getString('id');
     //     String path =
-    //         'http://192.168.1.99/WaterShop/addpayment.php?isAdd=true&slip_date_time=$slipDateTime&image_slip=$imageSlip&order_id=none&user_id=$user_id&user_name=$user_name&total=&emp_id=none';
+    //         '${MyConstant().domain}WaterShop/addpayment.php?isAdd=true&slip_date_time=$slipDateTime&image_slip=$imageSlip&order_id=none&user_id=$user_id&user_name=$user_name&total=&emp_id=none';
 
     //     await Dio().get(path).then((value) => print('upload Sucess'));
 

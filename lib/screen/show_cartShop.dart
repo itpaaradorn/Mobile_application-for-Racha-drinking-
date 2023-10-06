@@ -348,7 +348,7 @@ class _ShowCartShopState extends State<ShowCartShop> {
 
   Future<Null> deleteOrderCart(OrderDetail orderdetail) async {
     // String? url =
-    //     'http://192.168.1.99/WaterShop/deleteOrderDetail.php?id=${orderdetail.id}';
+    //     '${MyConstant().domain}WaterShop/deleteOrderDetail.php?id=${orderdetail.id}';
 
       Response resp = await deleteOrderCardApi(orderdetail: orderdetail);
 

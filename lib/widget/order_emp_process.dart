@@ -104,7 +104,9 @@ class _OrderProcessEmpState extends State<OrderProcessEmp> {
     ordermodels.clear();
 
     if (result != null) {
-      result?.forEach((elem) => ordermodels.add(OrderModel.fromJson(elem)));
+      result?.forEach((elem) {
+        ordermodels.add(OrderModel.fromJson(elem));
+      });
 
       /*
          listOrder = [
@@ -233,7 +235,7 @@ class _OrderProcessEmpState extends State<OrderProcessEmp> {
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             Text(
-                              '${listOrder[i].items.fold(0, (previous, current) => previous + int.parse(current.sum ?? '0'))} บาท',
+                              '${listOrder[i].items.fold(0, (previous, current) => previous + int.parse(current.sum ?? '0')) + int.parse(listOrder[i].items[0].transport ?? '0')} บาท',
                               style: MyStyle().mainhATitle,
                             ),
                           ],
@@ -273,15 +275,16 @@ class _OrderProcessEmpState extends State<OrderProcessEmp> {
                             MaterialPageRoute route = MaterialPageRoute(
                               builder: (context) => SaveBillOrderEmp(
                                 orderModel: ordermodels[i],
+                                submit: () {
+                                  updateStatusConfirmOrder_payment(i)
+                                      .then((value) {
+                                    findOrderShop();
+                                  });
+                                },
                               ),
                             );
                             Navigator.push(context, route).then(
-                              (value) {
-                                updateStatusConfirmOrder_payment(i)
-                                    .then((value) {
-                                  findOrderShop();
-                                });
-                              },
+                              (value) {},
                             );
                           } else {
                             updateStatusConfirmOrder(i).then((value) {

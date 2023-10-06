@@ -17,26 +17,29 @@ class OrderModel {
   String? brandId;
   String? waterId;
   String? riderId;
+  String? userPhone;
 
-  OrderModel(
-      {this.orderTableId,
-      this.paymentStatus,
-      this.orderNumber,
-      this.createAt,
-      this.amount,
-      this.sum,
-      this.distance,
-      this.transport,
-      this.price,
-      this.size,
-      this.brandName,
-      this.name,
-      this.userId,
-      this.riderName,
-      this.status,
-      this.brandId,
-      this.waterId,
-      this.riderId});
+  OrderModel({
+    this.orderTableId,
+    this.paymentStatus,
+    this.orderNumber,
+    this.createAt,
+    this.amount,
+    this.sum,
+    this.distance,
+    this.transport,
+    this.price,
+    this.size,
+    this.brandName,
+    this.name,
+    this.userId,
+    this.riderName,
+    this.status,
+    this.brandId,
+    this.waterId,
+    this.riderId,
+    this.userPhone,
+  });
 
   OrderModel.fromJson(Map<String, dynamic> json) {
     orderTableId = json['order_table_id'];
@@ -57,6 +60,7 @@ class OrderModel {
     brandId = json['brand_id'];
     waterId = json['water_id'];
     riderId = json['rider_id'];
+    userPhone = json['user_phone'];
   }
 
   Map<String, dynamic> toJson() {
@@ -79,6 +83,7 @@ class OrderModel {
     data['brand_id'] = this.brandId;
     data['water_id'] = this.waterId;
     data['rider_id'] = this.riderId;
+    data['user_phone'] = this.userPhone;
     return data;
   }
 }

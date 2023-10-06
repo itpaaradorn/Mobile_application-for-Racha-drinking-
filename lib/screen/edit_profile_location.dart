@@ -232,29 +232,34 @@ class _EditProfileLocationState extends State<EditProfileLocation> {
     int i = random.nextInt(100000);
     String nameFile = 'editavatar$i.jpg';
     Map<String, dynamic> map = Map();
-    map['file'] = await MultipartFile.fromFile(file!.path, filename: nameFile);
-    FormData formData = FormData.fromMap(map);
-    String urlUpload = '${MyConstant().domain}/WaterShop/saveAvatar.php';
-    await Dio().post(urlUpload, data: formData).then((value) async {
-      urlpicture = '/WaterShop/avatar/$nameFile';
 
-      String url =
-          '${MyConstant().domain}/WaterShop/editProfilelocation.php?isAdd=true&id=$user_id&UrlPicture=$urlpicture&Name=$name&User=$user&Password=$password&Phone=$phone&Address=$address&Lat=$lat&Lng=$lng';
-      await Dio().get(url).then((value) => AwesomeDialog(
-            context: context,
-            animType: AnimType.bottomSlide,
-            dialogType: DialogType.success,
-            body: Center(
-              child: Text(
-                "แก้ไขข้อมูลสมาชิกสำเร็จ",
-                style: TextStyle(fontStyle: FontStyle.normal),
-              ),
+    if (file != null) {
+      map['file'] =
+          await MultipartFile.fromFile(file!.path, filename: nameFile);
+
+      FormData formData = FormData.fromMap(map);
+      String urlUpload = '${MyConstant().domain}/WaterShop/saveAvatar.php';
+
+      await Dio().post(urlUpload, data: formData);
+      urlpicture = '/WaterShop/avatar/$nameFile';
+    }
+
+    String url =
+        '${MyConstant().domain}/WaterShop/editProfilelocation.php?isAdd=true&id=$user_id&UrlPicture=$urlpicture&Name=$name&User=$user&Password=$password&Phone=$phone&Address=$address&Lat=$lat&Lng=$lng';
+    await Dio().get(url).then((value) => AwesomeDialog(
+          context: context,
+          animType: AnimType.bottomSlide,
+          dialogType: DialogType.success,
+          body: Center(
+            child: Text(
+              "แก้ไขข้อมูลสมาชิกสำเร็จ",
+              style: TextStyle(fontStyle: FontStyle.normal),
             ),
-            title: 'This is Ignored',
-            desc: 'This is also Ignored',
-            btnOkOnPress: () {},
-          ).show());
-    });
+          ),
+          title: 'This is Ignored',
+          desc: 'This is also Ignored',
+          btnOkOnPress: () {},
+        ).show());
   }
 
   Widget buildMap() => Container(

@@ -7,6 +7,8 @@ import 'package:application_drinking_water_shop/utility/my_constant.dart';
 import 'package:application_drinking_water_shop/utility/my_style.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:dio/dio.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:geolocator/geolocator.dart';
@@ -45,19 +47,21 @@ class _FollowTrackingDeliveryState extends State<FollowTrackingDelivery> {
     order_id = orderModel!.orderTableId;
     date_time = orderModel!.createAt;
     // FindUserWhererider();
-    findLocation();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      findLocation();
+    });
 
     // getPolyPoints();
   }
 
   Future<Null> findLocation() async {
-    
     // var currentLocation = await Location.instance.getLocation();
     SharedPreferences preferences = await SharedPreferences.getInstance();
     String? user_id = preferences.getString('id');
 
     String url =
-        "http://192.168.1.99/WaterShop/getUserWhereId.php?isAdd=true&id=$user_id";
+        "${MyConstant().domain}WaterShop/getUserWhereId.php?isAdd=true&id=$user_id";
     Response resp = await Dio().get(url);
 
     if (resp.statusCode == 200) {
@@ -75,13 +79,47 @@ class _FollowTrackingDeliveryState extends State<FollowTrackingDelivery> {
     // print('lat1 ==> $lat1 , lng1 ==> $lng1');
   }
 
+  late DatabaseReference starCountRef;
+
   Future<Null> findLatLng() async {
     Position? position = await MyAPI().getLocation();
     setState(() {
-      
+
       lat2 = double.parse(userModel?.lat ?? '0');
       lng2 = double.parse(userModel?.lng ?? '0');
     });
+
+    print(userModel?.id);
+
+    FirebaseDatabase rtdb = FirebaseDatabase.instanceFor(
+        app: Firebase.app(),
+        databaseURL:
+            'https://watershop-26789-default-rtdb.asia-southeast1.firebasedatabase.app/');
+
+    starCountRef = rtdb.ref('rider/${userModel?.id}');
+    starCountRef.onValue.listen((DatabaseEvent event) {
+      Object? data = event.snapshot.value;
+
+      if (data != null) {
+        final dataJson = jsonDecode(jsonEncode(data));
+
+        print(dataJson);
+
+        // lat2 = double.parse(dataJson['latitude'] ?? '0');
+        // lng2 = double.parse(dataJson['longtitude'] ?? '0');
+
+        updateLocation(dataJson);
+      }
+    });
+  }
+
+  void updateLocation(dataJson) {
+    lat2 = dataJson['latitude'] + 0.0;
+    lng2 = dataJson['longtitude'] + 0.0;
+
+    if (this.mounted) {
+      setState(() {});
+    }
   }
 
   Future<Null> FindUserWhererider() async {
@@ -362,10 +400,12 @@ class _FollowTrackingDeliveryState extends State<FollowTrackingDelivery> {
   //   return <Marker>[userMarker(), riderMarker()].toSet();
   // }
 
-  // @override
-  // void dispose() {
-  //   super.dispose();
+  @override
+  void dispose() {
+    super.dispose();
 
-  //   positionStream?.cancel();
-  // }
+    // positionStream?.cancel();
+    starCountRef.onDisconnect();
+    starCountRef.remove();
+  }
 }

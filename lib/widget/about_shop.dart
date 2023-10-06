@@ -39,7 +39,7 @@ class _AboutShopState extends State<AboutShop> {
     String? user_id = preferences.getString('id');
 
     String url =
-        "http://192.168.1.99/WaterShop/getUserWhereId.php?isAdd=true&id=$user_id";
+        "${MyConstant().domain}WaterShop/getUserWhereId.php?isAdd=true&id=$user_id";
     Response resp = await Dio().get(url);
 
     if (resp.statusCode == 200) {

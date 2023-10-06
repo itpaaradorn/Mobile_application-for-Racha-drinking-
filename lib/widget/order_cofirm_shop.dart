@@ -4,6 +4,8 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:syncfusion_flutter_pdf/pdf.dart';
@@ -43,7 +45,16 @@ class _OrderConfirmShopState extends State<OrderConfirmShop> {
   @override
   void initState() {
     super.initState();
+    initialFont();
     findOrderShop();
+  }
+
+  late Uint8List dataInt;
+
+  Future<void> initialFont() async {
+    ByteData fontByte = await rootBundle.load('fonts/Samba/SambaBold.ttf');
+    dataInt = fontByte.buffer
+        .asUint8List(fontByte.offsetInBytes, fontByte.lengthInBytes);
   }
 
   @override
@@ -53,7 +64,9 @@ class _OrderConfirmShopState extends State<OrderConfirmShop> {
         backgroundColor: Colors.white,
         title: Text(
           'รายการน้ำดื่มที่จัดส่งเสร็จสิ้น',
-          style: TextStyle(color: Colors.indigo),
+          // style: TextStyle(color: Colors.indigo),
+          // style: GoogleFonts.notoSans(color: Colors.indigo),
+          style: GoogleFonts.kanit(color: Colors.indigo),
         ),
       ),
       body: Stack(
@@ -155,11 +168,15 @@ class _OrderConfirmShopState extends State<OrderConfirmShop> {
     );
   }
 
-  static void Detailbill(
-      PdfPage page, int index, List<OrderModel> ordermodels) {
+  void Detailbill(PdfPage page, int index, List<OrderModel> ordermodels) {
     page.graphics.drawString(
       'Name: ${ordermodels[index].name}',
-      PdfStandardFont(PdfFontFamily.helvetica, 21),
+      // 'Name: สมัครสมาชิก',
+      // 'こんにちは世界',
+      // 'hello',
+      PdfTrueTypeFont(dataInt, 21),
+      // PdfCjkStandardFont(PdfCjkFontFamily.heiseiMinchoW3, 20),
+      // PdfStandardFont(PdfFontFamily.helvetica, 21),
       bounds: const Rect.fromLTWH(0, 45, 0, 0),
     );
     page.graphics.drawString(

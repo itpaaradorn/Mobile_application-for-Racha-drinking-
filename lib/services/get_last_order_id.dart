@@ -18,7 +18,7 @@ Future<Response> getLastOrderId(
       "${MyConstant().domain}WaterShop/getLastOrderId.php?user_id=$user_id&status=$status";
   print(url);
 
-  // String url = "http://192.168.1.99/WaterShop/getLastOrderId.php?user_id=123";
+  // String url = "${MyConstant().domain}WaterShop/getLastOrderId.php?user_id=123";
 
   Response response = await Dio().get(url);
 

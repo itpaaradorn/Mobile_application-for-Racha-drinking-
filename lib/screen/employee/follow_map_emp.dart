@@ -3,6 +3,8 @@ import 'dart:convert';
 
 import 'package:application_drinking_water_shop/utility/my_style.dart';
 import 'package:dio/dio.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -39,6 +41,42 @@ class _FollowMapCustomerState extends State<FollowMapCustomer> {
     FindUserWhererider();
     findlatlng();
     super.initState();
+
+    // updatePosition();
+  }
+
+  FirebaseDatabase rtdb = FirebaseDatabase.instanceFor(
+      app: Firebase.app(),
+      databaseURL:
+          'https://watershop-26789-default-rtdb.asia-southeast1.firebasedatabase.app/');
+
+  void updatePosition() async {
+    print('updatePosition');
+
+    DatabaseReference ref = rtdb.ref("rider/2");
+    await ref.update({
+      "latitude": 100.1111,
+      "longtitude": 7.12345,
+    });
+
+    // DatabaseReference ref = rtdb.ref("users/123");
+
+    // await ref.set({
+    //   "name": "John",
+    //   "age": 18,
+    //   "address": {"line1": "100 Mountain View"}
+    // });
+
+    // final ref = FirebaseDatabase.instance.ref();
+    // final snapshot = await ref.child('users/123').get();
+    // final snapshot = await ref.child("rider/${userModel?.id ?? 0}").get();
+    // if (snapshot.exists) {
+    //   print(snapshot.value);
+    // } else {
+    //   print('No data available.');
+    // }
+
+    print('End updatePosition');
   }
 
   StreamSubscription<Position>? positionStream;
@@ -50,11 +88,17 @@ class _FollowMapCustomerState extends State<FollowMapCustomer> {
     );
     positionStream =
         Geolocator.getPositionStream(locationSettings: locationSettings)
-            .listen((Position? position) {
+            .listen((Position? position) async {
       print(position);
       if (position != null) {
         lat1 = position.latitude;
         lng1 = position.longitude;
+
+        DatabaseReference ref = rtdb.ref("rider/$id");
+        await ref.update({
+          "latitude": lat1,
+          "longtitude": lng1,
+        });
 
         setState(() {});
       }
@@ -80,7 +124,7 @@ class _FollowMapCustomerState extends State<FollowMapCustomer> {
       userModels.clear();
     }
     String url =
-        '${MyConstant().domain}/WaterShop/getUserWhereId.php?isAdd=true&id=$id';
+        '${MyConstant().domain}/WaterShop/getUserWhereId.php?isAdd=true&id=${orderModel.userId}';
 
     print(url);
 
@@ -93,8 +137,8 @@ class _FollowMapCustomerState extends State<FollowMapCustomer> {
         lat2 = double.parse(userModel?.lat ?? '0');
         lng2 = double.parse(userModel?.lng ?? '0');
 
-        print('userModel -->> $userModel');
-        print('userModel -->> $userModels');
+        print('lat2 -->> $lat2');
+        print('lng2 -->> $lng2');
 
         setState(() {});
       }
@@ -119,7 +163,7 @@ class _FollowMapCustomerState extends State<FollowMapCustomer> {
           buildMap(),
           ListTile(
             leading: Icon(Icons.phone),
-            title: Text('ติดต่อ : ${userModel?.phone}'),
+            title: Text('ติดต่อ : ${orderModel.userPhone}'),
           ),
           ListTile(
             leading: Icon(Icons.account_circle_rounded),
