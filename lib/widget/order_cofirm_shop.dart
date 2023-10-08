@@ -52,7 +52,7 @@ class _OrderConfirmShopState extends State<OrderConfirmShop> {
   late Uint8List dataInt;
 
   Future<void> initialFont() async {
-    ByteData fontByte = await rootBundle.load('fonts/Samba/SambaBold.ttf');
+    ByteData fontByte = await rootBundle.load('fonts/Samba/CSChatThaiUI.ttf');
     dataInt = fontByte.buffer
         .asUint8List(fontByte.offsetInBytes, fontByte.lengthInBytes);
   }
@@ -66,7 +66,7 @@ class _OrderConfirmShopState extends State<OrderConfirmShop> {
           'รายการน้ำดื่มที่จัดส่งเสร็จสิ้น',
           // style: TextStyle(color: Colors.indigo),
           // style: GoogleFonts.notoSans(color: Colors.indigo),
-          style: GoogleFonts.kanit(color: Colors.indigo),
+          style: GoogleFonts.aBeeZee(color: Colors.indigo),
         ),
       ),
       body: Stack(
@@ -146,17 +146,18 @@ class _OrderConfirmShopState extends State<OrderConfirmShop> {
   }
 
   Future<void> _createPDF(int index) async {
+
     PdfDocument document = PdfDocument();
 
     var page = document.pages.add();
 
     drawGrid(index, page, listOrder);
     Imagebill(page, index, ordermodels);
-    Detailbill(page, index, ordermodels);
+    Detailbill(page, index, listOrder);
 
     List<int> bytes = await document.save();
 
-    saveAndLanchFile(bytes, 'Order_${ordermodels[index].orderTableId}.pdf');
+    saveAndLanchFile(bytes, 'Order_${listOrder[index].items.first.orderTableId}.pdf');
     document.dispose();
   }
 
@@ -168,9 +169,12 @@ class _OrderConfirmShopState extends State<OrderConfirmShop> {
     );
   }
 
-  void Detailbill(PdfPage page, int index, List<OrderModel> ordermodels) {
+  void Detailbill(PdfPage page, int index, List<ListOrder> listOrder) {
+
+OrderModel  orderModel = listOrder[index].items.first;
+
     page.graphics.drawString(
-      'Name: ${ordermodels[index].name}',
+      'Name: ${orderModel.name}',
       // 'Name: สมัครสมาชิก',
       // 'こんにちは世界',
       // 'hello',
@@ -180,25 +184,29 @@ class _OrderConfirmShopState extends State<OrderConfirmShop> {
       bounds: const Rect.fromLTWH(0, 45, 0, 0),
     );
     page.graphics.drawString(
-      'Order ID: ${ordermodels[index].orderTableId}',
-      PdfStandardFont(PdfFontFamily.helvetica, 21),
+      'Order ID: ${orderModel.orderTableId}',
+      // PdfStandardFont(PdfFontFamily.helvetica, 21),
+      PdfTrueTypeFont(dataInt, 21),
       bounds: const Rect.fromLTWH(0, 75, 0, 0),
     );
 
     page.graphics.drawString(
-      'Order Time: ${ordermodels[index].createAt}',
-      PdfStandardFont(PdfFontFamily.helvetica, 21),
+      'Order Time: ${orderModel.createAt}',
+      // PdfStandardFont(PdfFontFamily.helvetica, 21),
+      PdfTrueTypeFont(dataInt, 21),
       bounds: const Rect.fromLTWH(0, 105, 0, 0),
     );
 
     page.graphics.drawString(
-      'Delivery Distance: ${ordermodels[index].distance} Km.',
-      PdfStandardFont(PdfFontFamily.helvetica, 21),
+      'Delivery Distance: ${orderModel.distance} Km.',
+      // PdfStandardFont(PdfFontFamily.helvetica, 21),
+      PdfTrueTypeFont(dataInt, 21),
       bounds: const Rect.fromLTWH(0, 135, 0, 0),
     );
     page.graphics.drawString(
-      'Shipping cost: ${ordermodels[index].transport} THB.',
-      PdfStandardFont(PdfFontFamily.helvetica, 21),
+      'Shipping cost: ${orderModel.transport} THB.',
+      // PdfStandardFont(PdfFontFamily.helvetica, 21),
+      PdfTrueTypeFont(dataInt, 21),
       bounds: const Rect.fromLTWH(0, 165, 0, 0),
     );
   }

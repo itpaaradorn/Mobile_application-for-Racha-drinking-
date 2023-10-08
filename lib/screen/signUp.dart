@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:math';
 
@@ -48,12 +49,33 @@ class _SignUpState extends State<SignUp> {
     super.initState();
   }
 
+  // Future<Null> findLatLng() async {
+  //   Position? positon = await MyAPI().getLocation();
+  //   setState(() {
+  //     lat = positon?.latitude;
+  //     lng = positon?.longitude;
+  //     print(' lat == $lat , lng == $lng');
+  //   });
+  // }
+
+
+  StreamSubscription<Position>? positionStream;
+
   Future<Null> findLatLng() async {
-    Position? positon = await MyAPI().getLocation();
-    setState(() {
-      lat = positon?.latitude;
-      lng = positon?.longitude;
-      print(' lat == $lat , lng == $lng');
+    final LocationSettings locationSettings = LocationSettings(
+      accuracy: LocationAccuracy.high,
+      distanceFilter: 100,
+    );
+    positionStream =
+        Geolocator.getPositionStream(locationSettings: locationSettings)
+            .listen((Position? position) async {
+      print(position);
+      if (position != null) {
+        lat = position.latitude;
+        lng = position.longitude;
+
+        setState(() {});
+      }
     });
   }
 
@@ -577,4 +599,12 @@ class _SignUpState extends State<SignUp> {
           MyStyle().showLogo(),
         ],
       );
+
+
+  @override
+  void dispose() {
+    super.dispose();
+
+    positionStream?.cancel();
+  }    
 }

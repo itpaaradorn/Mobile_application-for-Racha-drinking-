@@ -227,6 +227,9 @@ class _EditProfileLocationState extends State<EditProfileLocation> {
         ],
       );
 
+
+      
+
   Future<Null> updateProfileandLocation() async {
     Random random = Random();
     int i = random.nextInt(100000);
@@ -261,6 +264,16 @@ class _EditProfileLocationState extends State<EditProfileLocation> {
           btnOkOnPress: () {},
         ).show());
   }
+
+
+
+
+
+
+
+
+
+
 
   Widget buildMap() => Container(
         color: Colors.grey,

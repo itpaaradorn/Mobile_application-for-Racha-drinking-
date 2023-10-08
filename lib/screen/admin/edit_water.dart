@@ -28,7 +28,7 @@ class _EditWaterMenuState extends State<EditWaterMenu> {
   WaterModel? waterModel;
   BrandWaterModel? selectedModel;
   File? file;
-  String? brandname, price, size, pathImage, idbrand, quantity;
+  String? brandname, price, size, pathImage, idbrand, quantity, brand_image;
   String? selectvalue;
   List<BrandWaterModel> brandModels = [];
 
@@ -49,9 +49,38 @@ class _EditWaterMenuState extends State<EditWaterMenu> {
   Widget build(BuildContext context) {
     ToastContext().init(context);
     return Scaffold(
-      floatingActionButton: uploadButton(),
+      // floatingActionButton: uploadButton(),
       appBar: AppBar(
         title: Text('แก้ไขน้ำดื่ม ${waterModel!.brandName} '),
+        actions: [
+          IconButton(
+            onPressed: () {
+              if (brandname!.isEmpty || size!.isEmpty || price!.isEmpty) {
+                AwesomeDialog(
+                  context: context,
+                  animType: AnimType.bottomSlide,
+                  dialogType: DialogType.warning,
+                  body: Center(
+                    child: Text(
+                      "กรุณากรอกข้อมูลให้ครบ!",
+                      style: TextStyle(
+                          fontStyle: FontStyle.normal,
+                          fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                  title: 'This is Ignored',
+                  desc: 'This is also Ignored',
+                  btnOkOnPress: () {
+                    // Navigator.pop(context);
+                  },
+                ).show();
+              } else {
+                confirmEdit();
+              }
+            },
+            icon: Icon(Icons.save),
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -76,14 +105,15 @@ class _EditWaterMenuState extends State<EditWaterMenu> {
     return FloatingActionButton(
       onPressed: () {
         if (brandname!.isEmpty || size!.isEmpty || price!.isEmpty) {
-           AwesomeDialog(
+          AwesomeDialog(
             context: context,
             animType: AnimType.bottomSlide,
             dialogType: DialogType.warning,
             body: Center(
               child: Text(
                 "กรุณากรอกข้อมูลให้ครบ!",
-                style: TextStyle(fontStyle: FontStyle.normal , fontWeight: FontWeight.bold),
+                style: TextStyle(
+                    fontStyle: FontStyle.normal, fontWeight: FontWeight.bold),
               ),
             ),
             title: 'This is Ignored',
@@ -147,34 +177,40 @@ class _EditWaterMenuState extends State<EditWaterMenu> {
   // }
 
   Future<Null> editValueOnMySQL() async {
-    String? urlUpload = '${MyConstant().domain}/WaterShop/Savebrand.php';
-
     Random random = Random();
     int i = random.nextInt(1000000);
-    String? nameFile = 'brand$i.jpg';
-
+    String nameFile = 'brand$i.jpg';
     Map<String, dynamic> map = Map();
-    map['file'] = await MultipartFile.fromFile(file!.path, filename: nameFile);
-    FormData formData = FormData.fromMap(map);
 
-    await Dio().post(urlUpload, data: formData).then(
-      (value) async {
-        String? brand_image = '/WaterShop/brand/$nameFile';
+    if (file != null) {
+      map['file'] =
+          await MultipartFile.fromFile(file!.path, filename: nameFile);
 
-        String? id = waterModel!.id;
-        String url =
-            '${MyConstant().domain}/WaterShop/editWater.php?isAdd=true&id=$id&brandname=$brandname&PathImage=$brand_image&Price=$price&Size=$size&idbrand=$idbrand&quantity=$quantity';
-        await Dio().get(url).then((value) {
-          if (value.toString() == 'true') {
-            Navigator.pop(context);
-            Toast.show("แก้ไขข้อมูลสำเร็จ",
-                duration: Toast.lengthLong, gravity: Toast.bottom);
-          } else {
-            normalDialog(context, 'กรุณาลองใหม่มีอะไร ผิดพลาด!');
-          }
-        });
-      },
-    );
+      FormData formData = FormData.fromMap(map);
+      String? urlUpload = '${MyConstant().domain}/WaterShop/Savebrand.php';
+
+      await Dio().post(urlUpload, data: formData);
+      pathImage = '/WaterShop/brand/$nameFile';
+    }
+
+    // map['file'] = await MultipartFile.fromFile(file!.path, filename: nameFile);
+    // FormData formData = FormData.fromMap(map);
+
+    // await Dio().post(urlUpload, data: formData).then(
+    //   (value) async {
+
+    String? id = waterModel!.id;
+    String url =
+        '${MyConstant().domain}/WaterShop/editWater.php?isAdd=true&id=$id&brandname=$brandname&PathImage=$pathImage&Price=$price&Size=$size&idbrand=$idbrand&quantity=$quantity';
+    await Dio().get(url).then((value) {
+      if (value.toString() == 'true') {
+        Navigator.pop(context);
+        Toast.show("แก้ไขข้อมูลสำเร็จ",
+            duration: Toast.lengthLong, gravity: Toast.bottom);
+      } else {
+        normalDialog(context, 'กรุณาลองใหม่มีอะไร ผิดพลาด!');
+      }
+    });
   }
 
   Widget groupImage() => Row(
@@ -191,7 +227,7 @@ class _EditWaterMenuState extends State<EditWaterMenu> {
             height: 250.0,
             child: file == null
                 ? Image.network(
-                    '${MyConstant().domain}${waterModel?.pathImage}',
+                    '${MyConstant().domain}${pathImage}',
                     fit: BoxFit.cover,
                   )
                 : Image.file(file!),
@@ -244,24 +280,21 @@ class _EditWaterMenuState extends State<EditWaterMenu> {
     return Container(
       width: 300,
       child: DropdownButtonFormField(
-          hint: selectedModel?.brandName != null
-              ? Text('${selectedModel?.brandName}')
+          hint: waterModel?.brandName != null
+              ? Text('${waterModel?.brandName}')
               : Text('กรุณาเลือกยี่ห้อ'),
-          value: selectedModel
-              ?.brandName, // Use the selected model's brandName as the value
+          value: selectedModel?.brandName,
           items: brandModels.map((BrandWaterModel model) {
             return DropdownMenuItem(
-              value: model.brandName, // Set the value to the model's brandName
+              value: model.brandName,
               child: Text(model.brandName!),
             );
           }).toList(),
           onChanged: (value) {
             setState(() {
-              // Find the corresponding model based on the selected brandName
               selectedModel =
                   brandModels.firstWhere((model) => model.brandName == value);
 
-              // You can access the selected model's properties here
               idbrand = selectedModel?.brandId ?? '';
               brandname = selectedModel?.brandName ?? '';
 

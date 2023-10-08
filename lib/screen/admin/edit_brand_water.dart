@@ -23,7 +23,7 @@ class EditBrandWater extends StatefulWidget {
 class _EditBrandWaterState extends State<EditBrandWater> {
   BrandWaterModel? brandModel;
   File? file;
-  String? brand_id, brand_name, brand_image, idShop;
+  String? brand_id, brand_name, brand_image, idShop,brandImage;
 
   @override
   void initState() {
@@ -40,11 +40,40 @@ class _EditBrandWaterState extends State<EditBrandWater> {
   Widget build(BuildContext context) {
     ToastContext().init(context);
     return Scaffold(
-        floatingActionButton: uploadButton(),
+        // floatingActionButton: uploadButton(),
         appBar: AppBar(
           title: Text(
             'แก้ไข ยี่ห้อน้ำดื่ม ${brandModel!.brandName}',
           ),
+          actions: [
+            IconButton(
+              onPressed: () {
+                if (brand_name!.isEmpty) {
+                  AwesomeDialog(
+                    context: context,
+                    animType: AnimType.bottomSlide,
+                    dialogType: DialogType.warning,
+                    body: Center(
+                      child: Text(
+                        "กรุณากรอกข้อมูลให้ครบ!",
+                        style: TextStyle(
+                            fontStyle: FontStyle.normal,
+                            fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                    title: 'This is Ignored',
+                    desc: 'This is also Ignored',
+                    btnOkOnPress: () {
+                      // Navigator.pop(context);
+                    },
+                  ).show();
+                } else {
+                  confirmEdit();
+                }
+              },
+              icon: Icon(Icons.save),
+            ),
+          ],
         ),
         body: Column(
           children: [
@@ -58,14 +87,15 @@ class _EditBrandWaterState extends State<EditBrandWater> {
     return FloatingActionButton(
       onPressed: () {
         if (brand_name!.isEmpty) {
-           AwesomeDialog(
+          AwesomeDialog(
             context: context,
             animType: AnimType.bottomSlide,
             dialogType: DialogType.warning,
             body: Center(
               child: Text(
                 "กรุณากรอกข้อมูลให้ครบ!",
-                style: TextStyle(fontStyle: FontStyle.normal , fontWeight: FontWeight.bold),
+                style: TextStyle(
+                    fontStyle: FontStyle.normal, fontWeight: FontWeight.bold),
               ),
             ),
             title: 'This is Ignored',
@@ -117,35 +147,35 @@ class _EditBrandWaterState extends State<EditBrandWater> {
 
   Future<Null> editvalueOnMySQL() async {
     // ignore: unused_local_variable
-    String? urlUpload = '${MyConstant().domain}/WaterShop/Savebrand.php';
 
     Random random = Random();
     int i = random.nextInt(1000000);
     String? nameFile = 'brand$i.jpg';
-
     Map<String, dynamic> map = Map();
-    map['file'] = await MultipartFile.fromFile(file!.path, filename: nameFile);
-    FormData formData = FormData.fromMap(map);
 
-    await Dio().post(urlUpload, data: formData).then(
-      (value) async {
-        String? brand_image = '/WaterShop/brand/$nameFile';
+    if (file != null) {
+      map['file'] =
+          await MultipartFile.fromFile(file!.path, filename: nameFile);
+      FormData formData = FormData.fromMap(map);
+      String? urlUpload = '${MyConstant().domain}/WaterShop/Savebrand.php';
 
-        String? id = brandModel!.brandId;
+      await Dio().post(urlUpload, data: formData);
+       brand_image = '/WaterShop/brand/$nameFile';
+    }
 
-        String? url =
-            '${MyConstant().domain}/WaterShop/editBrand.php?isAdd=true&brand_id=$brand_id&brand_name=$brand_name&brand_image=$brand_image';
-        await Dio().get(url).then((value){
-              if (value.toString() == 'true'){
-                Navigator.pop(context);
-                Toast.show("แก้ไขสำเร็จ",
-                      duration: Toast.lengthLong, gravity: Toast.bottom);
-              }else{
-                normalDialog(context, 'กรุณาลองใหม่ มีข้อผิดพลาด');
-                }
-            });
-      },
-    );
+    String? id = brandModel!.brandId;
+
+    String? url =
+        '${MyConstant().domain}/WaterShop/editBrand.php?isAdd=true&brand_id=$brand_id&brand_name=$brand_name&brand_image=$brand_image';
+    await Dio().get(url).then((value) {
+      if (value.toString() == 'true') {
+        Navigator.pop(context);
+        Toast.show("แก้ไขสำเร็จ",
+            duration: Toast.lengthLong, gravity: Toast.bottom);
+      } else {
+        normalDialog(context, 'กรุณาลองใหม่ มีข้อผิดพลาด');
+      }
+    });
   }
 
   Widget groupImage() => Row(

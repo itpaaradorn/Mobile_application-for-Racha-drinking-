@@ -13,6 +13,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:location/location.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:toast/toast.dart';
 
 import '../../configs/api.dart';
 
@@ -36,6 +37,7 @@ class _EditInfoShopState extends State<EditInfoShop> {
     readCurrentInfo();
     findLatLng();
   }
+
   Future<Null> findLatLng() async {
     Position? positon = await MyAPI().getLocation();
     setState(() {
@@ -76,10 +78,19 @@ class _EditInfoShopState extends State<EditInfoShop> {
 
   @override
   Widget build(BuildContext context) {
+    ToastContext().init(context);
     return Scaffold(
       body: userModel == null ? MyStyle().showProgress() : showContet(),
       appBar: AppBar(
         title: Text('แก้ไข รายละเอียดร้าน'),
+        actions: [
+          IconButton(
+            onPressed: () {
+              confirmDialog();
+            },
+            icon: Icon(Icons.save),
+          ),
+        ],
       ),
     );
   }
@@ -92,7 +103,7 @@ class _EditInfoShopState extends State<EditInfoShop> {
             addressFrom(),
             phoneFrom(),
             lat == null ? MyStyle().showProgress() : showMap(),
-            editButton()
+            // editButton()
           ],
         ),
       );
@@ -127,7 +138,7 @@ class _EditInfoShopState extends State<EditInfoShop> {
                 },
                 child: Text(
                   'ตกลง',
-                 style: MyStyle().mainDackTitle,
+                  style: MyStyle().mainDackTitle,
                 ),
               ),
               TextButton(
@@ -167,6 +178,8 @@ class _EditInfoShopState extends State<EditInfoShop> {
         Response response = await Dio().get(url);
         if (response.toString() == 'true') {
           Navigator.pop(context);
+          Toast.show("แก้ไขข้อมูลสำเร็จ",
+              duration: Toast.lengthLong, gravity: Toast.bottom);
         } else {
           normalDialog(context, 'ยังอัพเดทไม่ได้ กรุณาลองใหม่');
         }
@@ -196,7 +209,6 @@ class _EditInfoShopState extends State<EditInfoShop> {
     };
   }
 
-
   Container showMap() {
     return Container(
       margin: EdgeInsets.only(top: 16.0),
@@ -212,7 +224,7 @@ class _EditInfoShopState extends State<EditInfoShop> {
     );
   }
 
- Widget showImage() => Container(
+  Widget showImage() => Container(
         margin: EdgeInsetsDirectional.only(top: 16.0),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -235,7 +247,6 @@ class _EditInfoShopState extends State<EditInfoShop> {
           ],
         ),
       );
-
 
   Widget nameShopFrom() => Row(
         mainAxisAlignment: MainAxisAlignment.center,

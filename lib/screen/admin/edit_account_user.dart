@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:math';
 
@@ -54,6 +55,38 @@ class _EditAccountUserState extends State<EditAccountUser> {
       print(' lat == $lat , lng == $lng');
     });
   }
+  StreamSubscription<Position>? positionStream;
+
+  // Future<Null> findLatLng() async {
+  //   final LocationSettings locationSettings = LocationSettings(
+  //     accuracy: LocationAccuracy.high,
+  //     distanceFilter: 100,
+  //   );
+  //   positionStream =
+  //       Geolocator.getPositionStream(locationSettings: locationSettings)
+  //           .listen((Position? position) async {
+  //     print(position);
+  //     if (position != null) {
+  //       lat = position.latitude;
+  //       lng = position.longitude;
+
+  //       setState(() {});
+  //     }
+    
+  //   });
+
+  //   // Position positon = await Geolocator.getCurrentPosition(
+  //   //     desiredAccuracy: LocationAccuracy.high);
+
+  //   // print(userModel.toJson());
+  //   // setState(() {
+  //   //   lat1 = positon.latitude;
+  //   //   lng1 = positon.longitude;
+  //   //   lat2 = double.parse(userModel.lat!);
+  //   //   lng2 = double.parse(userModel.lng!);
+  //   // });
+  // }
+
 
   @override
   Widget build(BuildContext context) {
@@ -229,22 +262,27 @@ class _EditAccountUserState extends State<EditAccountUser> {
     int i = random.nextInt(100000);
     String nameFile = 'editavatar$i.jpg';
     Map<String, dynamic> map = Map();
-    map['file'] = await MultipartFile.fromFile(file!.path, filename: nameFile);
-    FormData formData = FormData.fromMap(map);
-    String urlUpload = '${MyConstant().domain}/WaterShop/saveAvatar.php';
-    await Dio().post(urlUpload, data: formData).then((value) async {
+
+    if (file != null) {
+      map['file'] =
+          await MultipartFile.fromFile(file!.path, filename: nameFile);
+
+      FormData formData = FormData.fromMap(map);
+      String urlUpload = '${MyConstant().domain}/WaterShop/saveAvatar.php';
+
+      await Dio().post(urlUpload, data: formData);
       urlpicture = '/WaterShop/avatar/$nameFile';
+    }
 
-      String url =
-          '${MyConstant().domain}/WaterShop/editProfilelocation.php?isAdd=true&id=$user_id&UrlPicture=$urlpicture&Name=$name&User=$user&Password=$password&Phone=$phone&Address=$address&Lat=$lat&Lng=$lng';
+    String url =
+        '${MyConstant().domain}/WaterShop/editProfilelocation.php?isAdd=true&id=$user_id&UrlPicture=$urlpicture&Name=$name&User=$user&Password=$password&Phone=$phone&Address=$address&Lat=$lat&Lng=$lng';
 
-      await Dio().put(url).then(
-        (value) {
-          Toast.show("แก้ไขข้อมูลูกค้าสำเร็จ",
-              duration: Toast.lengthLong, gravity: Toast.bottom);
-        },
-      );
-    });
+    await Dio().put(url).then(
+      (value) {
+        Toast.show("แก้ไขข้อมูลูกค้าสำเร็จ",
+            duration: Toast.lengthLong, gravity: Toast.bottom);
+      },
+    );
   }
 
   Widget buildMap() => Container(
@@ -312,5 +350,13 @@ class _EditAccountUserState extends State<EditAccountUser> {
         file = File(object!.path);
       });
     } catch (e) {}
+  }
+
+  
+  @override
+  void dispose() {
+    super.dispose();
+
+    positionStream?.cancel();
   }
 }

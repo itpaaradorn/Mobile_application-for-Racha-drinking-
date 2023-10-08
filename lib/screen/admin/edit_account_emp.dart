@@ -229,22 +229,27 @@ class _EditAccountEmpState extends State<EditAccountEmp> {
     int i = random.nextInt(100000);
     String nameFile = 'editavatar$i.jpg';
     Map<String, dynamic> map = Map();
-    map['file'] = await MultipartFile.fromFile(file!.path, filename: nameFile);
-    FormData formData = FormData.fromMap(map);
-    String urlUpload = '${MyConstant().domain}/WaterShop/saveAvatar.php';
-    await Dio().post(urlUpload, data: formData).then((value) async {
+
+    if (file != null) {
+      map['file'] =
+          await MultipartFile.fromFile(file!.path, filename: nameFile);
+
+      FormData formData = FormData.fromMap(map);
+      String urlUpload = '${MyConstant().domain}/WaterShop/saveAvatar.php';
+
+      await Dio().post(urlUpload, data: formData);
       urlpicture = '/WaterShop/avatar/$nameFile';
+    }
 
-      String url =
-          '${MyConstant().domain}/WaterShop/editProfilelocation.php?isAdd=true&id=$user_id&UrlPicture=$urlpicture&Name=$name&User=$user&Password=$password&Phone=$phone&Address=$address&Lat=$lat&Lng=$lng';
+    String url =
+        '${MyConstant().domain}/WaterShop/editProfilelocation.php?isAdd=true&id=$user_id&UrlPicture=$urlpicture&Name=$name&User=$user&Password=$password&Phone=$phone&Address=$address&Lat=$lat&Lng=$lng';
 
-      await Dio().put(url).then(
-        (value) {
-          Toast.show("แก้ไขข้อมูพนักงานสำเร็จ",
-              duration: Toast.lengthLong, gravity: Toast.bottom);
-        },
-      );
-    });
+    await Dio().put(url).then(
+      (value) {
+        Toast.show("แก้ไขข้อมูลพนักงานสำเร็จ",
+            duration: Toast.lengthLong, gravity: Toast.bottom);
+      },
+    );
   }
 
   Widget buildMap() => Container(

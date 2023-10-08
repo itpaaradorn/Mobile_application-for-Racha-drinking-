@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:math';
 
@@ -23,7 +24,7 @@ class AddAccountUser extends StatefulWidget {
 }
 
 class _AddAccountUser extends State<AddAccountUser> {
- String? name, user, password, customer, address, phone;
+  String? name, user, password, customer, address, phone;
   String? chooseType;
   String? avatar;
   double? lat, lng;
@@ -51,12 +52,32 @@ class _AddAccountUser extends State<AddAccountUser> {
     super.initState();
   }
 
+  // Future<Null> findLatLng() async {
+  //   Position? positon = await MyAPI().getLocation();
+  //   setState(() {
+  //     lat = positon?.latitude;
+  //     lng = positon?.longitude;
+  //     print(' lat == $lat , lng == $lng');
+  //   });
+  // }
+
+  StreamSubscription<Position>? positionStream;
+
   Future<Null> findLatLng() async {
-    Position? positon = await MyAPI().getLocation();
-    setState(() {
-      lat = positon?.latitude;
-      lng = positon?.longitude;
-      print(' lat == $lat , lng == $lng');
+    final LocationSettings locationSettings = LocationSettings(
+      accuracy: LocationAccuracy.high,
+      distanceFilter: 100,
+    );
+    positionStream =
+        Geolocator.getPositionStream(locationSettings: locationSettings)
+            .listen((Position? position) async {
+      print(position);
+      if (position != null) {
+        lat = position.latitude;
+        lng = position.longitude;
+
+        setState(() {});
+      }
     });
   }
 
@@ -172,6 +193,7 @@ class _AddAccountUser extends State<AddAccountUser> {
         } else {
           // Have Avatar
           print('### process Upload Avatar');
+
           String apiSaveAvatar =
               '${MyConstant().domain}/WaterShop/saveAvatar.php';
           int i = Random().nextInt(100000);
@@ -236,10 +258,6 @@ class _AddAccountUser extends State<AddAccountUser> {
       }
     });
   }
-
-
-
-
 
   Row buildAvatar() {
     return Row(
@@ -555,4 +573,11 @@ class _AddAccountUser extends State<AddAccountUser> {
           MyStyle().showLogo(),
         ],
       );
+
+  @override
+  void dispose() {
+    super.dispose();
+
+    positionStream?.cancel();
+  }
 }

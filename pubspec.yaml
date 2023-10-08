@@ -92,6 +92,8 @@ flutter:
   assets:
     - images/
     - fonts/Samba/SambaBold.ttf
+    - fonts/Samba/CSChatThaiUI.ttf
+    - fonts/ekkamai/EkkamaiStandard-Light.ttf
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
