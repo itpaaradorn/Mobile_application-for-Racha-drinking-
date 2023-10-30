@@ -2,15 +2,12 @@ import 'dart:convert';
 
 import 'package:application_drinking_water_shop/model/customer_model.dart';
 import 'package:application_drinking_water_shop/model/water_model.dart';
-import 'package:application_drinking_water_shop/screen/payment.dart';
 import 'package:application_drinking_water_shop/utility/my_constant.dart';
 import 'package:application_drinking_water_shop/utility/my_style.dart';
-import 'package:application_drinking_water_shop/utility/dialog.dart';
 import 'package:application_drinking_water_shop/utility/sqlite_helper.dart';
 import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:toast/toast.dart';
 
@@ -87,6 +84,8 @@ class _ShowCartShopState extends State<ShowCartShop> {
         var result = json.decode(value.data);
         print('result ==>> $result');
 
+        total = 0;
+
         for (var map in result) {
           OrderDetail orderdetail = OrderDetail.fromJson(map);
           String sumString = orderdetail.sum!;
@@ -105,6 +104,8 @@ class _ShowCartShopState extends State<ShowCartShop> {
       }
     });
   }
+
+  
 
   @override
   Widget build(BuildContext context) {

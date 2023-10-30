@@ -150,7 +150,7 @@ class _FollowMapCustomerState extends State<FollowMapCustomer> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          "รายการสั่งซื้อที่ ${orderModel.orderTableId}",
+          "การจัดส่ง รายการสั่งซื้อที่ ${orderModel.orderTableId}",
         ),
       ),
       body:

@@ -198,7 +198,7 @@ class _OrderProcessEmpState extends State<OrderProcessEmp> {
                             Expanded(
                               flex: 1,
                               child: Text(
-                                items[j].price ?? '',
+                                 '${items[j].size} ml',
                                 style: MyStyle().mainh3Title,
                               ),
                             ),
@@ -487,7 +487,7 @@ class _OrderProcessEmpState extends State<OrderProcessEmp> {
           Expanded(
             flex: 1,
             child: Text(
-              'ราคา',
+              'ขนาด',
               style: MyStyle().mainh4Title,
             ),
           ),

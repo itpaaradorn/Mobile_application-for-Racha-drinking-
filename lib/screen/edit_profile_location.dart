@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:math';
 
@@ -48,12 +49,32 @@ class _EditProfileLocationState extends State<EditProfileLocation> {
     super.initState();
   }
 
+  // Future<Null> findLatLng() async {
+  //   Position? positon = await MyAPI().getLocation();
+  //   setState(() {
+  //     lat = positon?.latitude;
+  //     lng = positon?.longitude;
+  //     print(' lat == $lat , lng == $lng');
+  //   });
+  // }
+
+  StreamSubscription<Position>? positionStream;
+
   Future<Null> findLatLng() async {
-    Position? positon = await MyAPI().getLocation();
-    setState(() {
-      lat = positon?.latitude;
-      lng = positon?.longitude;
-      print(' lat == $lat , lng == $lng');
+    final LocationSettings locationSettings = LocationSettings(
+      accuracy: LocationAccuracy.high,
+      distanceFilter: 100,
+    );
+    positionStream =
+        Geolocator.getPositionStream(locationSettings: locationSettings)
+            .listen((Position? position) async {
+      print(position);
+      if (position != null) {
+        lat = position.latitude;
+        lng = position.longitude;
+
+        setState(() {});
+      }
     });
   }
 
@@ -151,6 +172,7 @@ class _EditProfileLocationState extends State<EditProfileLocation> {
             width: 300.0,
             child: TextFormField(
               onChanged: (value) => user = value.trim(),
+              enabled: false,
               initialValue: user,
               decoration: InputDecoration(
                 labelText: 'user',
@@ -227,9 +249,6 @@ class _EditProfileLocationState extends State<EditProfileLocation> {
         ],
       );
 
-
-      
-
   Future<Null> updateProfileandLocation() async {
     Random random = Random();
     int i = random.nextInt(100000);
@@ -264,16 +283,6 @@ class _EditProfileLocationState extends State<EditProfileLocation> {
           btnOkOnPress: () {},
         ).show());
   }
-
-
-
-
-
-
-
-
-
-
 
   Widget buildMap() => Container(
         color: Colors.grey,
@@ -340,5 +349,12 @@ class _EditProfileLocationState extends State<EditProfileLocation> {
         file = File(object!.path);
       });
     } catch (e) {}
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+
+    positionStream?.cancel();
   }
 }

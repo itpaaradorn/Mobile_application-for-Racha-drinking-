@@ -33,7 +33,7 @@ class _AddbrandWaterState extends State<AddbrandWater> {
       body: SingleChildScrollView(
         child: Column(
           children: <Widget>[
-            showTitleWater('รูปน้ำดื่ม'),
+            showTitleWater('รูปยี่ห้อ'),
             groupImage(),
             showTitleWater('รายละเอียดน้ำดื่ม'),
             brandForm(),
@@ -152,8 +152,8 @@ class _AddbrandWaterState extends State<AddbrandWater> {
           onPressed: () => chooseImage(ImageSource.camera),
         ),
         Container(
-          width: 230.0,
-          height: 230.0,
+          width: 200.0,
+          height: 200.0,
           child: file == null
               ? Image.asset('images/WaterMenu.png')
               : Image.file(file!),

@@ -231,7 +231,7 @@ class _OrderListShopState extends State<OrderListShop> {
                                 Expanded(
                                   flex: 1,
                                   child: Text(
-                                    items[j].price ?? '',
+                                    '${items[j].size} ml',
                                     style: MyStyle().mainh3Title,
                                   ),
                                 ),
@@ -383,7 +383,7 @@ class _OrderListShopState extends State<OrderListShop> {
       context: context,
       builder: (context) => SimpleDialog(
         title: MyStyle().showTitleH2(
-            'คุณต้องการยกเลิกรายการ สั่งซื้อน้ำดื่ม\nที่ ${ordermodels[index].orderNumber} ใช่ไหม ?'),
+            'คุณต้องการยกเลิกรายการ สั่งซื้อน้ำดื่ม\nที่ ${ordermodels[index].orderTableId} ใช่ไหม ?'),
         children: <Widget>[
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -436,7 +436,7 @@ class _OrderListShopState extends State<OrderListShop> {
           Expanded(
             flex: 1,
             child: Text(
-              'ราคา',
+              'ขนาด',
               style: MyStyle().mainh4Title,
             ),
           ),

@@ -79,7 +79,7 @@ class _InformationState extends State<Information> {
   Widget showListinfoShop() => Column(
         children: <Widget>[
           MyStyle().mySixedBox(),
-          showImage(),
+          // showImage(),
           Row(
             children: [
               MyStyle().showTitleH2('ที่อยู่ของร้าน'),

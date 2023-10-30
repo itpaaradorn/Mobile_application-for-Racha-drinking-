@@ -282,8 +282,8 @@ class _AddMenuWaterState extends State<AddMenuWater> {
           onPressed: () => chooseImage(ImageSource.camera),
         ),
         Container(
-          width: 230.0,
-          height: 230.0,
+          width: 200.0,
+          height: 210.0,
           child: file == null
               ? Image.asset('images/WaterMenu.png')
               : Image.file(file!),

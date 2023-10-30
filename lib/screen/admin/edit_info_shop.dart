@@ -47,6 +47,8 @@ class _EditInfoShopState extends State<EditInfoShop> {
     });
   }
 
+
+
   Future<Null> readCurrentInfo() async {
     SharedPreferences preferences = await SharedPreferences.getInstance();
     // ignore: unused_local_variable
@@ -99,7 +101,7 @@ class _EditInfoShopState extends State<EditInfoShop> {
         child: Column(
           children: [
             // nameShopFrom(),
-            showImage(),
+            // showImage(),
             addressFrom(),
             phoneFrom(),
             lat == null ? MyStyle().showProgress() : showMap(),
@@ -156,22 +158,22 @@ class _EditInfoShopState extends State<EditInfoShop> {
   }
 
   Future<Null> editThread() async {
-    Random random = Random();
-    int i = random.nextInt(100000);
-    String nameFile = 'ediShop$i.jpg';
+    // Random random = Random();
+    // int i = random.nextInt(100000);
+    // String nameFile = 'ediShop$i.jpg';
 
-    Map<String, dynamic> map = Map();
-    map['file'] = await MultipartFile.fromFile(file!.path, filename: nameFile);
-    FormData formData = FormData.fromMap(map);
+    // Map<String, dynamic> map = Map();
+    // map['file'] = await MultipartFile.fromFile(file!.path, filename: nameFile);
+    // FormData formData = FormData.fromMap(map);
 
-    String urlUpload = '${MyConstant().domain}/WaterShop/saveShop.php';
-    await Dio().post(urlUpload, data: formData).then(
-      (value) async {
-        urlPicture = '/WaterShop/shop/$nameFile';
+    // String urlUpload = '${MyConstant().domain}/WaterShop/saveShop.php';
+    // await Dio().post(urlUpload, data: formData).then(
+    //   (value) async {
 
         String? id = userModel?.id;
         print('id = $id');
 
+        urlPicture = '/WaterShop/shop/ediShop88653.jpg';
         String? url =
             '${MyConstant().domain}/WaterShop/editUserWhereId.php?isAdd=true&id=$id&NameShop=$nameShop&Address=$address&Phone=$phone&UrlPicture=$urlPicture&Lat=$lat&Lng=$lng';
 
@@ -183,8 +185,8 @@ class _EditInfoShopState extends State<EditInfoShop> {
         } else {
           normalDialog(context, 'ยังอัพเดทไม่ได้ กรุณาลองใหม่');
         }
-      },
-    );
+      // },
+    // );
   }
 
   Future<Null> chooseImage(ImageSource source) async {
@@ -212,7 +214,7 @@ class _EditInfoShopState extends State<EditInfoShop> {
   Container showMap() {
     return Container(
       margin: EdgeInsets.only(top: 16.0),
-      height: 540,
+      height: 610,
       child: GoogleMap(
         initialCameraPosition: CameraPosition(
           target: LatLng(lat!, lng!),

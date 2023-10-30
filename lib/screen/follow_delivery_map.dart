@@ -145,7 +145,7 @@ class _FollowTrackingDeliveryState extends State<FollowTrackingDelivery> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('รายการสั่งซื้อที่ ${orderModel?.orderTableId}'),
+        title: Text('ติดตามการจัดส่งสินค้า'),
       ),
       body: lat1 == null ? MyStyle().showProgress() : showList(),
     );

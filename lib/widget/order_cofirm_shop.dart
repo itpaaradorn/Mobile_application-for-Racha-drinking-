@@ -218,7 +218,7 @@ OrderModel  orderModel = listOrder[index].items.first;
     final headerRow = grid.headers.add(3)[0];
     headerRow.cells[0].value = ' Amount';
     headerRow.cells[1].value = ' Description';
-    headerRow.cells[2].value = ' Price';
+    headerRow.cells[2].value = 'Size';
     headerRow.cells[3].value = ' Total';
 
     PdfGridCellStyle headerStyle = PdfGridCellStyle();
@@ -290,8 +290,8 @@ OrderModel  orderModel = listOrder[index].items.first;
       // row.cells[1].value = '   ${listOrder[i].items[0].brandName}';
       row.cells[1].value = '   ${items[i].brandName ?? ''}';
       // row.cells[2].value = '   ${listOrder[i].items[0].price}';
-      row.cells[2].value = '   ${items[i].price ?? ''}';
-      row.cells[3].value = '   ${items[i].sum ?? ''}';
+      row.cells[2].value = '${items[i].size ?? ''} ml';
+      row.cells[3].value = ' ${items[i].sum ?? ''}';
 
       PdfGridCellStyle cells = PdfGridCellStyle();
       cells.borders.all = PdfPens.white;
@@ -412,7 +412,7 @@ OrderModel  orderModel = listOrder[index].items.first;
                             Expanded(
                               flex: 1,
                               child: Text(
-                                items[j].price ?? '',
+                                '${items[j].size} ml',
                                 style: MyStyle().mainh3Title,
                               ),
                             ),
@@ -488,7 +488,7 @@ OrderModel  orderModel = listOrder[index].items.first;
           Expanded(
             flex: 1,
             child: Text(
-              'ราคา',
+              'ขนาด',
               style: MyStyle().mainh4Title,
             ),
           ),

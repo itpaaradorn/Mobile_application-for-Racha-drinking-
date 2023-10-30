@@ -336,7 +336,7 @@ class _ConfirmPaymentState extends State<ConfirmPayment> {
         UserModel model = UserModel.fromJson(json);
         String tokenShop = model.token!;
         print('tokenShop ==>> $tokenShop');
-        String title = 'มีการสั่งซื้อจากuser$user_name';
+        String title = 'มีการสั่งซื้อจาก คุณ $user_name';
         String body = 'กรุณากดยืนยันเพื่อแจ้งลูกค้า';
 
         String urlSendToken =

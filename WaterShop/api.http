@@ -1,0 +1,85 @@
+
+
+GET http://localhost/WaterShop/getLastOrderId.php?user_id=94
+
+
+###
+
+
+# add order table
+POST http://localhost/WaterShop/addOrderWater.php
+Content-Type: application/json
+
+{
+    "payment_status": "",
+    "emp_id": "",
+    "create_by": "",
+    "status": "",
+}
+
+###
+
+# add order detail
+POST http://localhost/WaterShop/addOrderDetail.php
+Content-Type: application/json
+
+{
+    "order_id": "164",
+    "water_id": "52",
+    "amount": "1",
+    "sum": "51",
+    "distance": "11.98",
+    "transport": "90",
+    "create_by": "94",
+}
+
+###
+
+# get getOrderDetail_WhereIdUser
+GET http://localhost/WaterShop/getOrderDetail_WhereIdUser.php?user_id=94&status=usercart
+
+###
+
+# delete order detail
+DELETE http://192.168.1.99/WaterShop/deleteOrderDetail.php
+
+{
+    "order_id": 165,
+    "water_id": 56
+}
+
+###
+
+# update order status
+PUT http://192.168.1.99/WaterShop/updateOrderStatus.php
+
+{
+    "order_id": 165,
+    "emp_id": 56,
+    "status": "userorder",
+    "payment_status": "payment_status"
+}
+
+###
+
+# get order by user id
+GET http://192.168.1.99/WaterShop/getOrderWhereIdUser.php?user_id=94
+
+
+###
+
+# get order by user id
+GET http://192.168.1.99/WaterShop/editOrder.php?order_id=164
+
+
+###
+
+# get all customer
+GET http://192.168.1.99/WaterShop/getCustomer.php
+
+
+###
+
+GET http://192.168.1.99/WaterShop/getUserWhereId.php?isAdd=true&id=94
+
+###
